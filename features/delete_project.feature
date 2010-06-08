@@ -1,5 +1,6 @@
 Feature: Delete a project
-  In order to get rid-off a Kanban system
-  I can delete a project
-  As owner of the project
+  In order to get rid-off a project
+  I can delete a project from a board
+  As owner of the board
+
 
