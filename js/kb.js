@@ -63,17 +63,19 @@
       c.column = column_name;
       c.swimlane = swimlane_name;
       c.cell = true;
-      this.cells.push(c);
       return c;
     };
 
-    Board.prototype.draw = function(el, model) {
-      var c, cl, height, sl, width, x, y, _i, _j, _len, _len1, _ref, _ref1, _results;
-      this.model = model;
+    Board.prototype.compute_sizes = function() {
+      var height, width;
       width = this.model.columns.length * this.column_width;
       height = this.model.swimlanes.length * this.swimlane_height;
-      this.paper = Raphael(0, 0, width, height);
-      this.cells = [];
+      return [width, height];
+    };
+
+    Board.prototype.drawCells = function() {
+      var c, cells, cl, sl, x, y, _i, _j, _len, _len1, _ref, _ref1, _results;
+      cells = [];
       x = 0;
       _ref = this.model.columns;
       _results = [];
@@ -84,11 +86,21 @@
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           sl = _ref1[_j];
           c = this.drawCell(cl, sl, x, y, this.column_width, this.swimlane_height);
+          cells.push(c);
           y += this.swimlane_height;
         }
-        _results.push(x += this.column_width);
+        x += this.column_width;
+        _results.push(cells);
       }
       return _results;
+    };
+
+    Board.prototype.draw = function(el, model) {
+      var height, width, _ref;
+      this.model = model;
+      _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
+      this.paper = Raphael(0, 0, width, height);
+      return this.cells = this.drawCells();
     };
 
     return Board;

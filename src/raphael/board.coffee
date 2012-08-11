@@ -8,20 +8,30 @@ class Kb.Raphael.Board
     c.column = column_name
     c.swimlane = swimlane_name
     c.cell = true
-    @cells.push c
     c
 
-  draw: (el, @model) ->
+  compute_sizes: () ->
     width = @model.columns.length * @column_width
     height = @model.swimlanes.length * @swimlane_height
+    [width, height]
 
-    @paper = Raphael 0, 0, width, height
-    @cells = []
+  drawCells: () ->
+    cells = []
     x = 0
     for cl in @model.columns
       y = 0
       for sl in @model.swimlanes
         c = @drawCell cl, sl, x, y, @column_width, @swimlane_height
+        cells.push c
         y += @swimlane_height
       x += @column_width
+      cells
+
+  draw: (el, @model) ->
+    [width, height] = @compute_sizes()
+
+    @paper = Raphael 0, 0, width, height
+
+    # Let's draw cells
+    @cells = @drawCells()
 
