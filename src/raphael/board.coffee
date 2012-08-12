@@ -64,7 +64,7 @@ class Kb.Raphael.Board
   draw: (el, @model) ->
     [width, height] = @compute_sizes()
 
-    @paper = Raphael 0, 0, width, height
+    @paper = Raphael document.getElementById(el), 0, 0, width, height
 
     # Let's draw cells
     @cells = @drawCells()

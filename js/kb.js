@@ -142,7 +142,7 @@
       var height, width, _ref;
       this.model = model;
       _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
-      this.paper = Raphael(0, 0, width, height);
+      this.paper = Raphael(document.getElementById(el), 0, 0, width, height);
       return this.cells = this.drawCells();
     };
 

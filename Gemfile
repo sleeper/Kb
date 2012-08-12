@@ -6,3 +6,6 @@ gem "coffee-script"
 #gem "sass"
 #gem "eco"
 #gem 'sprockets', '~> 2.0'
+#
+#gem "jasmine"
+
