@@ -17,17 +17,12 @@
 
 }).call(this);
 (function() {
-  var b,
-    __hasProp = {}.hasOwnProperty,
+  var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Kb.Models.Board = (function(_super) {
 
     __extends(Board, _super);
-
-    Board.prototype.width = 1000;
-
-    Board.prototype.height = 1000;
 
     function Board(columns, swimlanes) {
       this.columns = columns;
@@ -41,8 +36,6 @@
 
   })(Backbone.Model);
 
-  b = new Kb.Models.Board(['backlog', 'in-progress', 'done'], ['projects', 'implementations']);
-
 }).call(this);
 (function() {
 
@@ -52,11 +45,15 @@
 
     Board.prototype.swimlane_height = 400;
 
+    Board.prototype.swimlane_title_width = 50;
+
     Board.prototype.column_width = 400;
 
-    Board.prototype.drawCell = function(column_name, swimlane_name, x, y, width, height) {
+    Board.prototype.column_title_height = 50;
+
+    Board.prototype.drawCell = function(column_name, swimlane_name, x, y) {
       var c;
-      c = this.paper.rect(x, y, width, height);
+      c = this.paper.rect(x, y, this.column_width, this.swimlane_height);
       c.attr({
         fill: "white"
       });
@@ -68,31 +65,77 @@
 
     Board.prototype.compute_sizes = function() {
       var height, width;
-      width = this.model.columns.length * this.column_width;
-      height = this.model.swimlanes.length * this.swimlane_height;
+      width = this.model.columns.length * this.column_width + this.swimlane_title_width;
+      height = this.model.swimlanes.length * this.swimlane_height + this.column_title_height;
       return [width, height];
     };
 
+    Board.prototype.center = function(el) {
+      var x, y;
+      x = el.attr('x') + (el.attr('width') / 2);
+      y = el.attr('y') + (el.attr('height') / 2);
+      return [x, y];
+    };
+
+    Board.prototype.drawSwimlaneTitle = function(sl, x, y) {
+      var cx, cy, t, text, _ref;
+      t = this.paper.rect(x, y, this.swimlane_title_width, this.swimlane_height);
+      t.attr({
+        fill: "white"
+      });
+      _ref = this.center(t), cx = _ref[0], cy = _ref[1];
+      text = this.paper.text(cx, cy, sl);
+      text.attr({
+        'font-size': 17,
+        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
+      });
+      text.attr("fill", "black");
+      return text.rotate(-90);
+    };
+
+    Board.prototype.drawColumnTitle = function(cl, x, y) {
+      var cx, cy, t, text, _ref;
+      t = this.paper.rect(x, y, this.column_width, this.column_title_height);
+      t.attr({
+        fill: "white"
+      });
+      _ref = this.center(t), cx = _ref[0], cy = _ref[1];
+      text = this.paper.text(cx, cy, cl);
+      text.attr({
+        'font-size': 17,
+        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
+      });
+      return text.attr("fill", "black");
+    };
+
     Board.prototype.drawCells = function() {
-      var c, cells, cl, sl, x, y, _i, _j, _len, _len1, _ref, _ref1, _results;
+      var c, cells, cl, sl, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
       cells = [];
-      x = 0;
+      x = this.swimlane_title_width;
       _ref = this.model.columns;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         cl = _ref[_i];
         y = 0;
+        this.drawColumnTitle(cl, x, y);
+        y += this.column_title_height;
         _ref1 = this.model.swimlanes;
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           sl = _ref1[_j];
-          c = this.drawCell(cl, sl, x, y, this.column_width, this.swimlane_height);
+          c = this.drawCell(cl, sl, x, y);
           cells.push(c);
           y += this.swimlane_height;
         }
         x += this.column_width;
-        _results.push(cells);
       }
-      return _results;
+      x = 0;
+      y = this.column_title_height;
+      _ref2 = this.model.swimlanes;
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        sl = _ref2[_k];
+        this.drawSwimlaneTitle(sl, x, y);
+        y += this.swimlane_height;
+      }
+      return cells;
     };
 
     Board.prototype.draw = function(el, model) {
