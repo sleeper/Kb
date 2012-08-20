@@ -6,5 +6,5 @@ class Kb.Views.BoardView extends Backbone.View
 
   render: =>
     b = new Kb.Raphael.Board
-    b.draw @el, @model
+    b.draw @el.id, @model
 

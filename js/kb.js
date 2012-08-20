@@ -142,7 +142,7 @@
       var height, width, _ref;
       this.model = model;
       _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
-      this.paper = Raphael(document.getElementById(el), 0, 0, width, height);
+      this.paper = Raphael(document.getElementById(el), width, height);
       return this.cells = this.drawCells();
     };
 
@@ -174,7 +174,7 @@
     BoardView.prototype.render = function() {
       var b;
       b = new Kb.Raphael.Board;
-      return b.draw(this.el, this.model);
+      return b.draw(this.el.id, this.model);
     };
 
     return BoardView;
