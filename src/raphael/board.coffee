@@ -13,8 +13,8 @@ class Kb.Raphael.Board
     c
 
   compute_sizes: () ->
-    width = @model.columns.length * @column_width + @swimlane_title_width
-    height = @model.swimlanes.length * @swimlane_height + @column_title_height
+    width = @model.columns.length * @column_width + @swimlane_title_width + 2
+    height = @model.swimlanes.length * @swimlane_height + @column_title_height + 2
     [width, height]
 
   center: (el) ->
@@ -64,7 +64,12 @@ class Kb.Raphael.Board
   draw: (el, @model) ->
     [width, height] = @compute_sizes()
 
-    @paper = Raphael document.getElementById(el), width, height
+    # Size correctly the container
+    jnode = $(el);
+    jnode.width(width)
+    jnode.height(height)
+
+    @paper = Raphael el, width, height
 
     # Let's draw cells
     @cells = @drawCells()

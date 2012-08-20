@@ -7,34 +7,44 @@
     Routers: {},
     Raphael: {},
     init: function() {
-      var b;
+      var b, container;
       b = new Kb.Models.Board(['backlog', 'in-progress', 'done'], ['projects', 'implementations']);
+      container = $('#board').get(0);
       return new Kb.Views.BoardView({
-        model: b
+        model: b,
+        el: container
       });
     }
   };
 
 }).call(this);
 (function() {
-  var __hasProp = {}.hasOwnProperty,
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Kb.Models.Board = (function(_super) {
+  Kb.Views.BoardView = (function(_super) {
 
-    __extends(Board, _super);
+    __extends(BoardView, _super);
 
-    function Board(columns, swimlanes) {
-      this.columns = columns;
-      this.swimlanes = swimlanes;
-      this.on("change", function() {
-        return console.log("Something changed");
-      });
+    function BoardView() {
+      this.render = __bind(this.render, this);
+      return BoardView.__super__.constructor.apply(this, arguments);
     }
 
-    return Board;
+    BoardView.prototype.initialize = function() {
+      return this.render();
+    };
 
-  })(Backbone.Model);
+    BoardView.prototype.render = function() {
+      var b;
+      b = new Kb.Raphael.Board;
+      return b.draw(this.el, this.model);
+    };
+
+    return BoardView;
+
+  })(Backbone.View);
 
 }).call(this);
 (function() {
@@ -65,8 +75,8 @@
 
     Board.prototype.compute_sizes = function() {
       var height, width;
-      width = this.model.columns.length * this.column_width + this.swimlane_title_width;
-      height = this.model.swimlanes.length * this.swimlane_height + this.column_title_height;
+      width = this.model.columns.length * this.column_width + this.swimlane_title_width + 2;
+      height = this.model.swimlanes.length * this.swimlane_height + this.column_title_height + 2;
       return [width, height];
     };
 
@@ -139,10 +149,13 @@
     };
 
     Board.prototype.draw = function(el, model) {
-      var height, width, _ref;
+      var height, jnode, width, _ref;
       this.model = model;
       _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
-      this.paper = Raphael(document.getElementById(el), width, height);
+      jnode = $(el);
+      jnode.width(width);
+      jnode.height(height);
+      this.paper = Raphael(el, width, height);
       return this.cells = this.drawCells();
     };
 
@@ -152,33 +165,23 @@
 
 }).call(this);
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
+  var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Kb.Views.BoardView = (function(_super) {
+  Kb.Models.Board = (function(_super) {
 
-    __extends(BoardView, _super);
+    __extends(Board, _super);
 
-    function BoardView() {
-      this.render = __bind(this.render, this);
-      return BoardView.__super__.constructor.apply(this, arguments);
+    function Board(columns, swimlanes) {
+      this.columns = columns;
+      this.swimlanes = swimlanes;
+      this.on("change", function() {
+        return console.log("Something changed");
+      });
     }
 
-    BoardView.prototype.el = $('#board');
+    return Board;
 
-    BoardView.prototype.initialize = function() {
-      return this.render();
-    };
-
-    BoardView.prototype.render = function() {
-      var b;
-      b = new Kb.Raphael.Board;
-      return b.draw(this.el.id, this.model);
-    };
-
-    return BoardView;
-
-  })(Backbone.View);
+  })(Backbone.Model);
 
 }).call(this);

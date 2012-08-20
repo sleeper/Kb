@@ -8,5 +8,6 @@ window.Kb =
   init: () ->
     b = new Kb.Models.Board ['backlog', 'in-progress', 'done'],
                             ['projects', 'implementations']
-    new Kb.Views.BoardView( model: b )
+    container = $('#board').get(0)
+    new Kb.Views.BoardView( model: b, el: container )
 
