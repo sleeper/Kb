@@ -7,10 +7,10 @@
     Routers: {},
     Raphael: {},
     init: function() {
-      var b, container;
+      var b, bview, container;
       b = new Kb.Models.Board(['backlog', 'in-progress', 'done'], ['projects', 'implementations']);
       container = $('#board').get(0);
-      return new Kb.Views.BoardView({
+      return bview = new Kb.Views.BoardView({
         model: b,
         el: container
       });
@@ -19,32 +19,66 @@
 
 }).call(this);
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
+  var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Kb.Views.BoardView = (function(_super) {
+  Kb.Collections.TicketList = (function(_super) {
 
-    __extends(BoardView, _super);
+    __extends(TicketList, _super);
 
-    function BoardView() {
-      this.render = __bind(this.render, this);
-      return BoardView.__super__.constructor.apply(this, arguments);
+    function TicketList() {
+      return TicketList.__super__.constructor.apply(this, arguments);
     }
 
-    BoardView.prototype.initialize = function() {
-      return this.render();
+    TicketList.prototype.url = '/tickets/';
+
+    return TicketList;
+
+  })(Backbone.Collection);
+
+}).call(this);
+(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Kb.Models.Board = (function(_super) {
+
+    __extends(Board, _super);
+
+    function Board(columns, swimlanes) {
+      this.columns = columns;
+      this.swimlanes = swimlanes;
+      this.on("change", function() {
+        return console.log("Something changed");
+      });
+    }
+
+    return Board;
+
+  })(Backbone.Model);
+
+}).call(this);
+(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Kb.Models.Ticket = (function(_super) {
+
+    __extends(Ticket, _super);
+
+    function Ticket() {
+      return Ticket.__super__.constructor.apply(this, arguments);
+    }
+
+    Ticket.prototype.defaults = {
+      title: "",
+      column: "",
+      swimlane: ""
     };
 
-    BoardView.prototype.render = function() {
-      var b;
-      b = new Kb.Raphael.Board;
-      return b.draw(this.el, this.model);
-    };
+    return Ticket;
 
-    return BoardView;
-
-  })(Backbone.View);
+  })(Backbone.Model);
 
 }).call(this);
 (function() {
@@ -165,23 +199,31 @@
 
 }).call(this);
 (function() {
-  var __hasProp = {}.hasOwnProperty,
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Kb.Models.Board = (function(_super) {
+  Kb.Views.BoardView = (function(_super) {
 
-    __extends(Board, _super);
+    __extends(BoardView, _super);
 
-    function Board(columns, swimlanes) {
-      this.columns = columns;
-      this.swimlanes = swimlanes;
-      this.on("change", function() {
-        return console.log("Something changed");
-      });
+    function BoardView() {
+      this.render = __bind(this.render, this);
+      return BoardView.__super__.constructor.apply(this, arguments);
     }
 
-    return Board;
+    BoardView.prototype.initialize = function() {
+      return this.render();
+    };
 
-  })(Backbone.Model);
+    BoardView.prototype.render = function() {
+      var b;
+      b = new Kb.Raphael.Board;
+      return b.draw(this.el, this.model);
+    };
+
+    return BoardView;
+
+  })(Backbone.View);
 
 }).call(this);
