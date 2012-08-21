@@ -13,8 +13,8 @@ class Kb.Raphael.Board
     c
 
   compute_sizes: () ->
-    width = @model.columns.length * @column_width + @swimlane_title_width + 2
-    height = @model.swimlanes.length * @swimlane_height + @column_title_height + 2
+    width = @model.get('columns').length * @column_width + @swimlane_title_width + 2
+    height = @model.get('swimlanes').length * @swimlane_height + @column_title_height + 2
     [width, height]
 
   center: (el) ->
@@ -42,11 +42,11 @@ class Kb.Raphael.Board
   drawCells: () ->
     cells = []
     x = @swimlane_title_width 
-    for cl in @model.columns
+    for cl in @model.get('columns')
       y = 0
       @drawColumnTitle cl, x , y
       y += @column_title_height
-      for sl in @model.swimlanes
+      for sl in @model.get('swimlanes')
         c = @drawCell cl, sl, x, y
         cells.push c
         y += @swimlane_height
@@ -55,7 +55,7 @@ class Kb.Raphael.Board
     # Add swimlane titles
     x = 0
     y = @column_title_height
-    for sl in @model.swimlanes
+    for sl in @model.get('swimlanes')
       @drawSwimlaneTitle sl, x, y
       y += @swimlane_height
 
