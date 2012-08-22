@@ -10,13 +10,12 @@ describe('Tests for TicketList', function() {
 
   it('Can add Model instances as objects and arrays.', function() {
     expect(tickets.length).toBe(0);
-//    tickets.add({ title: 'Clean the kitchen' });
-    tickets.add(new Kb.Models.Ticket({ title: 'Clean the kitchen' }));
+    tickets.add({ title: 'Clean the kitchen' });
     // how many todos have been added so far?
     expect(tickets.length).toBe(1);
     tickets.add([
-              new Kb.Models.Ticket({ title: 'Do the laundry', swimlane: "foo" }),
-              new Kb.Models.Ticket({ title: 'Go to the gym'})
+              { title: 'Do the laundry', swimlane: "foo" },
+              { title: 'Go to the gym'}
     ]);
     // how many are there in total now?
     expect(tickets.length).toBe(3);

@@ -7,21 +7,22 @@ require 'bundler'
 require 'bundler/setup'
 require 'coffee-script'
 
+SRCS = %w(
+kb.coffee
+models/board.coffee
+models/ticket.coffee
+collections/ticketlist.coffee
+raphael/board.coffee
+views/board_view.coffee
+)
+
 namespace :js do
   desc "compile coffee-scripts"
   task :compile do
     js = open "#{File.dirname(__FILE__)}/js/kb.js", 'w+'
-    Dir["#{File.dirname(__FILE__)}/src/*"].each do |cf|
-      if /\.coffee$/ =~ cf
-        puts "Compiling #{cf}"
-        js.puts CoffeeScript.compile File.read cf
-      end
-    end
-    Dir["#{File.dirname(__FILE__)}/src/*/*"].each do |cf|
-      if /\.coffee$/ =~ cf
-        puts "Compiling #{cf}"
-        js.puts CoffeeScript.compile File.read cf
-      end
+    SRCS.each do |cfile|
+      puts "Compiling #{cfile}"
+      js.puts CoffeeScript.compile File.read File.join(File.dirname(__FILE__),"src",cfile)
     end
   end
 end
