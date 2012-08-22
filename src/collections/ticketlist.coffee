@@ -1,3 +1,5 @@
 class Kb.Collections.TicketList extends Backbone.Collection
-  url: '/tickets/'
+  model: Kb.Models.Ticket
 
+  url: () ->
+    "/tickets/"

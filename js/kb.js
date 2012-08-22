@@ -33,7 +33,11 @@
       return TicketList.__super__.constructor.apply(this, arguments);
     }
 
-    TicketList.prototype.url = '/tickets/';
+    TicketList.prototype.model = Kb.Models.Ticket;
+
+    TicketList.prototype.url = function() {
+      return "/tickets/";
+    };
 
     return TicketList;
 
@@ -55,6 +59,20 @@
     Board.prototype.defaults = {
       swimlanes: [],
       columns: []
+    };
+
+    Board.prototype.url = function() {
+      return "/boards/" + this.id;
+    };
+
+    Board.prototype.validate = function(attribs) {
+      var name_empty;
+      name_empty = !attribs.name;
+      if (name_empty) {
+        return "Name must not be nil or empty";
+      } else {
+        return null;
+      }
     };
 
     return Board;
