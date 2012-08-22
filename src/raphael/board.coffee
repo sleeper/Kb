@@ -4,6 +4,8 @@ class Kb.Raphael.Board
   column_width: 400
   column_title_height: 50
 
+  constructor: (@model) ->
+
   drawCell: (column_name, swimlane_name, x, y) ->
     c = @paper.rect x, y, @column_width, @swimlane_height
     c.attr fill: "white"
@@ -61,7 +63,7 @@ class Kb.Raphael.Board
 
     cells
 
-  draw: (el, @model) ->
+  draw: (el) ->
     [width, height] = @compute_sizes()
 
     # Size correctly the container

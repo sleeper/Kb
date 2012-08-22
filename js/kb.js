@@ -89,8 +89,6 @@
 
   Kb.Raphael.Board = (function() {
 
-    function Board() {}
-
     Board.prototype.swimlane_height = 400;
 
     Board.prototype.swimlane_title_width = 50;
@@ -98,6 +96,10 @@
     Board.prototype.column_width = 400;
 
     Board.prototype.column_title_height = 50;
+
+    function Board(model) {
+      this.model = model;
+    }
 
     Board.prototype.drawCell = function(column_name, swimlane_name, x, y) {
       var c;
@@ -186,9 +188,8 @@
       return cells;
     };
 
-    Board.prototype.draw = function(el, model) {
+    Board.prototype.draw = function(el) {
       var height, jnode, width, _ref;
-      this.model = model;
       _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
       jnode = $(el);
       jnode.width(width);
@@ -222,8 +223,8 @@
 
     BoardView.prototype.render = function() {
       var b;
-      b = new Kb.Raphael.Board;
-      return b.draw(this.el, this.model);
+      b = new Kb.Raphael.Board(this.model);
+      return b.draw(this.el);
     };
 
     return BoardView;
