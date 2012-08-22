@@ -9,4 +9,7 @@ class Kb.Views.BoardView extends Backbone.View
   render: =>
     b = new Kb.Raphael.Board @model
     b.draw @el
+    # Now let's draw all the current tickets
+    @model.get('tickets').each (t)->
+      console.log( t.get('title') )
 

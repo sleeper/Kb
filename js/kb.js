@@ -9,6 +9,7 @@
     init: function() {
       var b, bview, container, tickets;
       b = new Kb.Models.Board({
+        name: "myboard",
         columns: ['backlog', 'in-progress', 'done'],
         swimlanes: ['projects', 'implementations']
       });
@@ -25,6 +26,7 @@
           swimlane: "implementations"
         }
       ]);
+      b.set('tickets', tickets);
       return bview = new Kb.Views.BoardView({
         model: b,
         el: container
@@ -254,7 +256,10 @@
     BoardView.prototype.render = function() {
       var b;
       b = new Kb.Raphael.Board(this.model);
-      return b.draw(this.el);
+      b.draw(this.el);
+      return this.model.get('tickets').each(function(t) {
+        return console.log(t.get('title'));
+      });
     };
 
     return BoardView;

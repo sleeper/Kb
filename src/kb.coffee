@@ -7,6 +7,7 @@ window.Kb =
 
   init: () ->
     b = new Kb.Models.Board
+        name: "myboard",
         columns: ['backlog', 'in-progress', 'done'],
         swimlanes: ['projects', 'implementations']
 
@@ -17,5 +18,6 @@ window.Kb =
       {title: "Buy some bread", column: "backlog", swimlane: "projects"},
       {title: "Buy some milk", column: "backlog", swimlane: "implementations"}
     ]
+    b.set('tickets', tickets)
     bview = new Kb.Views.BoardView( model: b, el: container )
 
