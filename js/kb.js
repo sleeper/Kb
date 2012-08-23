@@ -87,7 +87,9 @@
     Ticket.prototype.defaults = {
       title: "",
       column: "",
-      swimlane: ""
+      swimlane: "",
+      x: 0,
+      y: 0
     };
 
     return Ticket;
@@ -119,16 +121,132 @@
 
 }).call(this);
 (function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Kb.Raphael.Cell = (function() {
+
+    function Cell() {}
+
+    Cell.swimlane_height = 400;
+
+    Cell.swimlane_title_width = 50;
+
+    Cell.column_width = 400;
+
+    Cell.column_title_height = 50;
+
+    Cell.prototype.center = function(el) {
+      var x, y;
+      x = el.attr('x') + (el.attr('width') / 2);
+      y = el.attr('y') + (el.attr('height') / 2);
+      return [x, y];
+    };
+
+    return Cell;
+
+  })();
+
+  Kb.Raphael.DroppableCell = (function(_super) {
+
+    __extends(DroppableCell, _super);
+
+    DroppableCell.prototype.width = Kb.Raphael.Cell.column_width;
+
+    DroppableCell.prototype.height = Kb.Raphael.Cell.swimlane_height;
+
+    function DroppableCell(paper, col_name, sl_name, x, y) {
+      this.paper = paper;
+      this.col_name = col_name;
+      this.sl_name = sl_name;
+      this.x = x;
+      this.y = y;
+    }
+
+    DroppableCell.prototype.draw = function() {
+      var c;
+      c = this.paper.rect(this.x, this.y, this.width, this.height);
+      c.attr({
+        fill: "white"
+      });
+      c.droppable = this;
+      return c;
+    };
+
+    return DroppableCell;
+
+  })(Kb.Raphael.Cell);
+
+  Kb.Raphael.SwimlaneTitle = (function(_super) {
+
+    __extends(SwimlaneTitle, _super);
+
+    SwimlaneTitle.prototype.width = Kb.Raphael.Cell.swimlane_title_width;
+
+    SwimlaneTitle.prototype.height = Kb.Raphael.Cell.swimlane_height;
+
+    function SwimlaneTitle(paper, sl_name, x, y) {
+      this.paper = paper;
+      this.sl_name = sl_name;
+      this.x = x;
+      this.y = y;
+    }
+
+    SwimlaneTitle.prototype.draw = function() {
+      var cx, cy, t, text, _ref;
+      t = this.paper.rect(this.x, this.y, this.width, this.height);
+      t.attr({
+        fill: "white"
+      });
+      _ref = this.center(t), cx = _ref[0], cy = _ref[1];
+      text = this.paper.text(cx, cy, this.sl_name);
+      text.attr({
+        'font-size': 17,
+        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
+      });
+      text.attr("fill", "black");
+      return text.rotate(-90);
+    };
+
+    return SwimlaneTitle;
+
+  })(Kb.Raphael.Cell);
+
+  Kb.Raphael.ColumnTitle = (function(_super) {
+
+    __extends(ColumnTitle, _super);
+
+    ColumnTitle.prototype.width = Kb.Raphael.Cell.column_width;
+
+    ColumnTitle.prototype.height = Kb.Raphael.Cell.column_title_height;
+
+    function ColumnTitle(paper, name, x, y) {
+      this.paper = paper;
+      this.name = name;
+      this.x = x;
+      this.y = y;
+    }
+
+    ColumnTitle.prototype.draw = function() {
+      var cx, cy, t, text, _ref;
+      t = this.paper.rect(this.x, this.y, this.width, this.height);
+      t.attr({
+        fill: "white"
+      });
+      _ref = this.center(t), cx = _ref[0], cy = _ref[1];
+      text = this.paper.text(cx, cy, this.name);
+      text.attr({
+        'font-size': 17,
+        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
+      });
+      return text.attr("fill", "black");
+    };
+
+    return ColumnTitle;
+
+  })(Kb.Raphael.Cell);
 
   Kb.Raphael.Board = (function() {
-
-    Board.prototype.swimlane_height = 400;
-
-    Board.prototype.swimlane_title_width = 50;
-
-    Board.prototype.column_width = 400;
-
-    Board.prototype.column_title_height = 50;
 
     function Board(model, el) {
       var height, jnode, width, _ref;
@@ -141,89 +259,46 @@
       this.paper = Raphael(this.el, width, height);
     }
 
-    Board.prototype.drawCell = function(column_name, swimlane_name, x, y) {
-      var c;
-      c = this.paper.rect(x, y, this.column_width, this.swimlane_height);
-      c.attr({
-        fill: "white"
-      });
-      c.column = column_name;
-      c.swimlane = swimlane_name;
-      c.cell = true;
-      return c;
-    };
-
     Board.prototype.compute_sizes = function() {
-      var height, width;
-      width = this.model.get('columns').length * this.column_width + this.swimlane_title_width + 2;
-      height = this.model.get('swimlanes').length * this.swimlane_height + this.column_title_height + 2;
+      var cth, cw, height, sh, stw, width;
+      cw = Kb.Raphael.Cell.column_width;
+      stw = Kb.Raphael.Cell.swimlane_title_width;
+      sh = Kb.Raphael.Cell.swimlane_height;
+      cth = Kb.Raphael.Cell.column_title_height;
+      width = this.model.get('columns').length * cw + stw + 2;
+      height = this.model.get('swimlanes').length * sh + cth + 2;
       return [width, height];
     };
 
-    Board.prototype.center = function(el) {
-      var x, y;
-      x = el.attr('x') + (el.attr('width') / 2);
-      y = el.attr('y') + (el.attr('height') / 2);
-      return [x, y];
-    };
-
-    Board.prototype.drawSwimlaneTitle = function(sl, x, y) {
-      var cx, cy, t, text, _ref;
-      t = this.paper.rect(x, y, this.swimlane_title_width, this.swimlane_height);
-      t.attr({
-        fill: "white"
-      });
-      _ref = this.center(t), cx = _ref[0], cy = _ref[1];
-      text = this.paper.text(cx, cy, sl);
-      text.attr({
-        'font-size': 17,
-        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
-      });
-      text.attr("fill", "black");
-      return text.rotate(-90);
-    };
-
-    Board.prototype.drawColumnTitle = function(cl, x, y) {
-      var cx, cy, t, text, _ref;
-      t = this.paper.rect(x, y, this.column_width, this.column_title_height);
-      t.attr({
-        fill: "white"
-      });
-      _ref = this.center(t), cx = _ref[0], cy = _ref[1];
-      text = this.paper.text(cx, cy, cl);
-      text.attr({
-        'font-size': 17,
-        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
-      });
-      return text.attr("fill", "black");
-    };
-
     Board.prototype.drawCells = function() {
-      var c, cells, cl, sl, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+      var c, cells, cl, ctitle, sl, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
       cells = [];
-      x = this.swimlane_title_width;
+      x = Kb.Raphael.Cell.swimlane_title_width;
       _ref = this.model.get('columns');
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         cl = _ref[_i];
         y = 0;
-        this.drawColumnTitle(cl, x, y);
-        y += this.column_title_height;
+        ctitle = new Kb.Raphael.ColumnTitle(this.paper, cl, x, y);
+        ctitle.draw();
+        y += Kb.Raphael.Cell.column_title_height;
         _ref1 = this.model.get('swimlanes');
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           sl = _ref1[_j];
-          c = this.drawCell(cl, sl, x, y);
+          c = new Kb.Raphael.DroppableCell(this.paper, cl, sl, x, y);
+          c.draw();
           cells.push(c);
-          y += this.swimlane_height;
+          y += Kb.Raphael.Cell.swimlane_height;
         }
-        x += this.column_width;
+        x += Kb.Raphael.Cell.column_width;
       }
       x = 0;
-      y = this.column_title_height;
+      y = Kb.Raphael.Cell.column_title_height;
       _ref2 = this.model.get('swimlanes');
       for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
         sl = _ref2[_k];
-        this.drawSwimlaneTitle(sl, x, y);
-        y += this.swimlane_height;
+        sl = new Kb.Raphael.SwimlaneTitle(this.paper, sl, x, y);
+        sl.draw();
+        y += Kb.Raphael.Cell.swimlane_height;
       }
       return cells;
     };

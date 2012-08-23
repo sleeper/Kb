@@ -4,6 +4,8 @@ describe("Tests for Ticket", function() {
     expect(ticket.get('title')).toBe("");
     expect(ticket.get('column')).toBe("");
     expect(ticket.get('swimlane')).toBe("");
+    expect(ticket.get('x')).toBe(0);
+    expect(ticket.get('y')).toBe(0);
   });
 
   it('Will set passed attributes on the model instance when created.', function() { 
