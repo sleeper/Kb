@@ -54,10 +54,6 @@ class Kb.Raphael.ColumnTitle extends Kb.Raphael.Cell
 
 
 class Kb.Raphael.Board
-  #  swimlane_height: 400
-  #  swimlane_title_width: 50
-  #  column_width: 400
-  #  column_title_height: 50
 
   constructor: (@model, @el) ->
     [width, height] = @compute_sizes()
@@ -69,15 +65,6 @@ class Kb.Raphael.Board
 
     @paper = Raphael @el, width, height
 
-
-#  drawCell: (column_name, swimlane_name, x, y) ->
-#    c = @paper.rect x, y, @column_width, @swimlane_height
-#    c.attr fill: "white"
-#    c.column = column_name
-#    c.swimlane = swimlane_name
-#    c.cell = true
-#    c
-
   compute_sizes: () ->
     cw = Kb.Raphael.Cell.column_width
     stw = Kb.Raphael.Cell.swimlane_title_width
@@ -86,28 +73,6 @@ class Kb.Raphael.Board
     width = @model.get('columns').length * cw + stw + 2
     height = @model.get('swimlanes').length * sh + cth + 2
     [width, height]
-
-#  center: (el) ->
-#    x =  el.attr('x') + (el.attr('width')  / 2 )
-#    y =  el.attr('y') + (el.attr('height')  / 2 )
-#    [x,y]
-
-#  drawSwimlaneTitle: (sl, x, y) ->
-#    t = @paper.rect x, y, @swimlane_title_width, @swimlane_height
-#    t.attr fill: "white"
-#    [cx,cy] = @center t
-#    text = @paper.text cx, cy, sl
-#    text.attr({'font-size': 17, 'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'});
-#    text.attr("fill", "black");
-#    text.rotate(-90);
-
-#  drawColumnTitle: (cl, x, y) ->
-#    t = @paper.rect x, y, @column_width, @column_title_height
-#    t.attr fill: "white"
-#    [cx,cy] = @center t 
-#    text = @paper.text cx, cy, cl
-#    text.attr({'font-size': 17, 'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'});
-#    text.attr("fill", "black");
 
   drawCells: () ->
     cells = []
@@ -119,11 +84,11 @@ class Kb.Raphael.Board
 
       y += Kb.Raphael.Cell.column_title_height
       for sl in @model.get('swimlanes')
-#        c = @drawCell cl, sl, x, y
         c = new Kb.Raphael.DroppableCell @paper, cl, sl, x, y
         c.draw()
         cells.push c
         y += Kb.Raphael.Cell.swimlane_height
+
       x += Kb.Raphael.Cell.column_width
 
     # Add swimlane titles
@@ -132,7 +97,6 @@ class Kb.Raphael.Board
     for sl in @model.get('swimlanes')
       sl = new Kb.Raphael.SwimlaneTitle @paper, sl, x, y
       sl.draw()
-#      @drawSwimlaneTitle sl, x, y
       y += Kb.Raphael.Cell.swimlane_height
 
     cells
