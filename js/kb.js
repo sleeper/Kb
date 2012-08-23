@@ -20,6 +20,7 @@
         model: b,
         el: container
       });
+      bview.render();
       return tickets.reset([
         {
           title: "Buy some bread",
@@ -129,8 +130,15 @@
 
     Board.prototype.column_title_height = 50;
 
-    function Board(model) {
+    function Board(model, el) {
+      var height, jnode, width, _ref;
       this.model = model;
+      this.el = el;
+      _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
+      jnode = $(this.el);
+      jnode.width(width);
+      jnode.height(height);
+      this.paper = Raphael(this.el, width, height);
     }
 
     Board.prototype.drawCell = function(column_name, swimlane_name, x, y) {
@@ -220,13 +228,7 @@
       return cells;
     };
 
-    Board.prototype.draw = function(el) {
-      var height, jnode, width, _ref;
-      _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
-      jnode = $(el);
-      jnode.width(width);
-      jnode.height(height);
-      this.paper = Raphael(el, width, height);
+    Board.prototype.draw = function() {
       return this.cells = this.drawCells();
     };
 
@@ -249,6 +251,7 @@
     }
 
     Ticket.prototype.draw = function() {
+      console.log("Rendering ticket '" + (this.model.get('title')) + "'");
       return this.paper.rect(10, 10, this.width, this.height);
     };
 
@@ -305,7 +308,8 @@
       this.model.get('tickets').bind('add', this.addOne, this);
       this.model.get('tickets').bind('reset', this.addAll, this);
       this.model.get('tickets').bind('all', this.render, this);
-      return this.render();
+      this.svgboard = new Kb.Raphael.Board(this.model, this.el);
+      return this.svgboard.draw();
     };
 
     BoardView.prototype.addOne = function() {
@@ -326,8 +330,7 @@
     };
 
     BoardView.prototype.render = function() {
-      this.svgboard = new Kb.Raphael.Board(this.model);
-      return this.svgboard.draw(this.el);
+      return console.log("Rendering board");
     };
 
     return BoardView;

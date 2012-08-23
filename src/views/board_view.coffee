@@ -7,7 +7,9 @@ class Kb.Views.BoardView extends Backbone.View
     @model.get('tickets').bind 'add', @addOne, this
     @model.get('tickets').bind 'reset', @addAll, this
     @model.get('tickets').bind 'all', @render, this
-    @render()
+    @svgboard = new Kb.Raphael.Board @model, @el
+    @svgboard.draw()
+     #@render()
 
   addOne: ()->
     console.log "One ticket added. Render it"
@@ -19,6 +21,5 @@ class Kb.Views.BoardView extends Backbone.View
       view.render()
 
   render: =>
-    @svgboard = new Kb.Raphael.Board @model
-    @svgboard.draw @el
+    console.log "Rendering board"
 

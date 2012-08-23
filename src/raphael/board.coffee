@@ -4,7 +4,16 @@ class Kb.Raphael.Board
   column_width: 400
   column_title_height: 50
 
-  constructor: (@model) ->
+  constructor: (@model, @el) ->
+    [width, height] = @compute_sizes()
+
+    # Size correctly the container
+    jnode = $(@el);
+    jnode.width(width)
+    jnode.height(height)
+
+    @paper = Raphael @el, width, height
+
 
   drawCell: (column_name, swimlane_name, x, y) ->
     c = @paper.rect x, y, @column_width, @swimlane_height
@@ -63,16 +72,7 @@ class Kb.Raphael.Board
 
     cells
 
-  draw: (el) ->
-    [width, height] = @compute_sizes()
-
-    # Size correctly the container
-    jnode = $(el);
-    jnode.width(width)
-    jnode.height(height)
-
-    @paper = Raphael el, width, height
-
+  draw: () ->
     # Let's draw cells
     @cells = @drawCells()
 
