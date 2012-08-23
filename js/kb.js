@@ -262,53 +262,6 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Kb.Views.BoardView = (function(_super) {
-
-    __extends(BoardView, _super);
-
-    function BoardView() {
-      this.render = __bind(this.render, this);
-      return BoardView.__super__.constructor.apply(this, arguments);
-    }
-
-    BoardView.prototype.initialize = function() {
-      Kb.Collections.TicketList.bind('add', this.addOne, this);
-      Kb.Collections.TicketList.bind('reset', this.addAll, this);
-      Kb.Collections.TicketList.bind('all', this.render, this);
-      return this.render();
-    };
-
-    BoardView.prototype.addOne = function() {
-      return console.log("One ticket added. Render it");
-    };
-
-    BoardView.prototype.addAll = function() {
-      return this.model.get('tickets').each(function(t) {
-        var view;
-        console.log("Adding ticket '" + t.get('title') + "'");
-        view = new Kb.Views.Ticket({
-          model: t,
-          boardview: this
-        });
-        return view.render;
-      });
-    };
-
-    BoardView.prototype.render = function() {
-      this.svgboard = new Kb.Raphael.Board(this.model);
-      return this.svgboard.draw(this.el);
-    };
-
-    return BoardView;
-
-  })(Backbone.View);
-
-}).call(this);
-(function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
   Kb.Views.TicketView = (function(_super) {
 
     __extends(TicketView, _super);
@@ -319,7 +272,8 @@
     }
 
     TicketView.prototype.initialize = function() {
-      return bind('change', this.render);
+      this.boardview = this.options.boardview;
+      return this.bind('change', this.render);
     };
 
     TicketView.prototype.render = function() {
@@ -329,6 +283,54 @@
     };
 
     return TicketView;
+
+  })(Backbone.View);
+
+}).call(this);
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Kb.Views.BoardView = (function(_super) {
+
+    __extends(BoardView, _super);
+
+    function BoardView() {
+      this.render = __bind(this.render, this);
+      return BoardView.__super__.constructor.apply(this, arguments);
+    }
+
+    BoardView.prototype.initialize = function() {
+      this.model.get('tickets').bind('add', this.addOne, this);
+      this.model.get('tickets').bind('reset', this.addAll, this);
+      this.model.get('tickets').bind('all', this.render, this);
+      return this.render();
+    };
+
+    BoardView.prototype.addOne = function() {
+      return console.log("One ticket added. Render it");
+    };
+
+    BoardView.prototype.addAll = function() {
+      var _this = this;
+      return this.model.get('tickets').each(function(t) {
+        var view;
+        console.log("Adding ticket '" + t.get('title') + "'");
+        view = new Kb.Views.TicketView({
+          model: t,
+          boardview: _this
+        });
+        return view.render();
+      });
+    };
+
+    BoardView.prototype.render = function() {
+      this.svgboard = new Kb.Raphael.Board(this.model);
+      return this.svgboard.draw(this.el);
+    };
+
+    return BoardView;
 
   })(Backbone.View);
 

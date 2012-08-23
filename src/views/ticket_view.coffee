@@ -4,7 +4,8 @@ class Kb.Views.TicketView extends Backbone.View
   #   model
   #   boardview: the view of the enclosing board
   initialize:() ->
-    bind 'change', @render
+    @boardview = @options.boardview
+    @bind 'change', @render
 
   render: =>
     t = new Kb.Raphael.Ticket @boardview.svgboard, @model

@@ -14,8 +14,8 @@ models/ticket.coffee
 collections/ticketlist.coffee
 raphael/board.coffee
 raphael/ticket.coffee
-views/board_view.coffee
 views/ticket_view.coffee
+views/board_view.coffee
 )
 
 namespace :js do
