@@ -18,6 +18,6 @@ window.Kb =
     bview = new Kb.Views.BoardView( model: b, el: container )
     bview.render()
     tickets.reset [
-      {title: "Buy some bread", column: "backlog", swimlane: "projects"},
-      {title: "Buy some milk", column: "backlog", swimlane: "implementations"}
+      {title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60 },
+      {title: "Buy some milk", column: "backlog", swimlane: "implementations", x:80, y: 520}
     ]

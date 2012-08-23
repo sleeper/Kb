@@ -8,5 +8,5 @@ class Kb.Raphael.Ticket
   draw: ()->
     # FIXME: dummy first
     console.log "Rendering ticket '#{@model.get('title')}'"
-    @paper.rect( 10, 10, @width, @height)
+    @paper.rect( @model.get('x'), @model.get('y'), @width, @height)
 

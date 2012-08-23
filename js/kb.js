@@ -25,11 +25,15 @@
         {
           title: "Buy some bread",
           column: "backlog",
-          swimlane: "projects"
+          swimlane: "projects",
+          x: 60,
+          y: 60
         }, {
           title: "Buy some milk",
           column: "backlog",
-          swimlane: "implementations"
+          swimlane: "implementations",
+          x: 80,
+          y: 520
         }
       ]);
     }
@@ -327,7 +331,7 @@
 
     Ticket.prototype.draw = function() {
       console.log("Rendering ticket '" + (this.model.get('title')) + "'");
-      return this.paper.rect(10, 10, this.width, this.height);
+      return this.paper.rect(this.model.get('x'), this.model.get('y'), this.width, this.height);
     };
 
     return Ticket;
