@@ -14,10 +14,10 @@ window.Kb =
     container = $('#board').get(0)
 
     tickets = new Kb.Collections.TicketList();
+    b.set('tickets', tickets)
+    bview = new Kb.Views.BoardView( model: b, el: container )
+
     tickets.reset [
       {title: "Buy some bread", column: "backlog", swimlane: "projects"},
       {title: "Buy some milk", column: "backlog", swimlane: "implementations"}
     ]
-    b.set('tickets', tickets)
-    bview = new Kb.Views.BoardView( model: b, el: container )
-

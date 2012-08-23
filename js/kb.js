@@ -15,7 +15,12 @@
       });
       container = $('#board').get(0);
       tickets = new Kb.Collections.TicketList();
-      tickets.reset([
+      b.set('tickets', tickets);
+      bview = new Kb.Views.BoardView({
+        model: b,
+        el: container
+      });
+      return tickets.reset([
         {
           title: "Buy some bread",
           column: "backlog",
@@ -26,11 +31,6 @@
           swimlane: "implementations"
         }
       ]);
-      b.set('tickets', tickets);
-      return bview = new Kb.Views.BoardView({
-        model: b,
-        el: container
-      });
     }
   };
 
@@ -236,6 +236,28 @@
 
 }).call(this);
 (function() {
+
+  Kb.Raphael.Ticket = (function() {
+
+    Ticket.prototype.width = 70;
+
+    Ticket.prototype.height = 90;
+
+    function Ticket(board, model) {
+      this.model = model;
+      this.paper = board.paper;
+    }
+
+    Ticket.prototype.draw = function() {
+      return this.paper.rect(10, 10, this.width, this.height);
+    };
+
+    return Ticket;
+
+  })();
+
+}).call(this);
+(function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -250,19 +272,63 @@
     }
 
     BoardView.prototype.initialize = function() {
+      Kb.Collections.TicketList.bind('add', this.addOne, this);
+      Kb.Collections.TicketList.bind('reset', this.addAll, this);
+      Kb.Collections.TicketList.bind('all', this.render, this);
       return this.render();
     };
 
-    BoardView.prototype.render = function() {
-      var b;
-      b = new Kb.Raphael.Board(this.model);
-      b.draw(this.el);
+    BoardView.prototype.addOne = function() {
+      return console.log("One ticket added. Render it");
+    };
+
+    BoardView.prototype.addAll = function() {
       return this.model.get('tickets').each(function(t) {
-        return console.log(t.get('title'));
+        var view;
+        console.log("Adding ticket '" + t.get('title') + "'");
+        view = new Kb.Views.Ticket({
+          model: t,
+          boardview: this
+        });
+        return view.render;
       });
     };
 
+    BoardView.prototype.render = function() {
+      this.svgboard = new Kb.Raphael.Board(this.model);
+      return this.svgboard.draw(this.el);
+    };
+
     return BoardView;
+
+  })(Backbone.View);
+
+}).call(this);
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Kb.Views.TicketView = (function(_super) {
+
+    __extends(TicketView, _super);
+
+    function TicketView() {
+      this.render = __bind(this.render, this);
+      return TicketView.__super__.constructor.apply(this, arguments);
+    }
+
+    TicketView.prototype.initialize = function() {
+      return bind('change', this.render);
+    };
+
+    TicketView.prototype.render = function() {
+      var t;
+      t = new Kb.Raphael.Ticket(this.boardview.svgboard, this.model);
+      return t.draw(this.el);
+    };
+
+    return TicketView;
 
   })(Backbone.View);
 
