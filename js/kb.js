@@ -275,14 +275,15 @@
   Kb.Raphael.Board = (function() {
 
     function Board(model, el) {
-      var height, jnode, width, _ref;
+      var jnode, _ref;
       this.model = model;
       this.el = el;
-      _ref = this.compute_sizes(), width = _ref[0], height = _ref[1];
+      this._cells = new Kb.Raphael.CellCache();
+      _ref = this.compute_sizes(), this.width = _ref[0], this.height = _ref[1];
       jnode = $(this.el);
-      jnode.width(width);
-      jnode.height(height);
-      this.paper = Raphael(this.el, width, height);
+      jnode.width(this.width);
+      jnode.height(this.height);
+      this.paper = Raphael(this.el, this.width, this.height);
     }
 
     Board.prototype.compute_sizes = function() {
@@ -297,7 +298,7 @@
     };
 
     Board.prototype.drawCells = function() {
-      var c, cells, cl, ctitle, sl, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+      var c, cells, cl, ctitle, sl, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
       cells = [];
       x = Kb.Raphael.Cell.swimlane_title_width;
       _ref = this.model.get('columns');
@@ -312,7 +313,7 @@
           sl = _ref1[_j];
           c = new Kb.Raphael.DroppableCell(this.paper, cl, sl, x, y);
           c.draw();
-          cells.push(c);
+          this._cells.put(c);
           y += Kb.Raphael.Cell.swimlane_height;
         }
         x += Kb.Raphael.Cell.column_width;
@@ -320,17 +321,18 @@
       x = 0;
       y = Kb.Raphael.Cell.column_title_height;
       _ref2 = this.model.get('swimlanes');
+      _results = [];
       for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
         sl = _ref2[_k];
         sl = new Kb.Raphael.SwimlaneTitle(this.paper, sl, x, y);
         sl.draw();
-        y += Kb.Raphael.Cell.swimlane_height;
+        _results.push(y += Kb.Raphael.Cell.swimlane_height);
       }
-      return cells;
+      return _results;
     };
 
     Board.prototype.draw = function() {
-      return this.cells = this.drawCells();
+      return this.drawCells();
     };
 
     return Board;

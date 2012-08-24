@@ -52,23 +52,29 @@ class Kb.Raphael.ColumnTitle extends Kb.Raphael.Cell
     text.attr({'font-size': 17, 'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'});
     text.attr("fill", "black");
 
+#
+# A basic cache for droppable cells, allowing to retrieve
+# them by column_name and swimlane_name
+#
 class Kb.Raphael.CellCache
   constructor: ()-> @_cache = {}
   hash: (col_name, sl_name)-> "#{col_name}-#{sl_name}"
   put: (droppable)-> @_cache[@hash(droppable.col_name, droppable.sl_name)] = droppable
   get: (col_name, sl_name)-> @_cache[@hash(col_name, sl_name)]
 
+
 class Kb.Raphael.Board
 
   constructor: (@model, @el) ->
-    [width, height] = @compute_sizes()
+    @_cells = new Kb.Raphael.CellCache()
+    [@width, @height] = @compute_sizes()
 
     # Size correctly the container
     jnode = $(@el);
-    jnode.width(width)
-    jnode.height(height)
+    jnode.width(@width)
+    jnode.height(@height)
 
-    @paper = Raphael @el, width, height
+    @paper = Raphael @el, @width, @height
 
   compute_sizes: () ->
     cw = Kb.Raphael.Cell.column_width
@@ -91,7 +97,7 @@ class Kb.Raphael.Board
       for sl in @model.get('swimlanes')
         c = new Kb.Raphael.DroppableCell @paper, cl, sl, x, y
         c.draw()
-        cells.push c
+        @_cells.put c
         y += Kb.Raphael.Cell.swimlane_height
 
       x += Kb.Raphael.Cell.column_width
@@ -104,9 +110,7 @@ class Kb.Raphael.Board
       sl.draw()
       y += Kb.Raphael.Cell.swimlane_height
 
-    cells
-
   draw: () ->
     # Let's draw cells
-    @cells = @drawCells()
+    @drawCells()
 
