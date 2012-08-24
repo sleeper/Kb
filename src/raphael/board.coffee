@@ -52,6 +52,11 @@ class Kb.Raphael.ColumnTitle extends Kb.Raphael.Cell
     text.attr({'font-size': 17, 'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'});
     text.attr("fill", "black");
 
+class Kb.Raphael.CellCache
+  constructor: ()-> @_cache = {}
+  hash: (col_name, sl_name)-> "#{col_name}-#{sl_name}"
+  put: (droppable)-> @_cache[@hash(droppable.col_name, droppable.sl_name)] = droppable
+  get: (col_name, sl_name)-> @_cache[@hash(col_name, sl_name)]
 
 class Kb.Raphael.Board
 

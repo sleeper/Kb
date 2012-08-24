@@ -250,6 +250,28 @@
 
   })(Kb.Raphael.Cell);
 
+  Kb.Raphael.CellCache = (function() {
+
+    function CellCache() {
+      this._cache = {};
+    }
+
+    CellCache.prototype.hash = function(col_name, sl_name) {
+      return "" + col_name + "-" + sl_name;
+    };
+
+    CellCache.prototype.put = function(droppable) {
+      return this._cache[this.hash(droppable.col_name, droppable.sl_name)] = droppable;
+    };
+
+    CellCache.prototype.get = function(col_name, sl_name) {
+      return this._cache[this.hash(col_name, sl_name)];
+    };
+
+    return CellCache;
+
+  })();
+
   Kb.Raphael.Board = (function() {
 
     function Board(model, el) {
