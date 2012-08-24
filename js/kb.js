@@ -7,17 +7,17 @@
     Routers: {},
     Raphael: {},
     init: function() {
-      var b, bview, container, tickets;
-      b = new Kb.Models.Board({
+      var bview, container, tickets;
+      Kb.board = new Kb.Models.Board({
         name: "myboard",
         columns: ['backlog', 'in-progress', 'done'],
         swimlanes: ['projects', 'implementations']
       });
       container = $('#board').get(0);
       tickets = new Kb.Collections.TicketList();
-      b.set('tickets', tickets);
+      Kb.board.set('tickets', tickets);
       bview = new Kb.Views.BoardView({
-        model: b,
+        model: Kb.board,
         el: container
       });
       bview.render();
@@ -428,20 +428,21 @@
       return this.svgboard.draw();
     };
 
-    BoardView.prototype.addOne = function() {
-      return console.log("One ticket added. Render it");
+    BoardView.prototype.addOne = function(ticket) {
+      var view;
+      console.log("Ticket '" + ticket.title + "' added. Let's render it");
+      view = new Kb.Views.TicketView({
+        model: ticket,
+        boardview: this
+      });
+      return view.render();
     };
 
     BoardView.prototype.addAll = function() {
       var _this = this;
       return this.model.get('tickets').each(function(t) {
-        var view;
         console.log("Adding ticket '" + t.get('title') + "'");
-        view = new Kb.Views.TicketView({
-          model: t,
-          boardview: _this
-        });
-        return view.render();
+        return _this.addOne(t);
       });
     };
 

@@ -6,7 +6,7 @@ window.Kb =
   Raphael:     {}
 
   init: () ->
-    b = new Kb.Models.Board
+    Kb.board = new Kb.Models.Board
         name: "myboard",
         columns: ['backlog', 'in-progress', 'done'],
         swimlanes: ['projects', 'implementations']
@@ -14,8 +14,8 @@ window.Kb =
     container = $('#board').get(0)
 
     tickets = new Kb.Collections.TicketList();
-    b.set('tickets', tickets)
-    bview = new Kb.Views.BoardView( model: b, el: container )
+    Kb.board.set('tickets', tickets)
+    bview = new Kb.Views.BoardView( model: Kb.board, el: container )
     bview.render()
     tickets.reset [
       {title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60 },

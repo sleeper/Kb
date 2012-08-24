@@ -11,14 +11,18 @@ class Kb.Views.BoardView extends Backbone.View
     @svgboard.draw()
      #@render()
 
-  addOne: ()->
-    console.log "One ticket added. Render it"
+  addOne: (ticket)->
+    console.log "Ticket '#{ticket.title}' added. Let's render it"
+    view = new Kb.Views.TicketView model: ticket, boardview: this
+    view.render()
+
 
   addAll: ()->
     @model.get('tickets').each (t)=>
       console.log( "Adding ticket '" + t.get('title')+"'" )
-      view = new Kb.Views.TicketView model: t, boardview: this
-      view.render()
+      @addOne( t );
+#      view = new Kb.Views.TicketView model: t, boardview: this
+#      view.render()
 
   render: =>
     console.log "Rendering board"
