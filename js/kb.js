@@ -30,10 +30,10 @@
           y: 60
         }, {
           title: "Buy some milk",
-          column: "backlog",
+          column: "in-progress",
           swimlane: "implementations",
           x: 80,
-          y: 520
+          y: 60
         }
       ]);
     }
@@ -359,13 +359,16 @@
     Ticket.prototype.height = 90;
 
     function Ticket(board, model) {
+      this.board = board;
       this.model = model;
-      this.paper = board.paper;
+      this.board.paper;
     }
 
     Ticket.prototype.draw = function() {
+      var x, y, _ref;
       console.log("Rendering ticket '" + (this.model.get('title')) + "'");
-      return this.paper.rect(this.model.get('x'), this.model.get('y'), this.width, this.height);
+      _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), x = _ref[0], y = _ref[1];
+      return this.board.paper.rect(x, y, this.width, this.height);
     };
 
     return Ticket;

@@ -19,5 +19,5 @@ window.Kb =
     bview.render()
     tickets.reset [
       {title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60 },
-      {title: "Buy some milk", column: "backlog", swimlane: "implementations", x:80, y: 520}
+      {title: "Buy some milk", column: "in-progress", swimlane: "implementations", x:80, y: 60}
     ]
