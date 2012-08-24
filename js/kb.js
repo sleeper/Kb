@@ -167,6 +167,10 @@
       this.y = y;
     }
 
+    DroppableCell.prototype.compute_absolute_coordinates = function(rx, ry) {
+      return [this.x + rx, this.y + ry];
+    };
+
     DroppableCell.prototype.draw = function() {
       var c;
       c = this.paper.rect(this.x, this.y, this.width, this.height);
@@ -295,6 +299,12 @@
       width = this.model.get('columns').length * cw + stw + 2;
       height = this.model.get('swimlanes').length * sh + cth + 2;
       return [width, height];
+    };
+
+    Board.prototype.compute_absolute_coordinates = function(cl_name, sl_name, rx, ry) {
+      var cell;
+      cell = this._cells.get(cl_name, sl_name);
+      return cell.compute_absolute_coordinates(rx, ry);
     };
 
     Board.prototype.drawCells = function() {

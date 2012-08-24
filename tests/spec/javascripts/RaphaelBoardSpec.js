@@ -21,4 +21,18 @@ describe("Raphael.Board", function() {
       expect(window.Raphael).toHaveBeenCalled();
     });
   });
+
+  describe("coordinates computation", function() {
+    it("should return the absolute x and y coordinates from relative ones", function(){
+      var m = new Kb.Models.Board({columns: ['backlog', 'done'], swimlanes: ['foo']});
+      var b = new Kb.Raphael.Board(m, 'board');
+      b.draw();
+      var xa,ya,_tmp;
+      _tmp = b.compute_absolute_coordinates('done', 'foo', 10, 10);
+      xa = _tmp[0];
+      xb = _tmp[1];
+      expect(xa).toBe(460);
+      expect(xb).toBe(60);
+    });
+  });
 });

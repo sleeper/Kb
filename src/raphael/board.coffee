@@ -17,6 +17,10 @@ class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
 
   constructor: (@paper, @col_name, @sl_name, @x, @y)->
 
+  # Return the absolute x and y coordinates from the relative ones
+  compute_absolute_coordinates: (rx, ry)->
+    [ @x + rx, @y + ry ]
+
   draw: ()->
     c = @paper.rect @x, @y, @width, @height
     c.attr fill: "white"
@@ -84,6 +88,15 @@ class Kb.Raphael.Board
     width = @model.get('columns').length * cw + stw + 2
     height = @model.get('swimlanes').length * sh + cth + 2
     [width, height]
+
+  # Each ticket on the board has a x and y coordinate, relative to 
+  # the cell it is placed in.
+  # This method allows for computation of the absolute x and y
+  compute_absolute_coordinates: (cl_name, sl_name, rx, ry)->
+    cell = @_cells.get(cl_name, sl_name)
+    # FIXME: handle the case cell is empty
+    # delegate to cell
+    cell.compute_absolute_coordinates(rx, ry)
 
   drawCells: () ->
     cells = []
