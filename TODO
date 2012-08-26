@@ -1,0 +1,11 @@
+[ ] Implement a method of Raphael.Board to get the cell under points (x,y)
+[ ] Have the start method of Raphael.Ticket detect which cell it starts in
+[ ] Have the move method of the Raphael.Ticket detect the cell under us 
+    and notify it if it's not the same as the previous cell
+[ ] Have the up method of the Raphael.Ticket detect the cell under the Ticket
+    and notify it the ticket has land in.
+[ ] Change all Raphael.Ticket accordingly and notify model ? (note for the
+    Raphael part, either do it here or wait for the change in the BackBone
+    model to occur and transmit)
+
+

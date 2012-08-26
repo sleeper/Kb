@@ -21,11 +21,14 @@ class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
   compute_absolute_coordinates: (rx, ry)->
     [ @x + rx, @y + ry ]
 
+  isPointInside: (x,y)->
+    @el.isPointInside(x,y)
+
   draw: ()->
-    c = @paper.rect @x, @y, @width, @height
-    c.attr fill: "white"
-    c.droppable = this
-    c
+    @el = @paper.rect @x, @y, @width, @height
+    @el.attr fill: "white"
+    @el.droppable = this
+    @el
 
 class Kb.Raphael.SwimlaneTitle extends Kb.Raphael.Cell
   width: Kb.Raphael.Cell.swimlane_title_width
@@ -65,6 +68,8 @@ class Kb.Raphael.CellCache
   hash: (col_name, sl_name)-> "#{col_name}-#{sl_name}"
   put: (droppable)-> @_cache[@hash(droppable.col_name, droppable.sl_name)] = droppable
   get: (col_name, sl_name)-> @_cache[@hash(col_name, sl_name)]
+  forEach: (cb)->
+    $.each @_cache, (k,v)-> cb(v)
 
 
 class Kb.Raphael.Board
@@ -97,6 +102,15 @@ class Kb.Raphael.Board
     # FIXME: handle the case cell is empty
     # delegate to cell
     cell.compute_absolute_coordinates(rx, ry)
+
+  # Return the cell that is under point x, y
+  getCellByPoint: (x, y)->
+    cell = null
+    @_cells.forEach (c)->
+      if c.isPointInside(x,y)
+        cell = c
+        false
+    cell
 
   drawCells: () ->
     cells = []

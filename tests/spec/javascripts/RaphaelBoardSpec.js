@@ -35,4 +35,16 @@ describe("Raphael.Board", function() {
       expect(xb).toBe(60);
     });
   });
+
+  describe("get the cell under the point", function() {
+    it("should return the right droppable cell the furnished point is in", function() {
+      var m = new Kb.Models.Board({columns: ['backlog', 'done'], swimlanes: ['foo']});
+      var b = new Kb.Raphael.Board(m, 'board');
+      b.draw();
+      var c = b.getCellByPoint(100,100);
+      expect(c.col_name).toBe('backlog');
+      expect(c.sl_name).toBe('foo');
+
+    });
+  });
 });

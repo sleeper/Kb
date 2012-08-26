@@ -171,14 +171,17 @@
       return [this.x + rx, this.y + ry];
     };
 
+    DroppableCell.prototype.isPointInside = function(x, y) {
+      return this.el.isPointInside(x, y);
+    };
+
     DroppableCell.prototype.draw = function() {
-      var c;
-      c = this.paper.rect(this.x, this.y, this.width, this.height);
-      c.attr({
+      this.el = this.paper.rect(this.x, this.y, this.width, this.height);
+      this.el.attr({
         fill: "white"
       });
-      c.droppable = this;
-      return c;
+      this.el.droppable = this;
+      return this.el;
     };
 
     return DroppableCell;
@@ -272,6 +275,12 @@
       return this._cache[this.hash(col_name, sl_name)];
     };
 
+    CellCache.prototype.forEach = function(cb) {
+      return $.each(this._cache, function(k, v) {
+        return cb(v);
+      });
+    };
+
     return CellCache;
 
   })();
@@ -305,6 +314,18 @@
       var cell;
       cell = this._cells.get(cl_name, sl_name);
       return cell.compute_absolute_coordinates(rx, ry);
+    };
+
+    Board.prototype.getCellByPoint = function(x, y) {
+      var cell;
+      cell = null;
+      this._cells.forEach(function(c) {
+        if (c.isPointInside(x, y)) {
+          cell = c;
+          return false;
+        }
+      });
+      return cell;
     };
 
     Board.prototype.drawCells = function() {
@@ -351,6 +372,7 @@
 
 }).call(this);
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Kb.Raphael.Ticket = (function() {
 
@@ -361,14 +383,48 @@
     function Ticket(board, model) {
       this.board = board;
       this.model = model;
+      this.up = __bind(this.up, this);
+
+      this.start = __bind(this.start, this);
+
+      this.move = __bind(this.move, this);
+
       this.board.paper;
     }
+
+    Ticket.prototype.move = function(dx, dy) {
+      console.log("Ticket is moving");
+      return this.frame.attr({
+        x: this.ox + dx,
+        y: this.oy + dy
+      });
+    };
+
+    Ticket.prototype.start = function() {
+      console.log("Ticket is going to move");
+      this.frame.animate({
+        opacity: .25
+      }, 500, ">");
+      this.ox = this.frame.attr("x");
+      return this.oy = this.frame.attr("y");
+    };
+
+    Ticket.prototype.up = function() {
+      console.log("Ticket is going to land");
+      return this.frame.animate({
+        opacity: 1
+      }, 500, ">");
+    };
 
     Ticket.prototype.draw = function() {
       var x, y, _ref;
       console.log("Rendering ticket '" + (this.model.get('title')) + "'");
       _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), x = _ref[0], y = _ref[1];
-      return this.board.paper.rect(x, y, this.width, this.height);
+      this.frame = this.board.paper.rect(x, y, this.width, this.height);
+      this.frame.attr({
+        fill: "#ffffff"
+      });
+      return this.frame.drag(this.move, this.start, this.up);
     };
 
     return Ticket;
