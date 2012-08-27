@@ -411,12 +411,15 @@
     };
 
     Ticket.prototype.start = function() {
+      var _ref;
       console.log("Ticket is going to move");
       this.frame.animate({
         opacity: .25
       }, 500, ">");
       this.ox = this.frame.attr("x");
-      return this.oy = this.frame.attr("y");
+      this.oy = this.frame.attr("y");
+      _ref = this.board.getColumnAndSwimlane(this.ox, this.oy), this.ocol = _ref[0], this.osl = _ref[1];
+      return console.log("[drag] Starting in (" + this.ocol + ", " + this.osl + ")");
     };
 
     Ticket.prototype.up = function() {

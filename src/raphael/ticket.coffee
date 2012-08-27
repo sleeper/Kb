@@ -24,11 +24,9 @@ class Kb.Raphael.Ticket
     @frame.animate({opacity: .25}, 500, ">");
     @ox = @frame.attr("x");
     @oy = @frame.attr("y");
-    # We need to track the origin cell
-    #
-    # Get orig cell
-    # this.orig_cell = board.getCellByPoint(this.ox, this.oy);
-    # this.cell = this.orig_cell;
+    # Get original cell we're in
+    [@ocol, @osl] = @board.getColumnAndSwimlane @ox, @oy
+    console.log "[drag] Starting in (#{@ocol}, #{@osl})"
 
   up: ()=>
     console.log("Ticket is going to land")
