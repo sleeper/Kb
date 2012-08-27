@@ -7,16 +7,19 @@ class Kb.Raphael.Ticket
 
   move: (dx, dy)=>
     console.log("Ticket is moving")
-    @frame.attr({x: this.ox + dx, y: this.oy + dy});
+    @x = @ox + dx
+    @y = @oy + dy
+    @frame.attr({x: @x, y: @y});
     # We need to notify the cell we're entering in, as well
     # as the cell we're leaving
     #
-  # cell = board.getCellByPoint(this.attr("x"), this.attr("y"));
-  # if (cell.name != this.cell.name) {
-  #  this.cell.attr({fill: "white"});
-  #  this.cell = cell;
-  #  this.cell.attr({fill: "gray"});
-  # }
+    [col,sl] = @board.getColumnAndSwimlane @x,@y
+    if col != @cur_col || sl != @cur_sl
+      console.log "[drag] leaving (#{@cur_col}, #{@cur_sl})"
+      eve "cell.leaving", @el, @cur_col, @cur_sl
+      console.log "[drag] entering (#{col}, #{sl})"
+      eve "cell.entering", @el, col, sl
+      [@cur_col, @cur_sl] = [col,sl]
 
 
   start: ()=>
@@ -26,13 +29,13 @@ class Kb.Raphael.Ticket
     @oy = @frame.attr("y");
     # Get original cell we're in
     [@ocol, @osl] = @board.getColumnAndSwimlane @ox, @oy
+    [@cur_col, @cur_sl] = [@ocol, @osl]
     console.log "[drag] Starting in (#{@ocol}, #{@osl})"
 
   up: ()=>
     console.log("Ticket is going to land")
     @frame.animate({opacity: 1}, 500, ">");
-    # We need to notify the cell we're landing in it
-  # this.cell.attr({fill: "white"});
+    eve "cell.dropped", @el, @cur_col, @cur_sl
 
 
   draw: ()->

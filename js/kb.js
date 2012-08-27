@@ -125,7 +125,8 @@
 
 }).call(this);
 (function() {
-  var __hasProp = {}.hasOwnProperty,
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Kb.Raphael.Cell = (function() {
@@ -155,6 +156,10 @@
 
     __extends(DroppableCell, _super);
 
+    DroppableCell.prototype.hovered_color = "grey";
+
+    DroppableCell.prototype.background_color = "white";
+
     DroppableCell.prototype.width = Kb.Raphael.Cell.column_width;
 
     DroppableCell.prototype.height = Kb.Raphael.Cell.swimlane_height;
@@ -165,6 +170,16 @@
       this.sl_name = sl_name;
       this.x = x;
       this.y = y;
+      this.dropped = __bind(this.dropped, this);
+
+      this.left = __bind(this.left, this);
+
+      this.entered = __bind(this.entered, this);
+
+      this.scope = this;
+      eve.on("cell.leaving", this.left);
+      eve.on('cell.entering', this.entered);
+      eve.on('cell.dropped', this.dropped);
     }
 
     DroppableCell.prototype.compute_absolute_coordinates = function(rx, ry) {
@@ -173,6 +188,33 @@
 
     DroppableCell.prototype.isPointInside = function(x, y) {
       return this.el.isPointInside(x, y);
+    };
+
+    DroppableCell.prototype.entered = function(col, sl) {
+      if (col === this.col_name && sl === this.sl_name) {
+        console.log("[cell] I've been entered (" + this + ", " + col + ", " + sl + ")");
+        return this.el.attr({
+          fill: this.hovered_color
+        });
+      }
+    };
+
+    DroppableCell.prototype.left = function(col, sl) {
+      console.log("FRED --> " + this.col_name + " | " + this.sl_name + " == " + col + " | " + sl);
+      if (col === this.col_name && sl === this.sl_name) {
+        console.log("[cell] I've been left (" + this + ", " + col + ", " + sl + ")");
+        return this.el.attr({
+          fill: this.background_color
+        });
+      }
+    };
+
+    DroppableCell.prototype.dropped = function(col, sl) {
+      if (col === this.col_name && sl === this.sl_name) {
+        return this.el.attr({
+          fill: this.background_color
+        });
+      }
     };
 
     DroppableCell.prototype.draw = function() {
@@ -403,15 +445,26 @@
     }
 
     Ticket.prototype.move = function(dx, dy) {
+      var col, sl, _ref, _ref1;
       console.log("Ticket is moving");
-      return this.frame.attr({
-        x: this.ox + dx,
-        y: this.oy + dy
+      this.x = this.ox + dx;
+      this.y = this.oy + dy;
+      this.frame.attr({
+        x: this.x,
+        y: this.y
       });
+      _ref = this.board.getColumnAndSwimlane(this.x, this.y), col = _ref[0], sl = _ref[1];
+      if (col !== this.cur_col || sl !== this.cur_sl) {
+        console.log("[drag] leaving (" + this.cur_col + ", " + this.cur_sl + ")");
+        eve("cell.leaving", this.el, this.cur_col, this.cur_sl);
+        console.log("[drag] entering (" + col + ", " + sl + ")");
+        eve("cell.entering", this.el, col, sl);
+        return _ref1 = [col, sl], this.cur_col = _ref1[0], this.cur_sl = _ref1[1], _ref1;
+      }
     };
 
     Ticket.prototype.start = function() {
-      var _ref;
+      var _ref, _ref1;
       console.log("Ticket is going to move");
       this.frame.animate({
         opacity: .25
@@ -419,14 +472,16 @@
       this.ox = this.frame.attr("x");
       this.oy = this.frame.attr("y");
       _ref = this.board.getColumnAndSwimlane(this.ox, this.oy), this.ocol = _ref[0], this.osl = _ref[1];
+      _ref1 = [this.ocol, this.osl], this.cur_col = _ref1[0], this.cur_sl = _ref1[1];
       return console.log("[drag] Starting in (" + this.ocol + ", " + this.osl + ")");
     };
 
     Ticket.prototype.up = function() {
       console.log("Ticket is going to land");
-      return this.frame.animate({
+      this.frame.animate({
         opacity: 1
       }, 500, ">");
+      return eve("cell.dropped", this.el, this.cur_col, this.cur_sl);
     };
 
     Ticket.prototype.draw = function() {

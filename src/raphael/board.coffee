@@ -4,6 +4,7 @@ class Kb.Raphael.Cell
   @column_width: 400
   @column_title_height: 50
 
+
   # Return the center of the passed Raphael element
   center: (el)->
     x =  el.attr('x') + (el.attr('width')  / 2 )
@@ -12,10 +13,16 @@ class Kb.Raphael.Cell
 
 
 class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
+  hovered_color: "grey"
+  background_color: "white"
   width: Kb.Raphael.Cell.column_width
   height: Kb.Raphael.Cell.swimlane_height
 
   constructor: (@paper, @col_name, @sl_name, @x, @y)->
+    @scope = @
+    eve.on "cell.leaving", @left
+    eve.on 'cell.entering', @entered
+    eve.on 'cell.dropped', @dropped
 
   # Return the absolute x and y coordinates from the relative ones
   compute_absolute_coordinates: (rx, ry)->
@@ -23,6 +30,20 @@ class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
 
   isPointInside: (x,y)->
     @el.isPointInside(x,y)
+
+  entered: (col, sl)=>
+    if col == @col_name && sl == @sl_name
+      console.log "[cell] I've been entered (#{@}, #{col}, #{sl})"
+      @el.attr({fill: @hovered_color})
+
+  left: (col, sl)=>
+    if col == @col_name && sl == @sl_name
+      console.log "[cell] I've been left (#{@}, #{col}, #{sl})"
+      @el.attr({fill: @background_color})
+
+  dropped: (col,sl)=>
+    if col == @col_name && sl == @sl_name
+      @el.attr({fill: @background_color})
 
   draw: ()->
     @el = @paper.rect @x, @y, @width, @height
