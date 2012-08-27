@@ -1,4 +1,4 @@
-[ ] Implement a method of Raphael.Board to get the cell under points (x,y)
+[x] Implement a method of Raphael.Board to get the cell under points (x,y)
 [ ] Have the start method of Raphael.Ticket detect which cell it starts in
 [ ] Have the move method of the Raphael.Ticket detect the cell under us 
     and notify it if it's not the same as the previous cell

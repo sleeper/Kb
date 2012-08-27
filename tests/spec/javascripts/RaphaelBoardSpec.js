@@ -46,14 +46,15 @@ describe("Raphael.Board", function() {
       expect(c.sl_name).toBe('foo');
 
     });
-  });
 
-  describe("get the column and swimlane name under the point", function(){
+    it("get the column and swimlane name under the point", function(){
       var m = new Kb.Models.Board({columns: ['backlog', 'done'], swimlanes: ['foo']});
       var b = new Kb.Raphael.Board(m, 'board');
       b.draw();
       var c = b.getColumnAndSwimlane(100,100);
       expect(c[0]).toBe('backlog');
       expect(c[1]).toBe('foo');
+    });
   });
+
 });

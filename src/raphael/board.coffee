@@ -112,6 +112,12 @@ class Kb.Raphael.Board
         false
     cell
 
+  getColumnAndSwimlane: (x,y)->
+    [column,swimlane] = [null,null]
+    cell = @getCellByPoint(x,y)
+    [column,swimlane] = [cell.col_name, cell.sl_name] if cell != null
+    [column,swimlane]
+
   drawCells: () ->
     cells = []
     x = Kb.Raphael.Cell.swimlane_title_width 

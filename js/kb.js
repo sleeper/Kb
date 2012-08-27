@@ -328,6 +328,16 @@
       return cell;
     };
 
+    Board.prototype.getColumnAndSwimlane = function(x, y) {
+      var cell, column, swimlane, _ref, _ref1;
+      _ref = [null, null], column = _ref[0], swimlane = _ref[1];
+      cell = this.getCellByPoint(x, y);
+      if (cell !== null) {
+        _ref1 = [cell.col_name, cell.sl_name], column = _ref1[0], swimlane = _ref1[1];
+      }
+      return [column, swimlane];
+    };
+
     Board.prototype.drawCells = function() {
       var c, cells, cl, ctitle, sl, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
       cells = [];
