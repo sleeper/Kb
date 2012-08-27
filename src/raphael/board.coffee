@@ -33,12 +33,10 @@ class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
 
   entered: (col, sl)=>
     if col == @col_name && sl == @sl_name
-      console.log "[cell] I've been entered (#{@}, #{col}, #{sl})"
       @el.attr({fill: @hovered_color})
 
   left: (col, sl)=>
     if col == @col_name && sl == @sl_name
-      console.log "[cell] I've been left (#{@}, #{col}, #{sl})"
       @el.attr({fill: @background_color})
 
   dropped: (col,sl)=>
@@ -89,8 +87,14 @@ class Kb.Raphael.CellCache
   hash: (col_name, sl_name)-> "#{col_name}-#{sl_name}"
   put: (droppable)-> @_cache[@hash(droppable.col_name, droppable.sl_name)] = droppable
   get: (col_name, sl_name)-> @_cache[@hash(col_name, sl_name)]
+
+  # Iterates over the cached elements
+  # The callback will receive 2 parameters:
+  #   - the key
+  #   - the cell
+  #
   forEach: (cb)->
-    $.each @_cache, (k,v)-> cb(v)
+    $.each @_cache, cb
 
 
 class Kb.Raphael.Board
@@ -127,7 +131,7 @@ class Kb.Raphael.Board
   # Return the cell that is under point x, y
   getCellByPoint: (x, y)->
     cell = null
-    @_cells.forEach (c)->
+    @_cells.forEach (k, c)->
       if c.isPointInside(x,y)
         cell = c
         false

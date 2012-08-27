@@ -12,7 +12,7 @@ class Kb.Views.BoardView extends Backbone.View
      #@render()
 
   addOne: (ticket)->
-    console.log "Ticket '#{ticket.title}' added. Let's render it"
+    console.log "Ticket '#{ticket.get('title')}' added. Let's render it"
     view = new Kb.Views.TicketView model: ticket, boardview: this
     view.render()
 
