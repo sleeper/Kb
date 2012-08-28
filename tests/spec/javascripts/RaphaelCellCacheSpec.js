@@ -16,7 +16,7 @@ describe("Raphael.CellCache", function() {
       c.put({col_name: "foo", sl_name: "bar", value: "fred"})
       c.put({col_name: "bar", sl_name: "bar", value: "fred"})
       var s = "";
-      c.forEach(function(c) { 
+      c.forEach(function(k,c) { 
         s+= c.col_name;
       });
       expect(s).toBe("foobar");
@@ -27,7 +27,7 @@ describe("Raphael.CellCache", function() {
       c.put({col_name: "foo", sl_name: "bar", value: "fred"})
       c.put({col_name: "bar", sl_name: "bar", value: "fred"})
       var s = "";
-      c.forEach(function(c) { 
+      c.forEach(function(k,c) { 
         if (c.col_name == "bar") {
           return false;
         }
