@@ -1,6 +1,7 @@
 class Kb.Raphael.Ticket
   width: 70
   height: 90
+  header_height: 20
 
   constructor: (@board, @model)->
     @board.paper
@@ -8,7 +9,11 @@ class Kb.Raphael.Ticket
   move: (dx, dy)=>
     @x = @ox + dx
     @y = @oy + dy
-    @frame.attr({x: @x, y: @y});
+    @frame.attr x: @x, y: @y
+    @header.attr x: @x, y: @y
+    @title.setAttribute "x", @x
+    @title.setAttribute "y", @y + @header_height + 5
+
     # We need to notify the cell we're entering in, as well
     # as the cell we're leaving
     #
@@ -31,9 +36,27 @@ class Kb.Raphael.Ticket
     @frame.animate({opacity: 1}, 500, ">");
     eve "cell.dropped", @el, @cur_col, @cur_sl
 
+  draw_title: ()->
+    @title = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
+    @title.setAttribute "x", @x
+    @title.setAttribute "y", @y + @header_height + 5
+    @title.setAttribute "width", @width - 5
+    @title.setAttribute "height", @height - @header_height - 5
+    body = document.createElement "body"
+    @title.appendChild body
+    div = document.createElement "div"
+    body.appendChild div
+    div.innerHTML = @model.get 'title'
+    @board.paper.canvas.appendChild @title
+
+  draw_header: ()->
+    @header = @board.paper.rect(@x, @y, @width, @header_height)
 
   draw: ()->
-    [x,y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
-    @frame = @board.paper.rect( x, y, @width, @height)
+    [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
+    @frame = @board.paper.rect( @x, @y, @width, @height)
     @frame.attr({fill: "#ffffff"})
+    # Let's add the title
+    @draw_header()
+    @draw_title()
     @frame.drag(@move, @start, @up)

@@ -427,6 +427,8 @@
 
     Ticket.prototype.height = 90;
 
+    Ticket.prototype.header_height = 20;
+
     function Ticket(board, model) {
       this.board = board;
       this.model = model;
@@ -447,6 +449,12 @@
         x: this.x,
         y: this.y
       });
+      this.header.attr({
+        x: this.x,
+        y: this.y
+      });
+      this.title.setAttribute("x", this.x);
+      this.title.setAttribute("y", this.y + this.header_height + 5);
       _ref = this.board.getColumnAndSwimlane(this.x, this.y), col = _ref[0], sl = _ref[1];
       if (col !== this.cur_col || sl !== this.cur_sl) {
         eve("cell.leaving", this.el, this.cur_col, this.cur_sl);
@@ -473,13 +481,34 @@
       return eve("cell.dropped", this.el, this.cur_col, this.cur_sl);
     };
 
+    Ticket.prototype.draw_title = function() {
+      var body, div;
+      this.title = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+      this.title.setAttribute("x", this.x);
+      this.title.setAttribute("y", this.y + this.header_height + 5);
+      this.title.setAttribute("width", this.width - 5);
+      this.title.setAttribute("height", this.height - this.header_height - 5);
+      body = document.createElement("body");
+      this.title.appendChild(body);
+      div = document.createElement("div");
+      body.appendChild(div);
+      div.innerHTML = this.model.get('title');
+      return this.board.paper.canvas.appendChild(this.title);
+    };
+
+    Ticket.prototype.draw_header = function() {
+      return this.header = this.board.paper.rect(this.x, this.y, this.width, this.header_height);
+    };
+
     Ticket.prototype.draw = function() {
-      var x, y, _ref;
-      _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), x = _ref[0], y = _ref[1];
-      this.frame = this.board.paper.rect(x, y, this.width, this.height);
+      var _ref;
+      _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), this.x = _ref[0], this.y = _ref[1];
+      this.frame = this.board.paper.rect(this.x, this.y, this.width, this.height);
       this.frame.attr({
         fill: "#ffffff"
       });
+      this.draw_header();
+      this.draw_title();
       return this.frame.drag(this.move, this.start, this.up);
     };
 
