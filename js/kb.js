@@ -493,6 +493,7 @@
       div = document.createElement("div");
       body.appendChild(div);
       div.innerHTML = this.model.get('title');
+      $(div).quickfit();
       return this.board.paper.canvas.appendChild(this.title);
     };
 

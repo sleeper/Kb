@@ -47,6 +47,7 @@ class Kb.Raphael.Ticket
     div = document.createElement "div"
     body.appendChild div
     div.innerHTML = @model.get 'title'
+    $(div).quickfit();
     @board.paper.canvas.appendChild @title
 
   draw_header: ()->
