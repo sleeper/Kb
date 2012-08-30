@@ -8,6 +8,7 @@ require 'bundler/setup'
 require 'coffee-script'
 
 SRCS = %w(
+helpers/jquery-rsize-paragraph.coffee
 kb.coffee
 models/board.coffee
 models/ticket.coffee
