@@ -1,5 +1,93 @@
 (function() {
 
+  (function($) {
+    var RSize, defaults, pluginName;
+    pluginName = 'jquery.rsize.paragraph';
+    defaults = {
+      step_limit: 200,
+      align_middle: true,
+      align_center: true
+    };
+    RSize = (function() {
+
+      function RSize(element, options) {
+        this.element = element;
+        this.options = $.extend({}, defaults, options);
+        this.element = $(this.element);
+        this._defaults = defaults;
+        this._name = pluginName;
+      }
+
+      RSize.prototype.fit = function() {
+        var original_text, span;
+        this.element.css('white-space', 'normal');
+        original_text = this.element.html();
+        this.original_width = this.element.width();
+        this.original_height = this.element.height();
+        this.element.html("");
+        if (!this.original_width || !this.original_height) {
+          if (window.console != null) {
+            console.info('Set static height/width on target DIV before using boxfit!');
+          }
+          this.element.html(original_text);
+        } else {
+          if ($(original_text).find("span.rsize").length === 0) {
+            span = $("<span></span>").addClass("rsize").html(original_text);
+            this.element.html(span);
+          } else {
+            this.element.html(original_text);
+            span = $(original_text).find('span.rsize')[0];
+          }
+        }
+        this.inner_span = span;
+        if (this.options.align_middle) {
+          this.element.css("display", "table");
+          this.inner_span.css("display", "table-cell");
+          this.inner_span.css("vertical-align", "middle");
+        }
+        if (this.options.align_center) {
+          this.element.css("text-align", "center");
+          this.inner_span.css("text-align", "center");
+        }
+        if (this.element.height() > this.original_height) {
+          return this.downsize();
+        }
+      };
+
+      RSize.prototype.downsize = function() {
+        var current_step, font_size, height, lower, middle, upper;
+        current_step = 0;
+        font_size = parseInt(this.inner_span.css("font-size"), 10);
+        upper = font_size;
+        lower = 2;
+        while (upper - lower > 1) {
+          middle = (upper + lower) / 2;
+          this.inner_span.css("font-size", middle);
+          height = this.element.height();
+          if (height === this.original_height) {
+            break;
+          } else if (height > this.original_height) {
+            upper = middle;
+          } else {
+            lower = middle;
+          }
+        }
+        return this;
+      };
+
+      return RSize;
+
+    })();
+    return $.fn.rsize = function(options) {
+      return this.each(function() {
+        return new RSize(this, options).fit();
+      });
+    };
+  })(jQuery, window);
+
+}).call(this);
+(function() {
+
   window.Kb = {
     Models: {},
     Collections: {},
@@ -493,8 +581,8 @@
       div = document.createElement("div");
       body.appendChild(div);
       div.innerHTML = this.model.get('title');
-      $(div).quickfit();
-      return this.board.paper.canvas.appendChild(this.title);
+      this.board.paper.canvas.appendChild(this.title);
+      return $(div).rsize();
     };
 
     Ticket.prototype.draw_header = function() {
