@@ -436,12 +436,12 @@
 
       this.start = __bind(this.start, this);
 
-      this.move = __bind(this.move, this);
+      this.dragged = __bind(this.dragged, this);
 
       this.board.paper;
     }
 
-    Ticket.prototype.move = function(dx, dy) {
+    Ticket.prototype.dragged = function(dx, dy) {
       var col, sl, _ref, _ref1;
       this.x = this.ox + dx;
       this.y = this.oy + dy;
@@ -481,6 +481,21 @@
       return eve("cell.dropped", this.el, this.cur_col, this.cur_sl);
     };
 
+    Ticket.prototype.move = function() {
+      var _ref;
+      _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), this.x = _ref[0], this.y = _ref[1];
+      this.frame.attr({
+        x: this.x,
+        y: this.y
+      });
+      this.header.attr({
+        x: this.x,
+        y: this.y
+      });
+      this.title.setAttribute("x", this.x);
+      return this.title.setAttribute("y", this.y + this.header_height + 5);
+    };
+
     Ticket.prototype.draw_title = function() {
       var body, div;
       this.title = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
@@ -510,7 +525,8 @@
       });
       this.draw_header();
       this.draw_title();
-      return this.frame.drag(this.move, this.start, this.up);
+      this.frame.drag(this.dragged, this.start, this.up);
+      return this;
     };
 
     return Ticket;
@@ -533,14 +549,18 @@
     }
 
     TicketView.prototype.initialize = function() {
+      var t;
       this.boardview = this.options.boardview;
-      return this.bind('change', this.render);
+      t = new Kb.Raphael.Ticket(this.boardview.svgboard, this.model);
+      this.element = t.draw(this.el);
+      this.setElement(this.element.node);
+      return this.model.on('change', this.render);
     };
 
     TicketView.prototype.render = function() {
-      var t;
-      t = new Kb.Raphael.Ticket(this.boardview.svgboard, this.model);
-      return t.draw(this.el);
+      console.log("[DEBUG] TicketView.render called for " + (this.model.get('title')));
+      console.log("[DEBUG] column = " + (this.model.get('column')));
+      return this.element.move();
     };
 
     return TicketView;

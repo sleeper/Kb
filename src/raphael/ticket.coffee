@@ -6,7 +6,7 @@ class Kb.Raphael.Ticket
   constructor: (@board, @model)->
     @board.paper
 
-  move: (dx, dy)=>
+  dragged: (dx, dy)=>
     @x = @ox + dx
     @y = @oy + dy
     @frame.attr x: @x, y: @y
@@ -36,6 +36,14 @@ class Kb.Raphael.Ticket
     @frame.animate({opacity: 1}, 500, ">");
     eve "cell.dropped", @el, @cur_col, @cur_sl
 
+  move: ()->
+    [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
+    @frame.attr x: @x, y: @y
+    @header.attr x: @x, y: @y
+    @title.setAttribute "x", @x
+    @title.setAttribute "y", @y + @header_height + 5
+
+
   draw_title: ()->
     @title = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
     @title.setAttribute "x", @x
@@ -60,4 +68,5 @@ class Kb.Raphael.Ticket
     # Let's add the title
     @draw_header()
     @draw_title()
-    @frame.drag(@move, @start, @up)
+    @frame.drag(@dragged, @start, @up)
+    @
