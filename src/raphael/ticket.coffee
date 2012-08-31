@@ -38,6 +38,7 @@ class Kb.Raphael.Ticket
     if !@cur_col? || !@cur_sl?
         @cur_col = @ocol
         @cur_sl = @osl
+        [@x, @y] = [ @ox, @oy]
         # If the user dropped the ticket on non-droppable
         # the model will be reset to its column and swimlane
         # but no change event will be fired.
@@ -47,7 +48,7 @@ class Kb.Raphael.Ticket
     @frame.animate({opacity: 1}, 500, ">");
     [x,y] = @board.compute_relative_coordinates @cur_col, @cur_sl, @x, @y
     @model.set column: @cur_col, swimlane: @cur_sl, x: x, y: y
-    @move if force_move
+    @move() if force_move
 
   move: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')

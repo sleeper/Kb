@@ -472,17 +472,18 @@
     };
 
     Ticket.prototype.up = function() {
-      var force_move, x, y, _ref;
+      var force_move, x, y, _ref, _ref1;
       if (!(this.cur_col != null) || !(this.cur_sl != null)) {
         this.cur_col = this.ocol;
         this.cur_sl = this.osl;
+        _ref = [this.ox, this.oy], this.x = _ref[0], this.y = _ref[1];
         force_move = true;
       }
       eve("cell.dropped", this.el, this.cur_col, this.cur_sl);
       this.frame.animate({
         opacity: 1
       }, 500, ">");
-      _ref = this.board.compute_relative_coordinates(this.cur_col, this.cur_sl, this.x, this.y), x = _ref[0], y = _ref[1];
+      _ref1 = this.board.compute_relative_coordinates(this.cur_col, this.cur_sl, this.x, this.y), x = _ref1[0], y = _ref1[1];
       this.model.set({
         column: this.cur_col,
         swimlane: this.cur_sl,
@@ -490,7 +491,7 @@
         y: y
       });
       if (force_move) {
-        return this.move;
+        return this.move();
       }
     };
 
