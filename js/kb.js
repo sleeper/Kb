@@ -186,6 +186,10 @@
       return [this.x + rx, this.y + ry];
     };
 
+    DroppableCell.prototype.compute_relative_coordinates = function(ax, ay) {
+      return [ax - this.x, ay - this.y];
+    };
+
     DroppableCell.prototype.isPointInside = function(x, y) {
       return this.el.isPointInside(x, y);
     };
@@ -353,6 +357,12 @@
       return cell.compute_absolute_coordinates(rx, ry);
     };
 
+    Board.prototype.compute_relative_coordinates = function(cl_name, sl_name, ax, ay) {
+      var cell;
+      cell = this._cells.get(cl_name, sl_name);
+      return cell.compute_relative_coordinates(ax, ay);
+    };
+
     Board.prototype.getCellByPoint = function(x, y) {
       var cell;
       cell = null;
@@ -477,17 +487,26 @@
     };
 
     Ticket.prototype.up = function() {
-      if (!(this.cul_col != null) || !(this.cur_sl != null)) {
-        this.model.set('column', this.ocol);
-        this.model.set('swimlane', this.osl);
+      var force_move, x, y, _ref;
+      if (!(this.cur_col != null) || !(this.cur_sl != null)) {
         this.cur_col = this.ocol;
         this.cur_sl = this.osl;
-        this.move();
+        force_move = true;
       }
+      eve("cell.dropped", this.el, this.cur_col, this.cur_sl);
       this.frame.animate({
         opacity: 1
       }, 500, ">");
-      return eve("cell.dropped", this.el, this.cur_col, this.cur_sl);
+      _ref = this.board.compute_relative_coordinates(this.cur_col, this.cur_sl, this.x, this.y), x = _ref[0], y = _ref[1];
+      this.model.set({
+        column: this.cur_col,
+        swimlane: this.cur_sl,
+        x: x,
+        y: y
+      });
+      if (force_move) {
+        return this.move;
+      }
     };
 
     Ticket.prototype.move = function() {

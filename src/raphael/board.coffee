@@ -28,6 +28,9 @@ class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
   compute_absolute_coordinates: (rx, ry)->
     [ @x + rx, @y + ry ]
 
+  # Return the (x,y) relatives to this cell
+  compute_relative_coordinates: (ax, ay)->
+    [ ax - @x, ay - @y]
   isPointInside: (x,y)->
     @el.isPointInside(x,y)
 
@@ -127,6 +130,10 @@ class Kb.Raphael.Board
     # FIXME: handle the case cell is empty
     # delegate to cell
     cell.compute_absolute_coordinates(rx, ry)
+
+  compute_relative_coordinates: (cl_name, sl_name, ax, ay)->
+    cell = @_cells.get(cl_name, sl_name)
+    cell.compute_relative_coordinates(ax, ay)
 
   # Return the cell that is under point x, y
   getCellByPoint: (x, y)->

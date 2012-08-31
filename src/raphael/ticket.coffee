@@ -35,14 +35,19 @@ class Kb.Raphael.Ticket
 
   up: ()=>
     # If we're not on a droppable .. move back to original
-    if !@cul_col? || !@cur_sl?
-        @model.set 'column', @ocol
-        @model.set 'swimlane', @osl
+    if !@cur_col? || !@cur_sl?
         @cur_col = @ocol
         @cur_sl = @osl
-        @move()
-    @frame.animate({opacity: 1}, 500, ">");
+        # If the user dropped the ticket on non-droppable
+        # the model will be reset to its column and swimlane
+        # but no change event will be fired.
+        # So we do need to force the move
+        force_move = true
     eve "cell.dropped", @el, @cur_col, @cur_sl
+    @frame.animate({opacity: 1}, 500, ">");
+    [x,y] = @board.compute_relative_coordinates @cur_col, @cur_sl, @x, @y
+    @model.set column: @cur_col, swimlane: @cur_sl, x: x, y: y
+    @move if force_move
 
   move: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
