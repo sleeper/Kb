@@ -453,14 +453,16 @@
         x: this.x,
         y: this.y
       });
-      this.title.setAttribute("x", this.x);
-      this.title.setAttribute("y", this.y + this.header_height + 5);
+      this.title_frame.setAttribute("x", this.x);
+      this.title_frame.setAttribute("y", this.y + this.header_height + 5);
       _ref = this.board.getColumnAndSwimlane(this.x, this.y), col = _ref[0], sl = _ref[1];
       if (col !== this.cur_col || sl !== this.cur_sl) {
         eve("cell.leaving", this.el, this.cur_col, this.cur_sl);
-        eve("cell.entering", this.el, col, sl);
-        return _ref1 = [col, sl], this.cur_col = _ref1[0], this.cur_sl = _ref1[1], _ref1;
+        if ((col != null) && (sl != null)) {
+          eve("cell.entering", this.el, col, sl);
+        }
       }
+      return _ref1 = [col, sl], this.cur_col = _ref1[0], this.cur_sl = _ref1[1], _ref1;
     };
 
     Ticket.prototype.start = function() {
@@ -475,6 +477,13 @@
     };
 
     Ticket.prototype.up = function() {
+      if (!(this.cul_col != null) || !(this.cur_sl != null)) {
+        this.model.set('column', this.ocol);
+        this.model.set('swimlane', this.osl);
+        this.cur_col = this.ocol;
+        this.cur_sl = this.osl;
+        this.move();
+      }
       this.frame.animate({
         opacity: 1
       }, 500, ">");
@@ -492,8 +501,8 @@
         x: this.x,
         y: this.y
       });
-      this.title.setAttribute("x", this.x);
-      return this.title.setAttribute("y", this.y + this.header_height + 5);
+      this.title_frame.setAttribute("x", this.x);
+      return this.title_frame.setAttribute("y", this.y + this.header_height + 5);
     };
 
     Ticket.prototype.resize_title = function() {

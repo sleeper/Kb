@@ -11,8 +11,8 @@ class Kb.Raphael.Ticket
     @y = @oy + dy
     @frame.attr x: @x, y: @y
     @header.attr x: @x, y: @y
-    @title.setAttribute "x", @x
-    @title.setAttribute "y", @y + @header_height + 5
+    @title_frame.setAttribute "x", @x
+    @title_frame.setAttribute "y", @y + @header_height + 5
 
     # We need to notify the cell we're entering in, as well
     # as the cell we're leaving
@@ -20,8 +20,9 @@ class Kb.Raphael.Ticket
     [col,sl] = @board.getColumnAndSwimlane @x,@y
     if col != @cur_col || sl != @cur_sl
       eve "cell.leaving", @el, @cur_col, @cur_sl
-      eve "cell.entering", @el, col, sl
-      [@cur_col, @cur_sl] = [col,sl]
+      if col? && sl?
+        eve "cell.entering", @el, col, sl
+    [@cur_col, @cur_sl] = [col,sl]
 
 
   start: ()=>
@@ -33,6 +34,13 @@ class Kb.Raphael.Ticket
     [@cur_col, @cur_sl] = [@ocol, @osl]
 
   up: ()=>
+    # If we're not on a droppable .. move back to original
+    if !@cul_col? || !@cur_sl?
+        @model.set 'column', @ocol
+        @model.set 'swimlane', @osl
+        @cur_col = @ocol
+        @cur_sl = @osl
+        @move()
     @frame.animate({opacity: 1}, 500, ">");
     eve "cell.dropped", @el, @cur_col, @cur_sl
 
@@ -40,8 +48,8 @@ class Kb.Raphael.Ticket
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
     @frame.attr x: @x, y: @y
     @header.attr x: @x, y: @y
-    @title.setAttribute "x", @x
-    @title.setAttribute "y", @y + @header_height + 5
+    @title_frame.setAttribute "x", @x
+    @title_frame.setAttribute "y", @y + @header_height + 5
 
   # Resize the title font according to the size of
   # the foreignObject.

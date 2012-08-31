@@ -1,0 +1,11 @@
+[ ] Catch 'resize' event for the window (includes zoom)
+    and notify board elements
+[ ] If a moved ticket land on a non-droppable cell,
+    move it back to its original position
+[ ] Add avatars to ticket
+[ ] Double click on ticket opens an edition view
+[ ] WebSocket protocol to devise
+[ ] Backend
+[ ] Styling
+
+
