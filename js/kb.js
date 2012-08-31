@@ -6,36 +6,21 @@
     Views: {},
     Routers: {},
     Raphael: {},
-    init: function() {
+    init: function(cfg) {
       var bview, container, tickets;
       Kb.board = new Kb.Models.Board({
-        name: "myboard",
-        columns: ['backlog', 'in-progress', 'done'],
-        swimlanes: ['projects', 'implementations']
+        name: cfg.name,
+        columns: cfg.columns,
+        swimlanes: cfg.swimlanes
       });
-      container = $('#board').get(0);
+      container = $('#' + cfg.el).get(0);
       tickets = new Kb.Collections.TicketList();
       Kb.board.set('tickets', tickets);
       bview = new Kb.Views.BoardView({
         model: Kb.board,
         el: container
       });
-      bview.render();
-      return tickets.reset([
-        {
-          title: "Buy some bread",
-          column: "backlog",
-          swimlane: "projects",
-          x: 60,
-          y: 60
-        }, {
-          title: "Buy some milk",
-          column: "in-progress",
-          swimlane: "implementations",
-          x: 80,
-          y: 60
-        }
-      ]);
+      return bview.render();
     }
   };
 
@@ -676,5 +661,34 @@
     return BoardView;
 
   })(Backbone.View);
+
+}).call(this);
+(function() {
+  var config;
+
+  config = {
+    name: "myboard",
+    el: 'board',
+    columns: ['backlog', 'in-progress', 'done'],
+    swimlanes: ['projects', 'implementations']
+  };
+
+  Kb.init(config);
+
+  Kb.board.get('tickets').reset([
+    {
+      title: "Buy some bread",
+      column: "backlog",
+      swimlane: "projects",
+      x: 60,
+      y: 60
+    }, {
+      title: "Buy some milk",
+      column: "in-progress",
+      swimlane: "implementations",
+      x: 80,
+      y: 60
+    }
+  ]);
 
 }).call(this);

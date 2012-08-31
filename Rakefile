@@ -16,6 +16,7 @@ raphael/board.coffee
 raphael/ticket.coffee
 views/ticket_view.coffee
 views/board_view.coffee
+app.coffee
 )
 
 namespace :js do
