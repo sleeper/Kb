@@ -584,20 +584,54 @@
       return this.title.setAttribute("y", this.y + this.header_height + 5);
     };
 
+    Ticket.prototype.resize_title = function() {
+      var font_size, height, lower, middle, original_height, original_text, original_width, title, title_height, upper, _results;
+      original_height = this.title_frame.getAttribute("height");
+      original_width = this.title_frame.getAttribute("width");
+      title = $(this.title);
+      title_height = title.height();
+      original_text = title.html();
+      if (!original_width || !original_height) {
+        if (window.console != null) {
+          console.info("Set static width/height for your foreignObject");
+        }
+      }
+      if (title_height <= original_height) {
+        return;
+      }
+      font_size = parseInt(title.css("font-size"), 10);
+      upper = font_size;
+      lower = 2;
+      _results = [];
+      while ((upper - lower) > 1) {
+        middle = (upper + lower) / 2;
+        title.css("font-size", middle);
+        height = title.height();
+        if (height === original_height) {
+          break;
+        } else if (height > original_height) {
+          _results.push(upper = middle);
+        } else {
+          _results.push(lower = middle);
+        }
+      }
+      return _results;
+    };
+
     Ticket.prototype.draw_title = function() {
-      var body, div;
-      this.title = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-      this.title.setAttribute("x", this.x);
-      this.title.setAttribute("y", this.y + this.header_height + 5);
-      this.title.setAttribute("width", this.width - 5);
-      this.title.setAttribute("height", this.height - this.header_height - 5);
+      var body;
+      this.title_frame = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+      this.title_frame.setAttribute("x", this.x);
+      this.title_frame.setAttribute("y", this.y + this.header_height + 5);
+      this.title_frame.setAttribute("width", this.width - 5);
+      this.title_frame.setAttribute("height", this.height - this.header_height - 5);
       body = document.createElement("body");
-      this.title.appendChild(body);
-      div = document.createElement("div");
-      body.appendChild(div);
-      div.innerHTML = this.model.get('title');
-      this.board.paper.canvas.appendChild(this.title);
-      return $(div).rsize();
+      this.title_frame.appendChild(body);
+      this.title = document.createElement("div");
+      body.appendChild(this.title);
+      this.title.innerHTML = this.model.get('title');
+      this.board.paper.canvas.appendChild(this.title_frame);
+      return this.resize_title();
     };
 
     Ticket.prototype.draw_header = function() {

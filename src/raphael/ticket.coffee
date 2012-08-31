@@ -43,21 +43,47 @@ class Kb.Raphael.Ticket
     @title.setAttribute "x", @x
     @title.setAttribute "y", @y + @header_height + 5
 
+  # Resize the title font according to the size of
+  # the foreignObject.
+  resize_title: ()->
+    original_height = @title_frame.getAttribute "height"
+    original_width = @title_frame.getAttribute "width"
+    title = $(@title)
+    title_height = title.height()
+    if !original_width || !original_height
+      console.info("Set static width/height for your foreignObject") if window.console?
+
+    if title_height <= original_height
+     return
+
+    font_size = parseInt title.css("font-size"), 10
+    upper = font_size
+    lower = 2 # Min font size
+    while (upper-lower) > 1
+      middle = (upper + lower) / 2
+      title.css "font-size", middle
+      height = title.height()
+      if height == original_height
+        break
+      else if height > original_height
+        upper = middle
+      else
+        lower = middle
 
   draw_title: ()->
-    @title = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
-    @title.setAttribute "x", @x
-    @title.setAttribute "y", @y + @header_height + 5
-    @title.setAttribute "width", @width - 5
-    @title.setAttribute "height", @height - @header_height - 5
+    @title_frame = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
+    @title_frame.setAttribute "x", @x
+    @title_frame.setAttribute "y", @y + @header_height + 5
+    @title_frame.setAttribute "width", @width - 5
+    @title_frame.setAttribute "height", @height - @header_height - 5
     body = document.createElement "body"
-    @title.appendChild body
-    div = document.createElement "div"
-    body.appendChild div
-    div.innerHTML = @model.get 'title'
-    # $(div).quickfit();
-    @board.paper.canvas.appendChild @title
-    $(div).rsize()
+    @title_frame.appendChild body
+    @title = document.createElement "div"
+    body.appendChild @title
+    @title.innerHTML = @model.get 'title'
+    @board.paper.canvas.appendChild @title_frame
+    @resize_title()
+
 
   draw_header: ()->
     @header = @board.paper.rect(@x, @y, @width, @header_height)
