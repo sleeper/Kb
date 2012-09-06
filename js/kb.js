@@ -422,7 +422,9 @@
 
     Ticket.prototype.height = 90;
 
-    Ticket.prototype.header_height = 20;
+    Ticket.prototype.title_offset = 10;
+
+    Ticket.prototype.fill_color = '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100';
 
     function Ticket(board, model) {
       this.board = board;
@@ -444,12 +446,8 @@
         x: this.x,
         y: this.y
       });
-      this.header.attr({
-        x: this.x,
-        y: this.y
-      });
       this.title_frame.setAttribute("x", this.x);
-      this.title_frame.setAttribute("y", this.y + this.header_height + 5);
+      this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
       _ref = this.board.getColumnAndSwimlane(this.x, this.y), col = _ref[0], sl = _ref[1];
       if (col !== this.cur_col || sl !== this.cur_sl) {
         eve("cell.leaving", this.el, this.cur_col, this.cur_sl);
@@ -502,12 +500,8 @@
         x: this.x,
         y: this.y
       });
-      this.header.attr({
-        x: this.x,
-        y: this.y
-      });
       this.title_frame.setAttribute("x", this.x);
-      return this.title_frame.setAttribute("y", this.y + this.header_height + 5);
+      return this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
     };
 
     Ticket.prototype.resize_title = function() {
@@ -547,9 +541,9 @@
       var body;
       this.title_frame = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
       this.title_frame.setAttribute("x", this.x);
-      this.title_frame.setAttribute("y", this.y + this.header_height + 5);
+      this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
       this.title_frame.setAttribute("width", this.width - 5);
-      this.title_frame.setAttribute("height", this.height - this.header_height - 5);
+      this.title_frame.setAttribute("height", this.height - this.title_offset - 5);
       body = document.createElement("body");
       this.title_frame.appendChild(body);
       this.title = document.createElement("div");
@@ -559,18 +553,35 @@
       return this.resize_title();
     };
 
-    Ticket.prototype.draw_header = function() {
-      return this.header = this.board.paper.rect(this.x, this.y, this.width, this.header_height);
+    Ticket.prototype.draw_frame = function() {
+      var blur1, filter1, merge1, offset1;
+      this.frame = this.board.paper.rect(this.x, this.y, this.width, this.height);
+      this.frame.attr({
+        fill: this.fill_color
+      });
+      filter1 = this.board.paper.filterCreate("filter1");
+      this.frame.filterInstall(filter1);
+      blur1 = Raphael.filterOps.feGaussianBlur({
+        stdDeviation: "1.2",
+        "in": "SourceAlpha",
+        result: "blur1"
+      });
+      offset1 = Raphael.filterOps.feOffset({
+        "in": "blur1",
+        dx: 2,
+        dy: 2,
+        result: "offsetBlur"
+      });
+      merge1 = Raphael.filterOps.feMerge(["offsetBlur", "SourceGraphic"]);
+      filter1.appendOperation(blur1);
+      filter1.appendOperation(offset1);
+      return filter1.appendOperation(merge1);
     };
 
     Ticket.prototype.draw = function() {
       var _ref;
       _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), this.x = _ref[0], this.y = _ref[1];
-      this.frame = this.board.paper.rect(this.x, this.y, this.width, this.height);
-      this.frame.attr({
-        fill: "#ffffff"
-      });
-      this.draw_header();
+      this.draw_frame();
       this.draw_title();
       this.frame.drag(this.dragged, this.start, this.up);
       return this;

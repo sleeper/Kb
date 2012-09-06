@@ -1,7 +1,8 @@
 class Kb.Raphael.Ticket
   width: 70
   height: 90
-  header_height: 20
+  title_offset: 10
+  fill_color: '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100'
 
   constructor: (@board, @model)->
     @board.paper
@@ -10,9 +11,8 @@ class Kb.Raphael.Ticket
     @x = @ox + dx
     @y = @oy + dy
     @frame.attr x: @x, y: @y
-    @header.attr x: @x, y: @y
     @title_frame.setAttribute "x", @x
-    @title_frame.setAttribute "y", @y + @header_height + 5
+    @title_frame.setAttribute "y", @y + @title_offset + 5
 
     # We need to notify the cell we're entering in, as well
     # as the cell we're leaving
@@ -53,9 +53,8 @@ class Kb.Raphael.Ticket
   move: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
     @frame.attr x: @x, y: @y
-    @header.attr x: @x, y: @y
     @title_frame.setAttribute "x", @x
-    @title_frame.setAttribute "y", @y + @header_height + 5
+    @title_frame.setAttribute "y", @y + @title_offset + 5
 
   # Resize the title font according to the size of
   # the foreignObject.
@@ -87,9 +86,9 @@ class Kb.Raphael.Ticket
   draw_title: ()->
     @title_frame = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
     @title_frame.setAttribute "x", @x
-    @title_frame.setAttribute "y", @y + @header_height + 5
+    @title_frame.setAttribute "y", @y + @title_offset + 5
     @title_frame.setAttribute "width", @width - 5
-    @title_frame.setAttribute "height", @height - @header_height - 5
+    @title_frame.setAttribute "height", @height - @title_offset - 5
     body = document.createElement "body"
     @title_frame.appendChild body
     @title = document.createElement "div"
@@ -98,16 +97,26 @@ class Kb.Raphael.Ticket
     @board.paper.canvas.appendChild @title_frame
     @resize_title()
 
+  draw_frame: ()->
+    @frame = @board.paper.rect( @x, @y, @width, @height)
+    @frame.attr({fill:@fill_color})
+    filter1 = @board.paper.filterCreate("filter1");
+    @frame.filterInstall(filter1); 
+    blur1 = Raphael.filterOps.feGaussianBlur(
+        {stdDeviation: "1.2", "in": "SourceAlpha", result: "blur1"});
+    offset1 = Raphael.filterOps.feOffset(
+        {"in": "blur1", dx: 2, dy: 2, result: "offsetBlur"});
+    merge1 = Raphael.filterOps.feMerge(["offsetBlur", "SourceGraphic"]);
 
-  draw_header: ()->
-    @header = @board.paper.rect(@x, @y, @width, @header_height)
+    filter1.appendOperation(blur1);
+    filter1.appendOperation(offset1);
+    filter1.appendOperation(merge1); 
+
 
   draw: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
-    @frame = @board.paper.rect( @x, @y, @width, @height)
-    @frame.attr({fill: "#ffffff"})
+    @draw_frame()
     # Let's add the title
-    @draw_header()
     @draw_title()
     @frame.drag(@dragged, @start, @up)
     @
