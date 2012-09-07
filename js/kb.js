@@ -323,6 +323,10 @@
       jnode = $(this.el);
       jnode.width(this.width);
       jnode.height(this.height);
+      $(window).resize(function() {
+        console.log("[DEBUG] window resized");
+        return $('.ticket').trigger('window:resized');
+      });
       this.paper = Raphael(this.el, this.width, this.height);
     }
 
@@ -589,10 +593,15 @@
     };
 
     Ticket.prototype.draw_frame = function() {
-      var blur1, filter1, merge1, offset1;
+      var blur1, filter1, merge1, offset1,
+        _this = this;
       this.frame = this.board.paper.rect(this.x, this.y, this.width, this.height);
       this.frame.attr({
         fill: this.fill_color
+      });
+      this.frame.node.setAttribute("class", "ticket");
+      $(this.frame.node).on("window:resized", function() {
+        return _this.resize_title();
       });
       filter1 = this.board.paper.filterCreate("filter1");
       this.frame.filterInstall(filter1);
@@ -620,6 +629,9 @@
       this.draw_title();
       this.avatar = new Avatar(this.board.paper, "../assets/imgs/" + (this.model.get('avatar')), this.x, this.y);
       this.frame.drag(this.dragged, this.start, this.up);
+      $(this.frame).bind('window:resized', function() {
+        return console.log("[DEBUG] Ticket get notified of window resize");
+      });
       return this;
     };
 

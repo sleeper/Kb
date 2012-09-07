@@ -111,6 +111,9 @@ class Kb.Raphael.Board
     jnode.width(@width)
     jnode.height(@height)
 
+    $(window).resize ()-> 
+      $('.ticket').trigger('window:resized')
+
     @paper = Raphael @el, @width, @height
 
   compute_sizes: () ->

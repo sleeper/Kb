@@ -26,6 +26,7 @@ class Kb.Raphael.Ticket
   constructor: (@board, @model)->
     @board.paper
 
+
   dragged: (dx, dy)=>
     @x = @ox + dx
     @y = @oy + dy
@@ -121,6 +122,8 @@ class Kb.Raphael.Ticket
   draw_frame: ()->
     @frame = @board.paper.rect( @x, @y, @width, @height)
     @frame.attr({fill:@fill_color})
+    @frame.node.setAttribute("class", "ticket")
+    $(@frame.node).on("window:resized", ()=> @resize_title())
     filter1 = @board.paper.filterCreate("filter1");
     @frame.filterInstall(filter1); 
     blur1 = Raphael.filterOps.feGaussianBlur(
@@ -140,4 +143,5 @@ class Kb.Raphael.Ticket
     @draw_title()
     @avatar = new Avatar(@board.paper, "../assets/imgs/#{@model.get('avatar')}", @x, @y)
     @frame.drag(@dragged, @start, @up)
+    $(@frame).bind 'window:resized', ()-> console.log "[DEBUG] Ticket get notified of window resize"
     @
