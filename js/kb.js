@@ -78,7 +78,8 @@
       column: "",
       swimlane: "",
       x: 0,
-      y: 0
+      y: 0,
+      avatar: "Jack O Lantern.png"
     };
 
     return Ticket;
@@ -448,6 +449,10 @@
       });
       this.title_frame.setAttribute("x", this.x);
       this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+      this.avatar.attr({
+        x: this.x + 50,
+        y: this.y + 70
+      });
       _ref = this.board.getColumnAndSwimlane(this.x, this.y), col = _ref[0], sl = _ref[1];
       if (col !== this.cur_col || sl !== this.cur_sl) {
         eve("cell.leaving", this.el, this.cur_col, this.cur_sl);
@@ -501,7 +506,11 @@
         y: this.y
       });
       this.title_frame.setAttribute("x", this.x);
-      return this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+      this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+      return this.avatar.attr({
+        x: this.x + 50,
+        y: this.y + 70
+      });
     };
 
     Ticket.prototype.resize_title = function() {
@@ -578,11 +587,18 @@
       return filter1.appendOperation(merge1);
     };
 
+    Ticket.prototype.draw_avatar = function() {
+      var img;
+      img = "../assets/imgs/" + (this.model.get('avatar'));
+      return this.avatar = this.board.paper.image(img, this.x + 50, this.y + 70, 20, 20);
+    };
+
     Ticket.prototype.draw = function() {
       var _ref;
       _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), this.x = _ref[0], this.y = _ref[1];
       this.draw_frame();
       this.draw_title();
+      this.draw_avatar();
       this.frame.drag(this.dragged, this.start, this.up);
       return this;
     };
@@ -693,13 +709,15 @@
       column: "backlog",
       swimlane: "projects",
       x: 60,
-      y: 60
+      y: 60,
+      avatar: "Skull 2.png"
     }, {
       title: "Buy some milk",
       column: "in-progress",
       swimlane: "implementations",
       x: 80,
-      y: 60
+      y: 60,
+      avatar: "Hulk-01.png"
     }
   ]);
 
