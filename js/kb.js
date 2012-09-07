@@ -434,9 +434,9 @@
 
       Avatar.prototype.y_offset = 70;
 
-      Avatar.prototype.width = 20;
+      Avatar.prototype.width = 30;
 
-      Avatar.prototype.height = 20;
+      Avatar.prototype.height = 30;
 
       function Avatar(paper, img, tx, ty) {
         this.paper = paper;

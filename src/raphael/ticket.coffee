@@ -7,8 +7,8 @@ class Kb.Raphael.Ticket
   class Avatar
     x_offset: 50
     y_offset: 70
-    width: 20
-    height: 20
+    width: 30
+    height: 30
 
     # Draw an avatar for a ticket with coordinate (tx, ty)
     constructor: (@paper, @img, tx, ty)->
