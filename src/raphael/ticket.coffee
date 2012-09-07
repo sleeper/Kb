@@ -4,6 +4,25 @@ class Kb.Raphael.Ticket
   title_offset: 10
   fill_color: '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100'
 
+  class Avatar
+    x_offset: 50
+    y_offset: 70
+    width: 20
+    height: 20
+
+    # Draw an avatar for a ticket with coordinate (tx, ty)
+    constructor: (@paper, @img, tx, ty)->
+      @x = tx + @x_offset
+      @y = ty + @y_offset
+      @el = @paper.image(@img, @x, @y, @width, @height)
+
+    # Move to the right position, for a ticket which is at coordinate (x,y)
+    move: (x, y)->
+      @x = x + @x_offset
+      @y = y + @y_offset
+      @el.attr x: @x, y: @y
+
+
   constructor: (@board, @model)->
     @board.paper
 
@@ -13,7 +32,7 @@ class Kb.Raphael.Ticket
     @frame.attr x: @x, y: @y
     @title_frame.setAttribute "x", @x
     @title_frame.setAttribute "y", @y + @title_offset + 5
-    @avatar.attr x: (@x + 50), y: (@y + 70)
+    @avatar.move @x, @y
 
     # We need to notify the cell we're entering in, as well
     # as the cell we're leaving
@@ -56,7 +75,7 @@ class Kb.Raphael.Ticket
     @frame.attr x: @x, y: @y
     @title_frame.setAttribute "x", @x
     @title_frame.setAttribute "y", @y + @title_offset + 5
-    @avatar.attr x: (@x + 50), y: (@y + 70)
+    @avatar.move @x, @y
 
   # Resize the title font according to the size of
   # the foreignObject.
@@ -114,15 +133,11 @@ class Kb.Raphael.Ticket
     filter1.appendOperation(offset1);
     filter1.appendOperation(merge1); 
 
-  draw_avatar: ()->
-    img = "../assets/imgs/#{@model.get('avatar')}"
-    @avatar = @board.paper.image(img, @x + 50, @y + 70, 20, 20)
-
   draw: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
     @draw_frame()
     # Let's add the title
     @draw_title()
-    @draw_avatar()
+    @avatar = new Avatar(@board.paper, "../assets/imgs/#{@model.get('avatar')}", @x, @y)
     @frame.drag(@dragged, @start, @up)
     @

@@ -418,6 +418,7 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Kb.Raphael.Ticket = (function() {
+    var Avatar;
 
     Ticket.prototype.width = 70;
 
@@ -426,6 +427,37 @@
     Ticket.prototype.title_offset = 10;
 
     Ticket.prototype.fill_color = '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100';
+
+    Avatar = (function() {
+
+      Avatar.prototype.x_offset = 50;
+
+      Avatar.prototype.y_offset = 70;
+
+      Avatar.prototype.width = 20;
+
+      Avatar.prototype.height = 20;
+
+      function Avatar(paper, img, tx, ty) {
+        this.paper = paper;
+        this.img = img;
+        this.x = tx + this.x_offset;
+        this.y = ty + this.y_offset;
+        this.el = this.paper.image(this.img, this.x, this.y, this.width, this.height);
+      }
+
+      Avatar.prototype.move = function(x, y) {
+        this.x = x + this.x_offset;
+        this.y = y + this.y_offset;
+        return this.el.attr({
+          x: this.x,
+          y: this.y
+        });
+      };
+
+      return Avatar;
+
+    })();
 
     function Ticket(board, model) {
       this.board = board;
@@ -449,10 +481,7 @@
       });
       this.title_frame.setAttribute("x", this.x);
       this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
-      this.avatar.attr({
-        x: this.x + 50,
-        y: this.y + 70
-      });
+      this.avatar.move(this.x, this.y);
       _ref = this.board.getColumnAndSwimlane(this.x, this.y), col = _ref[0], sl = _ref[1];
       if (col !== this.cur_col || sl !== this.cur_sl) {
         eve("cell.leaving", this.el, this.cur_col, this.cur_sl);
@@ -507,10 +536,7 @@
       });
       this.title_frame.setAttribute("x", this.x);
       this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
-      return this.avatar.attr({
-        x: this.x + 50,
-        y: this.y + 70
-      });
+      return this.avatar.move(this.x, this.y);
     };
 
     Ticket.prototype.resize_title = function() {
@@ -587,18 +613,12 @@
       return filter1.appendOperation(merge1);
     };
 
-    Ticket.prototype.draw_avatar = function() {
-      var img;
-      img = "../assets/imgs/" + (this.model.get('avatar'));
-      return this.avatar = this.board.paper.image(img, this.x + 50, this.y + 70, 20, 20);
-    };
-
     Ticket.prototype.draw = function() {
       var _ref;
       _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), this.x = _ref[0], this.y = _ref[1];
       this.draw_frame();
       this.draw_title();
-      this.draw_avatar();
+      this.avatar = new Avatar(this.board.paper, "../assets/imgs/" + (this.model.get('avatar')), this.x, this.y);
       this.frame.drag(this.dragged, this.start, this.up);
       return this;
     };
