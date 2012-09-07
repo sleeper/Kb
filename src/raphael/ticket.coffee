@@ -1,7 +1,6 @@
 class Kb.Raphael.Ticket
   width: 70
   height: 90
-  title_offset: 10
   fill_color: '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100'
 
   class Avatar
@@ -23,6 +22,54 @@ class Kb.Raphael.Ticket
       @el.attr x: @x, y: @y
 
 
+  class Title
+    title_offset: 10
+
+    # Resize the title font according to the size of
+    # the foreignObject.
+    resize: ()->
+      original_height = @title_frame.getAttribute "height"
+      original_width = @title_frame.getAttribute "width"
+      title = $(@title)
+      title_height = title.height()
+
+      if title_height <= original_height
+       return
+
+      font_size = parseInt title.css("font-size"), 10
+      upper = font_size
+      lower = 2 # Min font size
+      while (upper-lower) > 1
+        middle = (upper + lower) / 2
+        title.css "font-size", middle
+        height = title.height()
+        if height == original_height
+          break
+        else if height > original_height
+          upper = middle
+        else
+          lower = middle
+
+    # Draw the title at coordinate (x,y) with a (width, height) size
+    constructor: (@paper, @text, @x, @y, @width, @height)->
+      @title_frame = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
+      @title_frame.setAttribute "x", @x
+      @title_frame.setAttribute "y", @y + @title_offset + 5
+      @title_frame.setAttribute "width", @width - 5
+      @title_frame.setAttribute "height", @height - @title_offset - 5
+      body = document.createElement "body"
+      @title_frame.appendChild body
+      @title = document.createElement "div"
+      body.appendChild @title
+      $(@title).html( @text ) 
+      @paper.canvas.appendChild @title_frame
+      @resize()
+
+    move: (@x,@y)->
+      @title_frame.setAttribute "x", @x
+      @title_frame.setAttribute "y", @y + @title_offset + 5
+
+
   constructor: (@board, @model)->
     @board.paper
 
@@ -31,8 +78,7 @@ class Kb.Raphael.Ticket
     @x = @ox + dx
     @y = @oy + dy
     @frame.attr x: @x, y: @y
-    @title_frame.setAttribute "x", @x
-    @title_frame.setAttribute "y", @y + @title_offset + 5
+    @title.move @x, @y
     @avatar.move @x, @y
 
     # We need to notify the cell we're entering in, as well
@@ -74,56 +120,15 @@ class Kb.Raphael.Ticket
   move: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
     @frame.attr x: @x, y: @y
-    @title_frame.setAttribute "x", @x
-    @title_frame.setAttribute "y", @y + @title_offset + 5
+    @title.move @x, @y
     @avatar.move @x, @y
 
-  # Resize the title font according to the size of
-  # the foreignObject.
-  resize_title: ()->
-    original_height = @title_frame.getAttribute "height"
-    original_width = @title_frame.getAttribute "width"
-    title = $(@title)
-    title_height = title.height()
-    if !original_width || !original_height
-      console.info("Set static width/height for your foreignObject") if window.console?
-
-    if title_height <= original_height
-     return
-
-    font_size = parseInt title.css("font-size"), 10
-    upper = font_size
-    lower = 2 # Min font size
-    while (upper-lower) > 1
-      middle = (upper + lower) / 2
-      title.css "font-size", middle
-      height = title.height()
-      if height == original_height
-        break
-      else if height > original_height
-        upper = middle
-      else
-        lower = middle
-
-  draw_title: ()->
-    @title_frame = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
-    @title_frame.setAttribute "x", @x
-    @title_frame.setAttribute "y", @y + @title_offset + 5
-    @title_frame.setAttribute "width", @width - 5
-    @title_frame.setAttribute "height", @height - @title_offset - 5
-    body = document.createElement "body"
-    @title_frame.appendChild body
-    @title = document.createElement "div"
-    body.appendChild @title
-    @title.innerHTML = @model.get 'title'
-    @board.paper.canvas.appendChild @title_frame
-    @resize_title()
 
   draw_frame: ()->
     @frame = @board.paper.rect( @x, @y, @width, @height)
     @frame.attr({fill:@fill_color})
     @frame.node.setAttribute("class", "ticket")
-    $(@frame.node).on("window:resized", ()=> @resize_title())
+    $(@frame.node).on("window:resized", ()=> @title.resize())
     filter1 = @board.paper.filterCreate("filter1");
     @frame.filterInstall(filter1); 
     blur1 = Raphael.filterOps.feGaussianBlur(
@@ -131,17 +136,16 @@ class Kb.Raphael.Ticket
     offset1 = Raphael.filterOps.feOffset(
         {"in": "blur1", dx: 2, dy: 2, result: "offsetBlur"});
     merge1 = Raphael.filterOps.feMerge(["offsetBlur", "SourceGraphic"]);
-
     filter1.appendOperation(blur1);
     filter1.appendOperation(offset1);
     filter1.appendOperation(merge1); 
 
   draw: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')
+
     @draw_frame()
-    # Let's add the title
-    @draw_title()
+    @title = new Title(@board.paper, @model.get('title'), @x, @y, @width, @height)
     @avatar = new Avatar(@board.paper, "../assets/imgs/#{@model.get('avatar')}", @x, @y)
+
     @frame.drag(@dragged, @start, @up)
-    $(@frame).bind 'window:resized', ()-> console.log "[DEBUG] Ticket get notified of window resize"
     @

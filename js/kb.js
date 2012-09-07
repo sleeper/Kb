@@ -324,7 +324,6 @@
       jnode.width(this.width);
       jnode.height(this.height);
       $(window).resize(function() {
-        console.log("[DEBUG] window resized");
         return $('.ticket').trigger('window:resized');
       });
       this.paper = Raphael(this.el, this.width, this.height);
@@ -422,13 +421,11 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Kb.Raphael.Ticket = (function() {
-    var Avatar;
+    var Avatar, Title;
 
     Ticket.prototype.width = 70;
 
     Ticket.prototype.height = 90;
-
-    Ticket.prototype.title_offset = 10;
 
     Ticket.prototype.fill_color = '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100';
 
@@ -463,6 +460,71 @@
 
     })();
 
+    Title = (function() {
+
+      Title.prototype.title_offset = 10;
+
+      Title.prototype.resize = function() {
+        var font_size, height, lower, middle, original_height, original_width, title, title_height, upper, _results;
+        original_height = this.title_frame.getAttribute("height");
+        original_width = this.title_frame.getAttribute("width");
+        title = $(this.title);
+        title_height = title.height();
+        if (title_height <= original_height) {
+          return;
+        }
+        font_size = parseInt(title.css("font-size"), 10);
+        upper = font_size;
+        lower = 2;
+        _results = [];
+        while ((upper - lower) > 1) {
+          middle = (upper + lower) / 2;
+          title.css("font-size", middle);
+          height = title.height();
+          if (height === original_height) {
+            break;
+          } else if (height > original_height) {
+            _results.push(upper = middle);
+          } else {
+            _results.push(lower = middle);
+          }
+        }
+        return _results;
+      };
+
+      function Title(paper, text, x, y, width, height) {
+        var body;
+        this.paper = paper;
+        this.text = text;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.title_frame = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+        this.title_frame.setAttribute("x", this.x);
+        this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+        this.title_frame.setAttribute("width", this.width - 5);
+        this.title_frame.setAttribute("height", this.height - this.title_offset - 5);
+        body = document.createElement("body");
+        this.title_frame.appendChild(body);
+        this.title = document.createElement("div");
+        body.appendChild(this.title);
+        $(this.title).html(this.text);
+        this.paper.canvas.appendChild(this.title_frame);
+        this.resize();
+      }
+
+      Title.prototype.move = function(x, y) {
+        this.x = x;
+        this.y = y;
+        this.title_frame.setAttribute("x", this.x);
+        return this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+      };
+
+      return Title;
+
+    })();
+
     function Ticket(board, model) {
       this.board = board;
       this.model = model;
@@ -483,8 +545,7 @@
         x: this.x,
         y: this.y
       });
-      this.title_frame.setAttribute("x", this.x);
-      this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+      this.title.move(this.x, this.y);
       this.avatar.move(this.x, this.y);
       _ref = this.board.getColumnAndSwimlane(this.x, this.y), col = _ref[0], sl = _ref[1];
       if (col !== this.cur_col || sl !== this.cur_sl) {
@@ -538,58 +599,8 @@
         x: this.x,
         y: this.y
       });
-      this.title_frame.setAttribute("x", this.x);
-      this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+      this.title.move(this.x, this.y);
       return this.avatar.move(this.x, this.y);
-    };
-
-    Ticket.prototype.resize_title = function() {
-      var font_size, height, lower, middle, original_height, original_width, title, title_height, upper, _results;
-      original_height = this.title_frame.getAttribute("height");
-      original_width = this.title_frame.getAttribute("width");
-      title = $(this.title);
-      title_height = title.height();
-      if (!original_width || !original_height) {
-        if (window.console != null) {
-          console.info("Set static width/height for your foreignObject");
-        }
-      }
-      if (title_height <= original_height) {
-        return;
-      }
-      font_size = parseInt(title.css("font-size"), 10);
-      upper = font_size;
-      lower = 2;
-      _results = [];
-      while ((upper - lower) > 1) {
-        middle = (upper + lower) / 2;
-        title.css("font-size", middle);
-        height = title.height();
-        if (height === original_height) {
-          break;
-        } else if (height > original_height) {
-          _results.push(upper = middle);
-        } else {
-          _results.push(lower = middle);
-        }
-      }
-      return _results;
-    };
-
-    Ticket.prototype.draw_title = function() {
-      var body;
-      this.title_frame = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-      this.title_frame.setAttribute("x", this.x);
-      this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
-      this.title_frame.setAttribute("width", this.width - 5);
-      this.title_frame.setAttribute("height", this.height - this.title_offset - 5);
-      body = document.createElement("body");
-      this.title_frame.appendChild(body);
-      this.title = document.createElement("div");
-      body.appendChild(this.title);
-      this.title.innerHTML = this.model.get('title');
-      this.board.paper.canvas.appendChild(this.title_frame);
-      return this.resize_title();
     };
 
     Ticket.prototype.draw_frame = function() {
@@ -601,7 +612,7 @@
       });
       this.frame.node.setAttribute("class", "ticket");
       $(this.frame.node).on("window:resized", function() {
-        return _this.resize_title();
+        return _this.title.resize();
       });
       filter1 = this.board.paper.filterCreate("filter1");
       this.frame.filterInstall(filter1);
@@ -626,7 +637,7 @@
       var _ref;
       _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), this.x = _ref[0], this.y = _ref[1];
       this.draw_frame();
-      this.draw_title();
+      this.title = new Title(this.board.paper, this.model.get('title'), this.x, this.y, this.width, this.height);
       this.avatar = new Avatar(this.board.paper, "../assets/imgs/" + (this.model.get('avatar')), this.x, this.y);
       this.frame.drag(this.dragged, this.start, this.up);
       $(this.frame).bind('window:resized', function() {
