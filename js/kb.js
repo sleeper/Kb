@@ -233,19 +233,17 @@
     }
 
     SwimlaneTitle.prototype.draw = function() {
-      var cx, cy, t, text, _ref;
+      var bbox, cx, cy, t, text, _ref;
       t = this.paper.rect(this.x, this.y, this.width, this.height);
       t.attr({
-        fill: "white"
+        fill: "white",
+        stroke: "none"
       });
       _ref = this.center(t), cx = _ref[0], cy = _ref[1];
-      text = this.paper.text(cx, cy, this.sl_name);
-      text.attr({
-        'font-size': 17,
-        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
-      });
-      text.attr("fill", "black");
-      return text.rotate(-90);
+      text = this.paper.print(cx, cy, this.sl_name, this.paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle");
+      bbox = text.getBBox();
+      text.transform("R-90T-" + (bbox.width / 2 + 10) + ",0");
+      return text.attr("fill", "black");
     };
 
     return SwimlaneTitle;
@@ -268,17 +266,16 @@
     }
 
     ColumnTitle.prototype.draw = function() {
-      var cx, cy, t, text, _ref;
+      var bbox, cx, cy, t, text, _ref;
       t = this.paper.rect(this.x, this.y, this.width, this.height);
       t.attr({
-        fill: "white"
+        fill: "white",
+        stroke: "none"
       });
       _ref = this.center(t), cx = _ref[0], cy = _ref[1];
-      text = this.paper.text(cx, cy, this.name);
-      text.attr({
-        'font-size': 17,
-        'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'
-      });
+      text = this.paper.print(cx, cy, this.name, this.paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle");
+      bbox = text.getBBox();
+      text.transform("t-" + (bbox.width / 2) + ",0");
       return text.attr("fill", "black");
     };
 
@@ -640,9 +637,6 @@
       this.title = new Title(this.board.paper, this.model.get('title'), this.x, this.y, this.width, this.height);
       this.avatar = new Avatar(this.board.paper, "../assets/imgs/" + (this.model.get('avatar')), this.x, this.y);
       this.frame.drag(this.dragged, this.start, this.up);
-      $(this.frame).bind('window:resized', function() {
-        return console.log("[DEBUG] Ticket get notified of window resize");
-      });
       return this;
     };
 

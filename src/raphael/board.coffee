@@ -60,12 +60,13 @@ class Kb.Raphael.SwimlaneTitle extends Kb.Raphael.Cell
 
   draw: ()->
     t = @paper.rect @x, @y, @width, @height
-    t.attr fill: "white"
+    t.attr fill: "white", stroke: "none"
     [cx,cy] = @center t
-    text = @paper.text cx, cy, @sl_name
-    text.attr({'font-size': 17, 'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'});
+    text = @paper.print cx, cy, @sl_name, @paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle"
+    bbox = text.getBBox()
+    # Correct text position
+    text.transform "R-90T-#{bbox.width/2+10},0"
     text.attr("fill", "black");
-    text.rotate(-90);
 
 class Kb.Raphael.ColumnTitle extends Kb.Raphael.Cell
   width: Kb.Raphael.Cell.column_width
@@ -75,11 +76,13 @@ class Kb.Raphael.ColumnTitle extends Kb.Raphael.Cell
 
   draw: ()->
     t = @paper.rect @x, @y, @width, @height
-    t.attr fill: "white"
+    t.attr fill: "white", stroke: "none"
     [cx,cy] = @center t 
-    text = @paper.text cx, cy, @name
-    text.attr({'font-size': 17, 'font-family': 'FranklinGothicFSCondensed-1, FranklinGothicFSCondensed-2'});
-    text.attr("fill", "black");
+    text = @paper.print cx, cy, @name, @paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle"
+    bbox = text.getBBox()
+    # Correct text position
+    text.transform "t-#{bbox.width/2},0"
+    text.attr("fill", "black")
 
 #
 # A basic cache for droppable cells, allowing to retrieve
