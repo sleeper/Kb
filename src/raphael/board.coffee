@@ -13,7 +13,8 @@ class Kb.Raphael.Cell
 
 
 class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
-  hovered_color: "grey"
+  #hovered_color: "grey"
+  hovered_color: "rgb(227,225,226)"
   background_color: "white"
   width: Kb.Raphael.Cell.column_width
   height: Kb.Raphael.Cell.swimlane_height
@@ -31,6 +32,7 @@ class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
   # Return the (x,y) relatives to this cell
   compute_relative_coordinates: (ax, ay)->
     [ ax - @x, ay - @y]
+
   isPointInside: (x,y)->
     @el.isPointInside(x,y)
 
@@ -48,7 +50,7 @@ class Kb.Raphael.DroppableCell extends Kb.Raphael.Cell
 
   draw: ()->
     @el = @paper.rect @x, @y, @width, @height
-    @el.attr fill: "white"
+    @el.attr({fill: @background_color, 'stroke-linejoin': "round", 'stroke-width': 3})
     @el.droppable = this
     @el
 
@@ -81,7 +83,7 @@ class Kb.Raphael.ColumnTitle extends Kb.Raphael.Cell
     text = @paper.print cx, cy, @name, @paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle"
     bbox = text.getBBox()
     # Correct text position
-    text.transform "t-#{bbox.width/2},0"
+    text.transform "t-#{bbox.width/2},-5"
     text.attr("fill", "black")
 
 #
@@ -157,6 +159,14 @@ class Kb.Raphael.Board
     [column,swimlane]
 
   drawCells: () ->
+    # Add swimlane titles
+    x = 0
+    y = Kb.Raphael.Cell.column_title_height
+    for sl in @model.get('swimlanes')
+      sl = new Kb.Raphael.SwimlaneTitle @paper, sl, x, y
+      sl.draw()
+      y += Kb.Raphael.Cell.swimlane_height
+
     cells = []
     x = Kb.Raphael.Cell.swimlane_title_width 
     for cl in @model.get('columns')
@@ -173,13 +183,6 @@ class Kb.Raphael.Board
 
       x += Kb.Raphael.Cell.column_width
 
-    # Add swimlane titles
-    x = 0
-    y = Kb.Raphael.Cell.column_title_height
-    for sl in @model.get('swimlanes')
-      sl = new Kb.Raphael.SwimlaneTitle @paper, sl, x, y
-      sl.draw()
-      y += Kb.Raphael.Cell.swimlane_height
 
   draw: () ->
     # Let's draw cells

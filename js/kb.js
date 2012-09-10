@@ -142,7 +142,7 @@
 
     __extends(DroppableCell, _super);
 
-    DroppableCell.prototype.hovered_color = "grey";
+    DroppableCell.prototype.hovered_color = "rgb(227,225,226)";
 
     DroppableCell.prototype.background_color = "white";
 
@@ -207,7 +207,9 @@
     DroppableCell.prototype.draw = function() {
       this.el = this.paper.rect(this.x, this.y, this.width, this.height);
       this.el.attr({
-        fill: "white"
+        fill: this.background_color,
+        'stroke-linejoin': "round",
+        'stroke-width': 3
       });
       this.el.droppable = this;
       return this.el;
@@ -275,7 +277,7 @@
       _ref = this.center(t), cx = _ref[0], cy = _ref[1];
       text = this.paper.print(cx, cy, this.name, this.paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle");
       bbox = text.getBBox();
-      text.transform("t-" + (bbox.width / 2) + ",0");
+      text.transform("t-" + (bbox.width / 2) + ",-5");
       return text.attr("fill", "black");
     };
 
@@ -373,34 +375,34 @@
 
     Board.prototype.drawCells = function() {
       var c, cells, cl, ctitle, sl, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
+      x = 0;
+      y = Kb.Raphael.Cell.column_title_height;
+      _ref = this.model.get('swimlanes');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        sl = _ref[_i];
+        sl = new Kb.Raphael.SwimlaneTitle(this.paper, sl, x, y);
+        sl.draw();
+        y += Kb.Raphael.Cell.swimlane_height;
+      }
       cells = [];
       x = Kb.Raphael.Cell.swimlane_title_width;
-      _ref = this.model.get('columns');
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        cl = _ref[_i];
+      _ref1 = this.model.get('columns');
+      _results = [];
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        cl = _ref1[_j];
         y = 0;
         ctitle = new Kb.Raphael.ColumnTitle(this.paper, cl, x, y);
         ctitle.draw();
         y += Kb.Raphael.Cell.column_title_height;
-        _ref1 = this.model.get('swimlanes');
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          sl = _ref1[_j];
+        _ref2 = this.model.get('swimlanes');
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          sl = _ref2[_k];
           c = new Kb.Raphael.DroppableCell(this.paper, cl, sl, x, y);
           c.draw();
           this._cells.put(c);
           y += Kb.Raphael.Cell.swimlane_height;
         }
-        x += Kb.Raphael.Cell.column_width;
-      }
-      x = 0;
-      y = Kb.Raphael.Cell.column_title_height;
-      _ref2 = this.model.get('swimlanes');
-      _results = [];
-      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-        sl = _ref2[_k];
-        sl = new Kb.Raphael.SwimlaneTitle(this.paper, sl, x, y);
-        sl.draw();
-        _results.push(y += Kb.Raphael.Cell.swimlane_height);
+        _results.push(x += Kb.Raphael.Cell.column_width);
       }
       return _results;
     };
