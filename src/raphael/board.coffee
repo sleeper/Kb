@@ -1,5 +1,5 @@
 class Kb.Raphael.Cell
-  @swimlane_height: 400
+  @swimlane_height: 600
   @swimlane_title_width: 50
   @column_width: 400
   @column_title_height: 50

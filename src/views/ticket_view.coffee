@@ -17,7 +17,10 @@ class Kb.Views.TicketView extends Backbone.View
 
 #    @delegateEvents(@events);
 
-    @model.on 'change', @render
+    @model.on 'change', ()=> @element.move()
+    @model.on 'change:title', ()=> @element.update_title()
+
+#    @model.on 'change', @render
 
   render: =>
     console.log "[DEBUG] TicketView.render called for #{@model.get('title')}"

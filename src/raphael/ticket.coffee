@@ -69,6 +69,9 @@ class Kb.Raphael.Ticket
       @title_frame.setAttribute "x", @x
       @title_frame.setAttribute "y", @y + @title_offset + 5
 
+    update_title: (@text)->
+      $(@title).html( @text )
+      @resize()
 
   constructor: (@board, @model)->
     @board.paper
@@ -139,6 +142,9 @@ class Kb.Raphael.Ticket
     filter1.appendOperation(blur1);
     filter1.appendOperation(offset1);
     filter1.appendOperation(merge1); 
+
+  update_title: ()->
+    @title.update_title @model.get('title')
 
   draw: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')

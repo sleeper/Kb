@@ -65,6 +65,28 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+  Kb.Models.User = (function(_super) {
+
+    __extends(User, _super);
+
+    function User() {
+      return User.__super__.constructor.apply(this, arguments);
+    }
+
+    User.prototype.defaults = {
+      name: "",
+      avatar: "Zombie.png"
+    };
+
+    return User;
+
+  })(Backbone.Model);
+
+}).call(this);
+(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
   Kb.Models.Ticket = (function(_super) {
 
     __extends(Ticket, _super);
@@ -119,7 +141,7 @@
 
     function Cell() {}
 
-    Cell.swimlane_height = 400;
+    Cell.swimlane_height = 600;
 
     Cell.swimlane_title_width = 50;
 
@@ -520,6 +542,12 @@
         return this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
       };
 
+      Title.prototype.update_title = function(text) {
+        this.text = text;
+        $(this.title).html(this.text);
+        return this.resize();
+      };
+
       return Title;
 
     })();
@@ -632,6 +660,10 @@
       return filter1.appendOperation(merge1);
     };
 
+    Ticket.prototype.update_title = function() {
+      return this.title.update_title(this.model.get('title'));
+    };
+
     Ticket.prototype.draw = function() {
       var _ref;
       _ref = this.board.compute_absolute_coordinates(this.model.get('column'), this.model.get('swimlane'), this.model.get('x'), this.model.get('y')), this.x = _ref[0], this.y = _ref[1];
@@ -662,12 +694,18 @@
     }
 
     TicketView.prototype.initialize = function() {
-      var t;
+      var t,
+        _this = this;
       this.boardview = this.options.boardview;
       t = new Kb.Raphael.Ticket(this.boardview.svgboard, this.model);
       this.element = t.draw(this.el);
       this.setElement(this.element.node);
-      return this.model.on('change', this.render);
+      this.model.on('change', function() {
+        return _this.element.move();
+      });
+      return this.model.on('change:title', function() {
+        return _this.element.update_title();
+      });
     };
 
     TicketView.prototype.render = function() {

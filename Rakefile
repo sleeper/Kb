@@ -10,6 +10,7 @@ require 'coffee-script'
 SRCS = %w(
 kb.coffee
 models/board.coffee
+models/user.coffee
 models/ticket.coffee
 collections/ticketlist.coffee
 raphael/board.coffee

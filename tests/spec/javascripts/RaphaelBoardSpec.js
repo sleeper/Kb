@@ -7,7 +7,7 @@ describe("Raphael.Board", function() {
       var width = tmp[0];
       var height = tmp[1];
       expect(width).toEqual(852);
-      expect(height).toEqual(452);
+      expect(height).toEqual(652);
     });
   });
 
