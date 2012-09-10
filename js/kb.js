@@ -483,7 +483,9 @@
 
     Title = (function() {
 
-      Title.prototype.title_offset = 10;
+      Title.prototype.y_offset = 10;
+
+      Title.prototype.x_offset = 5;
 
       Title.prototype.resize = function() {
         var font_size, height, lower, middle, original_height, original_width, title, title_height, upper, _results;
@@ -522,10 +524,10 @@
         this.width = width;
         this.height = height;
         this.title_frame = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-        this.title_frame.setAttribute("x", this.x);
-        this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
-        this.title_frame.setAttribute("width", this.width - 5);
-        this.title_frame.setAttribute("height", this.height - this.title_offset - 5);
+        this.title_frame.setAttribute("x", this.x + this.x_offset);
+        this.title_frame.setAttribute("y", this.y + this.y_offset + 5);
+        this.title_frame.setAttribute("width", this.width - this.x_offset - 5);
+        this.title_frame.setAttribute("height", this.height - this.y_offset - 5);
         body = document.createElement("body");
         this.title_frame.appendChild(body);
         this.title = document.createElement("div");
@@ -538,8 +540,8 @@
       Title.prototype.move = function(x, y) {
         this.x = x;
         this.y = y;
-        this.title_frame.setAttribute("x", this.x);
-        return this.title_frame.setAttribute("y", this.y + this.title_offset + 5);
+        this.title_frame.setAttribute("x", this.x + this.x_offset);
+        return this.title_frame.setAttribute("y", this.y + this.y_offset + 5);
       };
 
       Title.prototype.update_title = function(text) {

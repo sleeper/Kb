@@ -23,7 +23,8 @@ class Kb.Raphael.Ticket
 
 
   class Title
-    title_offset: 10
+    y_offset: 10
+    x_offset: 5
 
     # Resize the title font according to the size of
     # the foreignObject.
@@ -53,10 +54,10 @@ class Kb.Raphael.Ticket
     # Draw the title at coordinate (x,y) with a (width, height) size
     constructor: (@paper, @text, @x, @y, @width, @height)->
       @title_frame = document.createElementNS "http://www.w3.org/2000/svg","foreignObject"
-      @title_frame.setAttribute "x", @x
-      @title_frame.setAttribute "y", @y + @title_offset + 5
-      @title_frame.setAttribute "width", @width - 5
-      @title_frame.setAttribute "height", @height - @title_offset - 5
+      @title_frame.setAttribute "x", @x + @x_offset
+      @title_frame.setAttribute "y", @y + @y_offset + 5
+      @title_frame.setAttribute "width", @width - @x_offset - 5
+      @title_frame.setAttribute "height", @height - @y_offset - 5
       body = document.createElement "body"
       @title_frame.appendChild body
       @title = document.createElement "div"
@@ -66,8 +67,8 @@ class Kb.Raphael.Ticket
       @resize()
 
     move: (@x,@y)->
-      @title_frame.setAttribute "x", @x
-      @title_frame.setAttribute "y", @y + @title_offset + 5
+      @title_frame.setAttribute "x", @x + @x_offset
+      @title_frame.setAttribute "y", @y + @y_offset + 5
 
     update_title: (@text)->
       $(@title).html( @text )
