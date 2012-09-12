@@ -15,8 +15,10 @@ models/ticket.coffee
 collections/ticketlist.coffee
 raphael/board.coffee
 raphael/ticket.coffee
+views/ticket_detail_view.coffee
 views/ticket_view.coffee
 views/board_view.coffee
+routers/app_router.coffee
 app.coffee
 )
 
