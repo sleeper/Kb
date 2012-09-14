@@ -1,4 +1,5 @@
-.bundle/*
+app/scripts/build/*
+temp/*
+dist/*
+.bundle
 vendor/*
-.DS_Store
-

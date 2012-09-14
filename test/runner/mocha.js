@@ -1,5 +1,5 @@
 (function() {
-  var runner = mocha.run();
+  var runner = mocha.run().globals(['LiveReload']);
 
   if(!window.PHANTOMJS) return;
 
