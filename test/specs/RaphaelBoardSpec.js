@@ -6,19 +6,18 @@ describe("Raphael.Board", function() {
       var tmp = b.compute_sizes();
       var width = tmp[0];
       var height = tmp[1];
-      expect(width).toEqual(852);
-      expect(height).toEqual(652);
+      height.should.equal(652);
+      width.should.equal(852);
     });
   });
 
   describe("draw", function() {
 
     it("should create a Raphael paper", function() {
-      spyOn(window, 'Raphael').andCallThrough();
       var m = new Kb.Models.Board({columns: ['backlog', 'done'], swimlanes: ['foo']});
       var b = new Kb.Raphael.Board(m, 'board');
       b.draw();
-      expect(window.Raphael).toHaveBeenCalled();
+      $('#board').children().should.not.have.length(0);
     });
   });
 
@@ -31,8 +30,8 @@ describe("Raphael.Board", function() {
       _tmp = b.compute_absolute_coordinates('done', 'foo', 10, 10);
       xa = _tmp[0];
       xb = _tmp[1];
-      expect(xa).toBe(460);
-      expect(xb).toBe(60);
+      xb.should.equal(60);
+      xa.should.equal(460);
     });
   });
 
@@ -45,8 +44,8 @@ describe("Raphael.Board", function() {
       _tmp = b.compute_relative_coordinates('done', 'foo', 460, 60);
       xa = _tmp[0];
       xb = _tmp[1];
-      expect(xa).toBe(10);
-      expect(xb).toBe(10);
+      xb.should.equal(10);
+      xa.should.equal(10);
     });
   });
 
@@ -56,8 +55,8 @@ describe("Raphael.Board", function() {
       var b = new Kb.Raphael.Board(m, 'board');
       b.draw();
       var c = b.getCellByPoint(100,100);
-      expect(c.col_name).toBe('backlog');
-      expect(c.sl_name).toBe('foo');
+      c.col_name.should.equal('backlog');
+      c.sl_name.should.equal('foo');
 
     });
 
@@ -66,8 +65,8 @@ describe("Raphael.Board", function() {
       var b = new Kb.Raphael.Board(m, 'board');
       b.draw();
       var c = b.getColumnAndSwimlane(100,100);
-      expect(c[0]).toBe('backlog');
-      expect(c[1]).toBe('foo');
+      c[0].should.equal('backlog');
+      c[1].should.equal('foo');
     });
   });
 

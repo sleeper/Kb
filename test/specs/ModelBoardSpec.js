@@ -2,42 +2,38 @@
 describe("Tests for Model.Board", function() {
   it('Can be created with default values for its attributes.', function() { 
     var board = new Kb.Models.Board();
-    expect(board.get('swimlanes').length).toBe(0);
-    expect(board.get('columns').length).toBe(0);
+    board.get('swimlanes').should.have.length(0);
+    board.get('columns').should.have.length(0);
   });
 
   it('Will set passed attributes on the model instance when created.', function() { 
     var board = new Kb.Models.Board({swimlanes:[ 'foo'], name: "board"});
-    expect(board.get('name')).toBe("board");
-    expect(board.get('swimlanes').length).toBe(1);
-    expect(board.get('swimlanes')).toContain('foo');
+    board.get('name').should.equal('board');
+    board.get('swimlanes').should.have.length(1);
+    board.get('swimlanes').should.include('foo');
   });
 
-  it('Fires a custom event when the state changes.', function() {
-    var spy = jasmine.createSpy('-change event callback-');
+  it('Fires a custom event when the state changes.', function(done) {
     var board = new Kb.Models.Board({swimlanes:[ 'foo'], name: "board"});
     // how do we monitor changes of state?
-    board.on('change', spy);
+    board.on('change', function() { done();});
     // what would you need to do to force a change of state?
     board.set('name', 'new name' );
-    expect(spy).toHaveBeenCalled();
   });
 
-  it('Can contain custom validation rules, and will trigger an error event on failed validation.', function() {
-    var errorCallback = jasmine.createSpy('-error event callback-');
+  it('Can contain custom validation rules, and will trigger an error event on failed validation.', function(done) {
     var board = new Kb.Models.Board({swimlanes:[ 'foo'], name: "name"});
-    board.on('error', errorCallback);
+    board.on('error', function(b,error) {
+      error.should.equal('Name must not be nil or empty');
+      done();
+    });
     board.set({name:''});
-    var errorArgs = errorCallback.mostRecentCall.args;
-    expect(errorArgs).toBeDefined();
-    expect(errorArgs[0]).toBe(board);
-    expect(errorArgs[1]).toBe('Name must not be nil or empty');
   });
 
   it("url must be correctly set", function() {
     var board = new Kb.Models.Board({swimlanes:[ 'foo'], name: "name"});
     board.id = 42;
-    expect(board.url()).toBe('/boards/'+board.id);
+    board.url().should.equal('/boards/'+ board.id );
 
   });
 

@@ -8,31 +8,42 @@
 <body>
   <div id="mocha"></div>
   <script src="lib/mocha-1.2.2/mocha.js"></script>
-  <script>mocha.setup('bdd')</script>
+  <script>mocha.setup({ui: 'bdd', ignoreLeaks: true})</script>
 
   <!-- assertion framework -->
 
   <script src="lib/chai.js"></script>
 
 
-  <script>expect = chai.expect</script>
+  <!--script>expect = chai.expect</script-->
+  <script>chai.should()</script>
 
   <!-- -->
 
   <!-- include source files here... -->
-  <!--script src="scripts/5ba6b5c7.scripts.js"></script-->
-  <script src="scripts/kb.js"></script>
+  <script src="scripts/vendor/underscore-min.js"></script>
+  <script src="scripts/vendor/backbone-min.js"></script>
+  <script src="scripts/vendor/jquery.min.js"></script>
+  <script src="scripts/vendor/raphael.js"></script>
+  <script src="scripts/vendor/raphael-svg-filter.js"></script>
+  <script src="scripts/build/kb.js"></script>
+  <script src="scripts/build/user_model.js"></script>
+  <script src="scripts/build/ticket_model.js"></script>
+  <script src="scripts/build/board_model.js"></script>
+  <script src="scripts/build/ticketlist.js"></script>
+  <script src="scripts/build/board.js"></script>
 
   <!-- include spec files here... -->
   <script src="specs/CollectionTicketListSpec.js"></script>
-  <!--script src="specs/ModelBoardSpec.js"></script>
+  <script src="specs/ModelBoardSpec.js"></script>
   <script src="specs/ModelTicketSpec.js"></script>
   <script src="specs/ModelUserSpec.js"></script>
   <script src="specs/RaphaelBoardSpec.js"></script>
-  <script src="specs/RaphaelCellCacheSpec.js"></script-->
+  <script src="specs/RaphaelCellCacheSpec.js"></script>
 
   <!-- trigger the mocha runner -->
   <script src="runner/mocha.js"></script>
 
+  <div style="display: none;" id="board"></div>
 </body>
 </html>

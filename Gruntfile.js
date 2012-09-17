@@ -44,7 +44,9 @@ module.exports = function( grunt ) {
 
     // headless testing through PhantomJS
     mocha: {
-      all: ['test/**/*.html']
+//      all: ['test/**/*.html']
+//      all: ['test/headless.html']
+      all: ['http://localhost:3501/index.html']
     },
 
     // default watch configuration
@@ -66,6 +68,10 @@ module.exports = function( grunt ) {
           'app/scripts/**/*.js',
           'app/images/**/*'
         ],
+        tasks: 'reload'
+      },
+      test: {
+        files: [ 'test/**/*.js'],
         tasks: 'reload'
       }
     },
@@ -169,6 +175,6 @@ module.exports = function( grunt ) {
   });
 
   // Alias the `test` task to run the `mocha` task instead
-  grunt.registerTask('test', 'mocha');
+  grunt.registerTask('test', 'server:phantom mocha');
 
 };

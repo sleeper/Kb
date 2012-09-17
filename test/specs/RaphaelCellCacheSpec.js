@@ -4,9 +4,9 @@ describe("Raphael.CellCache", function() {
       var c = new Kb.Raphael.CellCache()
       c.put({col_name: "foo", sl_name: "bar", value: "fred"})
       var d = c.get("foo", "bar")
-      expect(d.col_name).toBe("foo")
-      expect(d.sl_name).toBe("bar")
-      expect(d.value).toBe("fred")
+      d.col_name.should.equal("foo");
+      d.sl_name.should.equal("bar");
+      d.value.should.equal("fred");
     });
   });
 
@@ -19,7 +19,7 @@ describe("Raphael.CellCache", function() {
       c.forEach(function(k,c) { 
         s+= c.col_name;
       });
-      expect(s).toBe("foobar");
+      s.should.equal("foobar");
     });
 
     it("must stop iterating when callback returns false", function(){
@@ -33,7 +33,7 @@ describe("Raphael.CellCache", function() {
         }
         s+= c.col_name;
       });
-      expect(s).toBe("foo");
+      s.should.equal("foo");
 
     });
 
