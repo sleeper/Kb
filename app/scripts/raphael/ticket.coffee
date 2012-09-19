@@ -155,4 +155,5 @@ class Kb.Raphael.Ticket
     @avatar = new Avatar(@board.paper, "../assets/imgs/#{@model.get('avatar')}", @x, @y)
 
     @frame.drag(@dragged, @start, @up)
+    @frame.dblclick ()=> console.log "Double click on ticket " + @model.get('id')
     @
