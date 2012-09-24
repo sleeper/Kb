@@ -74,7 +74,9 @@ class Kb.Raphael.Ticket
       $(@title).html( @text )
       @resize()
 
-  constructor: (@board, @model)->
+
+
+  constructor: (@tview, @board, @model)->
     @board.paper
 
 
@@ -155,5 +157,8 @@ class Kb.Raphael.Ticket
     @avatar = new Avatar(@board.paper, "../assets/imgs/#{@model.get('avatar')}", @x, @y)
 
     @frame.drag(@dragged, @start, @up)
-    @frame.dblclick ()=> console.log "Double click on ticket " + @model.get('id')
+    @frame.dblclick ()=> 
+      console.log "Double click on ticket " + @model.get('id')
+      # Notify my view
+      @tview.dblclick()
     @

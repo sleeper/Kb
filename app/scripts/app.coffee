@@ -12,7 +12,7 @@ class App
         {id: 2, title: "Buy some milk", column: "in-progress", swimlane: "implementations", x:80, y: 60, avatar: "Hulk-01.png"}
       ]
     # Instantiate the router
-    app_router = new Kb.Routers.AppRouter
+    app_router = new Kb.Routers.AppRouter({tickets: Kb.board.get('tickets')})
     # Start Backbone history a neccesary step for bookmarkable URL's
 #    Backbone.history.start({pushState: true, root: "/index.html"})
     Backbone.history.start({root: "/index.html"})

@@ -5,28 +5,25 @@ class Kb.Views.TicketDetailView extends Backbone.View
   # To be given:
   #   model
   #   boardview: the view of the enclosing board
-  initialize:() ->
-    @boardview = @options.boardview
-#    @bind 'change', @render
-    t = new Kb.Raphael.Ticket @boardview.svgboard, @model
-    @element = t.draw @el
-    @setElement @element.node
-    # FIXME: We'll probably need to be smarter, as
-    # the ticket must be redraw if the title change
-    # but just moved when the column or swimlane or position is juste changed
-
-#    @delegateEvents(@events);
-
-    @model.on 'change', ()=> @element.move()
-    @model.on 'change:title', ()=> @element.update_title()
-
-#    @model.on 'change', @render
+  #  initialize:() ->
 
   render: =>
-    console.log "[DEBUG] TicketView.render called for #{@model.get('title')}"
-    console.log "[DEBUG] column = #{@model.get('column')}"
-#    t = new Kb.Raphael.Ticket @boardview.svgboard, @model
-#    t.draw @el
-    @element.move()
+    overlay_tmpl = '<div id="overlay">&nbsp;</div>'
+    detail_tmpl = "<div id=\"ticket_detail\">Details for ticket '#{@model.get('title')}'</div>"
+
+    $(@el).html(overlay_tmpl + detail_tmpl)
+    overlay = $('#overlay', $(@el))
+    ticket_detail = $('#ticket_detail', $(@el))
+    overlay.show()
+    ticket_detail.show();
+    # FIXME: the size of the ticket_detail i, for the time being, equal to 0
+    # as it has not yet been drawn
+    # We need to reposition it later, when it has been displayed... Event ?
+    ticket_detail.css({
+                position: 'absolute',
+                left: ($(window).width() - ticket_detail.width()) / 2,
+                top: ($(window).height() - ticket_detail.height()) / 2
+            });
+    @
 
 

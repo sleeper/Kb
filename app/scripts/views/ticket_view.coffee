@@ -8,7 +8,7 @@ class Kb.Views.TicketView extends Backbone.View
   initialize:() ->
     @boardview = @options.boardview
 #    @bind 'change', @render
-    t = new Kb.Raphael.Ticket @boardview.svgboard, @model
+    t = new Kb.Raphael.Ticket @, @boardview.svgboard, @model
     @element = t.draw @el
     @setElement @element.node
     # FIXME: We'll probably need to be smarter, as
@@ -21,6 +21,10 @@ class Kb.Views.TicketView extends Backbone.View
     @model.on 'change:title', ()=> @element.update_title()
 
 #    @model.on 'change', @render
+
+  dblclick: ()->
+    # Navigate to this ticket
+    Backbone.history.navigate('/tickets/'+@model.get('id'), true)
 
   render: =>
     console.log "[DEBUG] TicketView.render called for #{@model.get('title')}"
