@@ -28,6 +28,8 @@ class Kb.Routers.AppRouter extends Backbone.Router
     @ticket_detail_view = new Kb.Views.TicketDetailView({model: @ticket})
     dv = @ticket_detail_view.render().el
     details.append(dv)
+    # Now the view is displayed, ensure it's perfectly displayed
+    @ticket_detail_view.resize()
 
     # FIXME: Append it to the HTML document
 
