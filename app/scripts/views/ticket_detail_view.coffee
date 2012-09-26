@@ -1,5 +1,5 @@
 class Kb.Views.TicketDetailView extends Backbone.View
-  # FIXME: must be changed on model change
+  # FIXME: must be updated on model change
 
   resume: ()->
     # Navigate to this ticket

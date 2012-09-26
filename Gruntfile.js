@@ -17,9 +17,14 @@ module.exports = function( grunt ) {
 
     // Coffee to JS compilation
     coffee: {
-      dist: {
-        src: 'app/scripts/**/*.coffee',
-        dest: 'app/scripts/build'
+      compile: {
+        files: {
+          'app/scripts/build/*.js': 'app/scripts/**/*.coffee'
+        },
+        options: {
+          basePath: 'app/scripts',
+          flatten: true
+        }
       }
     },
 
@@ -52,7 +57,7 @@ module.exports = function( grunt ) {
     // default watch configuration
     watch: {
       coffee: {
-        files: '<config:coffee.dist.src>',
+        files: 'app/scripts/**/*.coffee',
         tasks: 'coffee reload'
       },
       compass: {

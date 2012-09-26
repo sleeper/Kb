@@ -7,9 +7,13 @@ class App
 
   constructor: ()->
     Kb.init config
+    Kb.board.get('users').reset [
+      {id: 1, name: "fred", avatar: 'Iron Man Mark VI-01.png'},
+      {id: 2, name: "joe", avatar: 'Vampire.png'},
+    ]
     Kb.board.get('tickets').reset [
-        {id: 1, title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60, avatar: "Skull 2.png" },
-        {id: 2, title: "Buy some milk", column: "in-progress", swimlane: "implementations", x:80, y: 60, avatar: "Hulk-01.png"}
+        {id: 1, title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60, user_id: 1},
+        {id: 2, title: "Buy some milk", column: "in-progress", swimlane: "implementations", x:80, y: 60, user_id: 2}
       ]
     # Instantiate the router
     app_router = new Kb.Routers.AppRouter({tickets: Kb.board.get('tickets')})

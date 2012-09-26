@@ -22,7 +22,9 @@ window.Kb =
     container = $('#'+cfg.el).get(0)
 
     tickets = new Kb.Collections.TicketList();
+    users = new Kb.Collections.UserList();
     Kb.board.set('tickets', tickets)
+    Kb.board.set('users', users)
     bview = new Kb.Views.BoardView( model: Kb.board, el: container )
     bview.render()
 
