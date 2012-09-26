@@ -1,6 +1,10 @@
 class Kb.Views.TicketDetailView extends Backbone.View
   # FIXME: must be changed on model change
 
+  resume: ()->
+    # Navigate to this ticket
+    Backbone.history.navigate('/tickets', true)
+
   resize: ()->
     @width = @ticket_detail.width()
     @height = @ticket_detail.height()
@@ -21,6 +25,7 @@ class Kb.Views.TicketDetailView extends Backbone.View
     overlay.show()
     @ticket_detail.show();
     @resize()
+    overlay.on('click', @resume)
     @
 
 
