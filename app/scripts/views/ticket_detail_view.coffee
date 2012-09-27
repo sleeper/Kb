@@ -14,18 +14,31 @@ class Kb.Views.TicketDetailView extends Backbone.View
                 top: ($(window).height() - @height) / 2
             });
 
+  add_overlay: ()->
+    $(@el).append('<div id="overlay">&nbsp;</div>')
+    @overlay = $('#overlay', $(@el))
+    @overlay.show()
+    @overlay.on('click', @resume)
 
-  render: =>
-    overlay_tmpl = '<div id="overlay">&nbsp;</div>'
-    detail_tmpl = "<div id=\"ticket_detail\">Details for ticket '#{@model.get('title')}'</div>"
-
-    $(@el).html(overlay_tmpl + detail_tmpl)
-    overlay = $('#overlay', $(@el))
+  add_details: ()->
+    #    $(@el).append("<div id=\"ticket_detail\">Details for ticket '#{@model.get('title')}'</div>")
+    $(@el).append("<div id=\"ticket_detail\"></div>")
     @ticket_detail = $('#ticket_detail', $(@el))
-    overlay.show()
+    @ticket_detail.append("<h1>#{@model.get('title')}</h1>")
+    @ticket_detail.append("<div class=\"date\">Created on: #{@model.get('creation_time')}</div>")
+    @ticket_detail.append("<div class=\"date\">Entered board on: #{@model.get('entered_time')}</div>")
+    @ticket_detail.append("<div class=\"comment\">#{@model.get('comment')}</div>")
+
+    # FIXME: Add the avatar of the user OR a button for the user to take care 
+    #        of the ticket.
+
     @ticket_detail.show();
     @resize()
-    overlay.on('click', @resume)
+
+
+  render: =>
+    @add_overlay()
+    @add_details()
     @
 
 

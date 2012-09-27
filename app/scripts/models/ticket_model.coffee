@@ -16,4 +16,6 @@ class Kb.Models.Ticket extends Backbone.Model
     user_id: 0
     x: 0
     y: 0
-    avatar: "Jack O Lantern.png"
+    creation_time: ""
+    entered_time: ""
+    comment: ""
