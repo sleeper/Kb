@@ -12,8 +12,8 @@ class App
       {id: 2, name: "joe", avatar: 'Vampire.png'},
     ]
     Kb.board.get('tickets').reset [
-        {id: 1, title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60, user_id: 1, created_on: "2012-09-20 15:32:12", entered_time: "2012-09-22 09:23:21", comment:" This is a simple task just to check"},
-        {id: 2, title: "Buy some milk", column: "in-progress", swimlane: "implementations", x:80, y: 60, user_id: 2, created_on: "2012-09-21 17:32:12", entered_time: "2012-09-23 19:13:11", comment:" This is a simple task just to check"}
+        {id: 1, title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60, user_id: 1, created_on: "2012-09-20 15:32:12", entered_on: "2012-09-22 09:23:21", comment:" This is a simple task just to check"},
+        {id: 2, title: "Buy some milk", column: "in-progress", swimlane: "implementations", x:80, y: 60, user_id: 2, created_on: "2012-09-21 17:32:12", entered_on: "2012-09-23 19:13:11", comment:" This is a simple task just to check"}
       ]
     # Instantiate the router
     app_router = new Kb.Routers.AppRouter({tickets: Kb.board.get('tickets')})
