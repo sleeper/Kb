@@ -25,7 +25,7 @@ class Kb.Views.TicketDetailView extends Backbone.View
     $(@el).append("<div id=\"ticket_detail\"></div>")
     @ticket_detail = $('#ticket_detail', $(@el))
     @ticket_detail.append("<h1>#{@model.get('title')}</h1>")
-    @ticket_detail.append("<div class=\"date\">Created on: #{@model.get('creation_time')}</div>")
+    @ticket_detail.append("<div class=\"date\">Created on: #{@model.get('created_on')}</div>")
     @ticket_detail.append("<div class=\"date\">Entered board on: #{@model.get('entered_time')}</div>")
     @ticket_detail.append("<div class=\"comment\">#{@model.get('comment')}</div>")
 
