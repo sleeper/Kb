@@ -53,10 +53,9 @@ class Kb.Routers.AppRouter extends Backbone.Router
 #    }
 
   defaultRoute: (actions)->
-    #    overlay = $('#overlay')
-    #overlay.hide()
-    $('body').removeClass('dialog_open')
-#    ticket_detail = $('#ticket_detail')
-#    ticket_detail.hide();
+    overlay = $('#overlay')
+    overlay.hide()
+    ticket_detail = $('#ticket_detail')
+    ticket_detail.hide();
     console.log "[DEBUG] Default route"
 
