@@ -154,8 +154,8 @@ class Kb.Raphael.Ticket
 
     @draw_frame()
     @title = new Title(@board.paper, @model.get('title'), @x, @y, @width, @height)
-    # FIXME: Treat the case where no user is associated (=> no avatar created)
-    img = "../assets/imgs/#{@model.user.get('avatar')}"
+
+    img = "../assets/imgs/#{@model.avatar}"
     @avatar = new Avatar(@board.paper, img, @x, @y)
 
     @frame.drag(@dragged, @start, @up)

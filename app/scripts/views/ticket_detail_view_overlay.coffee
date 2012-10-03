@@ -30,7 +30,11 @@ class Kb.Views.TicketDetailView extends Backbone.View
     # FIXME: Add the avatar of the user OR a button for the user to take care 
     #        of the ticket.
 
-#    @ticket_detail.addClass('visible')
+    img = "../assets/imgs/#{@model.avatar}"
+    @ticket_detail.append("<img class=\"avatar\" src=\"#{img}\">")
+#    $('.avatar', @ticket_detail).on 'click', ()=> @model.set('user_id', Kb.board.current_user.get('id'))
+#    @ticket_detail.on 'click', '.avatar', ()=> alert("CLICKEEEED !!")
+    @ticket_detail.on 'click', ()=> alert("CLICKED")
     @ticket_detail.css('opacity',1)
     @ticket_detail.show();
     @resize()

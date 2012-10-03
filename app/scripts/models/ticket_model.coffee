@@ -36,3 +36,9 @@ class Kb.Models.Ticket extends Backbone.Model
   initialize: (@orig_options={})->
     @toDate('created_on')
     @toDate('entered_on')
+
+    if @get('user_id')
+      @user = Kb.board.get('users').get( @get('user_id') )
+      @avatar = @user.get('avatar')
+    else
+      @avatar = "question-mark-icon.png"
