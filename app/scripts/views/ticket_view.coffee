@@ -19,8 +19,9 @@ class Kb.Views.TicketView extends Backbone.View
     # but just moved when the column or swimlane or position is juste changed
 
 
-    @model.on 'change', ()=> @element.move()
-    @model.on 'change:title', ()=> @element.update_title()
+    @model.on 'change', () => @element.move()
+    @model.on 'change:user_id', () => @element.update_avatar()
+    @model.on 'change:title', () => @element.update_title()
 
 
   dblclick: ()->

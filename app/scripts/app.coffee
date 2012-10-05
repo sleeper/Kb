@@ -10,12 +10,15 @@ class App
     Kb.board.get('users').reset [
       {id: 1, name: "fred", avatar: 'Iron Man Mark VI-01.png'},
       {id: 2, name: "joe", avatar: 'Vampire.png'},
+      {id: 3, name: "boozie", avatar: 'Ghoul.png'},
     ]
     Kb.board.get('tickets').reset [
         {id: 1, title: "Buy some bread", column: "backlog", swimlane: "projects", x: 60, y:60, user_id: 1, created_on: "2012-09-20 15:32:12", entered_on: "2012-09-22 09:23:21", comment:" This is a simple task just to check"},
         {id: 2, title: "Buy some milk", column: "in-progress", swimlane: "implementations", x:80, y: 60, user_id: 2, created_on: "2012-09-21 17:32:12", entered_on: "2012-09-23 19:13:11", comment:" This is a simple task just to check"}
         {id: 3, title: "Start working", column: "backlog", swimlane: "implementations", x:80, y: 60, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "2012-09-23 19:13:11", comment:"This is the most ennoying ticket ever written"}
       ]
+    Kb.board.current_user = Kb.board.get('users').get(3)
+
     # Instantiate the router
     app_router = new Kb.Routers.AppRouter({tickets: Kb.board.get('tickets')})
     # Start Backbone history a neccesary step for bookmarkable URL's

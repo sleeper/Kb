@@ -21,6 +21,10 @@ class Kb.Raphael.Ticket
       @y = y + @y_offset
       @el.attr x: @x, y: @y
 
+    update: (@img) ->
+      @el.remove()
+      @el = @paper.image(@img, @x, @y, @width, @height)
+
 
   class Title
     y_offset: 10
@@ -148,6 +152,10 @@ class Kb.Raphael.Ticket
 
   update_title: ()->
     @title.update_title @model.get('title')
+
+  update_avatar: ()->
+    img = "../assets/imgs/#{@model.avatar}"
+    @avatar.update img
 
   draw: ()->
     [@x,@y] = @board.compute_absolute_coordinates @model.get('column'), @model.get('swimlane'),@model.get('x'), @model.get('y')

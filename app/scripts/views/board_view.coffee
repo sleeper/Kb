@@ -6,7 +6,7 @@ class Kb.Views.BoardView extends Backbone.View
   initialize: ()->
     @model.get('tickets').bind 'add', @addOne, this
     @model.get('tickets').bind 'reset', @addAll, this
-    @model.get('tickets').bind 'all', @render, this
+    #@model.get('tickets').bind 'all', @render, this
     @svgboard = new Kb.Raphael.Board @model, @el
     @svgboard.draw()
      #@render()
