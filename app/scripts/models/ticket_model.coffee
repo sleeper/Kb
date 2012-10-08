@@ -1,5 +1,7 @@
 # The following fields are available for this model:
 #  - title (string): the is the title of the ticket
+#  - status (string): the ticket can be 'closed', in the product 'backlog',
+#                     or on the 'board'
 #  - column (string): this is the column name the current ticket is in
 #  - swimlane (string): this is the swimlane name the current ticket is in
 #  - x, y : the position *relative*( to the cell the ticket is in.

@@ -2,6 +2,7 @@ describe("Tests for Ticket", function() {
   it('Can be created with default values for its attributes.', function() { 
     var ticket = new Kb.Models.Ticket();
     ticket.get('title').should.equal("");
+    ticket.get('status').should.equal("backlog");
     ticket.get('column').should.equal("");
     ticket.get('swimlane').should.equal("");
     ticket.get('x').should.equal(0);
