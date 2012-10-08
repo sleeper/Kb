@@ -25,6 +25,9 @@ class Kb.Views.BoardView extends Backbone.View
 #      view = new Kb.Views.TicketView model: t, boardview: this
 #      view.render()
 
+  toggle: () =>
+    $(@el).toggle()
+
   render: =>
     console.log "Rendering board"
 
