@@ -13,6 +13,7 @@
 class Kb.Models.Ticket extends Backbone.Model
   defaults:
     title: ""
+    status: "backlog"
     column: ""
     swimlane: ""
     user_id: 0
