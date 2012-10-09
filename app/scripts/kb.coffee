@@ -27,5 +27,11 @@ window.Kb =
     Kb.board.set('users', users)
     bview = new Kb.Views.BoardView( model: Kb.board, el: container )
     bview.render()
-    $('#toggle_mode').on 'click', () => bview.toggle()
+    pbview = new Kb.Views.ProductBacklogView( model: Kb.board, el: $('#product_backlog'))
+    pbview.render()
+    pbview.toggle()
+    $('#toggle_mode').on 'click', () => 
+      bview.toggle()
+      pbview.toggle()
+
 
