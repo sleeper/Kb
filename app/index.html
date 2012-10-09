@@ -1,55 +1,31 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <title></title>
-        <meta name="description" content=""/>
-        <meta name="viewport" content="width=device-width"/>
-        <link rel="stylesheet" href="styles/main.css"/>
-        <link rel="stylesheet" href="styles/jquery.handsontable.css"/>
+<html>
+  <head>
+    <!-- you do not have to use bootstrap but we use it by default -->
+    <link rel="stylesheet" href="scripts/vendor/bootstrap/css/bootstrap.css" />
+    <!-- CSS for relevant view components - here we just have grid -->
+    <link rel="stylesheet" href="styles/recline/slickgrid.css">
+  </head>
+  <body>
 
-    </head>
-    <body>
-      <div id="page_wrapper">
-        <h1> My beautiful Board </h1>
-        <button id="toggle_mode">Product Backlog</button>
-        <div id="board"></div>
-        <div id="product_backlog"></div>
-      </div>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-        <![endif]-->
+    <div id="mygrid" style="height: 400px"></div>
+<!-- 3rd party dependencies -->
+<script src="scripts/vendor/jquery.1.7.1.js"></script>
+<!--script src="scripts/vendor/lodash.min.js"></script-->
+<script src="scripts/vendor/underscore-1.1.6.js"></script>
+<!--script src="scripts/vendor/backbone.js"></script-->
+<script src="scripts/vendor/backbone-0.5.1.js"></script>
+<script src="scripts/vendor/jquery.mustache.js"></script>
+<script src="scripts/vendor/bootstrap/js/bootstrap.js"></script>
+<!-- note that we could include individual components rather than whole of recline e.g.
+<script type="text/javascript" src="src/model.js"></script>
+<script type="text/javascript" src="src/backend/memory.js"></script>
+<script type="text/javascript" src="src/view-grid.js"></script>
+-->
+<script type="text/javascript" src="scripts/vendor/slickgrid/2.0.1/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="scripts/vendor/slickgrid/2.0.1/jquery.event.drag-2.0.min.js"></script>
+<script type="text/javascript" src="scripts/vendor/slickgrid/2.0.1/slick.grid.min.js"></script>
+<script type="text/javascript" src="scripts/vendor/recline.js"></script>
 
-        <!-- Add your site or application content here -->
-
-        <!-- build:js scripts/scripts.js -->
-        <script src="scripts/vendor/jquery.min.js"></script>
-        <script src="scripts/vendor/lodash.min.js"></script>
-        <script src="scripts/vendor/underscore-min.js"></script>
-        <script src="scripts/vendor/backbone.js"></script>
-        <script src="scripts/vendor/raphael.js"></script>
-        <script src="scripts/vendor/raphael-svg-filter.js"></script>
-        <script src="scripts/vendor/Yanone_Kaffeesatz.font.js"></script>
-        <script src="scripts/vendor/jquery.handsontable.js"></script>
-        <script src="scripts/build/kb.js"></script>
-        <script src="scripts/build/board_model.js"></script>
-        <script src="scripts/build/ticket_model.js"></script>
-        <script src="scripts/build/user_model.js"></script>
-        <script src="scripts/build/ticketlist.js"></script>
-        <script src="scripts/build/userlist.js"></script>
-        <script src="scripts/build/board.js"></script>
-        <script src="scripts/build/ticket.js"></script>
-        <script src="scripts/build/ticket_view.js"></script>
-        <script src="scripts/build/ticket_detail_view_overlay.js"></script>
-        <!--script src="scripts/build/ticket_detail_view_blur.js"></script-->
-        <script src="scripts/build/board_view.js"></script>
-        <script src="scripts/build/product_backlog_view.js"></script>
-        <script src="scripts/build/app_router.js"></script>
-        <script src="scripts/build/app.js"></script>
-        <!-- endbuild -->
-    </body>
+<script src="scripts/test.js"></script>
+  </body>
 </html>
