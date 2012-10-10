@@ -8,17 +8,40 @@ var data = [
 
 var dataset = new recline.Model.Dataset({ records: data });
 
+
 var $el = $('#mygrid');
+/*
 var grid = new recline.View.SlickGrid({
   model: dataset,
   el: $el
 });
-grid.visible = true;
-grid.render();
-/*var grid = new recline.View.SlickGrid({
+*/
+var grid = new recline.View.SlkGrid({
+  model: dataset,
+  el: $el,
+  state: {
+    gridOptions: {editable: true, autoEdit: true },
+//    columnsWidth: [{column: "status", width: "120px"}],
+    columnsEditor: [
+      {column: "status", editor: Slick.Editors.YesNoSelect},
+      {column: "entered_od", editor: Slick.Editors.Dataset}
+    ]
+  }
+ // options: {
+ //    editable: true,
+ //    enableCellNavigation: true,
+ //    autoEdit: true,
+ //    columns: {
+ //      status: {editor: Slick.Editors.YesNoSelect},
+ //      entered_on: {editor: Slick.Editors.Date}
+ //    }
+ // }
+});
+/*
+var grid = new recline.View.Grid({
   model: dataset,
   el: $el
-});
+});*/
 grid.visible = true;
-grid.render();*/
+grid.render();
 
