@@ -1,29 +1,43 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <!-- you do not have to use bootstrap but we use it by default -->
     <link rel="stylesheet" href="scripts/vendor/recline/bootstrap/2.0.2/css/bootstrap.css" />
     <!-- CSS for relevant view components - here we just have grid -->
-    <link rel="stylesheet" href="styles/recline.css"/>
-    <link rel="stylesheet" href="styles/main.css"/>
+    <link rel="stylesheet" href="scripts/vendor/recline/recline.css"/>
     <link rel="stylesheet" href="scripts/vendor/recline/slickgrid/2.0.1/slick.grid.css"/>
+    <link rel="stylesheet" href="scripts/vendor/recline/jquery-ui-1.8.16.custom.css"/>
+    <link rel="stylesheet" href="styles/main.css"/>
+    <link rel="stylesheet" href="styles/recline-custom.css"/>
   </head>
   <body>
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="../../"><strong>Kb</strong> ... your way.</a>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+   <div class="row-fluid">
+    <div class="span12">
+      <div id="mygrid"></div>
+    </div>
+  </div>
+</div>
+    <!-- build:js scripts/scripts.js -->
+    <script type="text/javascript" src="scripts/vendor/recline/jquery/1.7.1/jquery.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/underscore/1.4.2/underscore.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/backbone/0.9.2/backbone.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/mustache/0.5.0-dev/mustache.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/bootstrap/2.0.2/bootstrap.js"></script>
 
-    <div id="mygrid" style="height: 400px"></div>
-<!-- 3rd party dependencies -->
-<script type="text/javascript" src="scripts/vendor/recline/jquery/1.7.1/jquery.js"></script>
-<script type="text/javascript" src="scripts/vendor/recline/underscore/1.1.6/underscore.js"></script>
-<script type="text/javascript" src="scripts/vendor/recline/backbone/0.5.1/backbone.js"></script>
-<script type="text/javascript" src="scripts/vendor/recline/mustache/0.5.0-dev/mustache.js"></script>
-<script type="text/javascript" src="scripts/vendor/recline/bootstrap/2.0.2/bootstrap.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/slickgrid/2.0.1/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/slickgrid/2.0.1/jquery.event.drag-2.0.min.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/slickgrid/2.0.1/slick.grid.min.js"></script>
+    <script type="text/javascript" src="scripts/vendor/recline/recline.js"></script>
+    <script src="scripts/build/kbapp.js"></script>
+    <!-- endbuild -->
 
-<script type="text/javascript" src="scripts/vendor/recline/slickgrid/2.0.1/jquery-ui-1.8.16.custom.min.js"></script>
-<script type="text/javascript" src="scripts/vendor/recline/slickgrid/2.0.1/jquery.event.drag-2.0.min.js"></script>
-<script type="text/javascript" src="scripts/vendor/recline/slickgrid/2.0.1/slick.grid.min.js"></script>
-<script type="text/javascript" src="scripts/vendor/recline.js"></script>
-<script type="text/javascript" src="scripts/views/slick.editors.js"></script>
-<script type="text/javascript" src="scripts/views/slkgrid.js"></script>
-
-<script src="scripts/test.js"></script>
   </body>
 </html>
