@@ -38,6 +38,5 @@ kanbansystem = new recline.View.MultiView
       view: grid
     }
   ]
-  sidebarViews: []
 
 
