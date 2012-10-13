@@ -1,3 +1,7 @@
+body {
+  padding-top: 60px;
+}
+
 /* Slick.Editors.Text, Slick.Editors.Date */
 input.editor-text {
   width: 100%;
@@ -98,5 +102,4 @@ input.editor-checkbox {
   padding: 0;
   border: 0;
 }
-
 

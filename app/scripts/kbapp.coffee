@@ -17,7 +17,14 @@ fields = [
 ]
 
 state = {
-      gridOptions: {editable: true, autoEdit: false, forceFitColumns: true, showHeaderRow: true, enableCellNavigation: true },
+      gridOptions: {
+        editable: true, 
+        autoEdit: false, 
+        forceFitColumns: true, 
+        showHeaderRow: true, 
+        enableCellNavigation: true,
+        autoHeight: true
+      },
       columnsEditor: [
         { column: 'title', editor: Slick.Editors.Text }
       ]
