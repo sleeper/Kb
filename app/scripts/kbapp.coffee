@@ -7,12 +7,12 @@ data = [
 ]
 fields = [
         {id: 'id', label: 'ID'},
-        {id: 'created_on', type: 'date'},
-        {id: 'entered_on', type: 'date'},
+        {id: 'title', label: 'Title'},
+        {id: 'created_on', type: 'date', label: "Creation"},
+        {id: 'entered_on', type: 'date', label: "Entered board"},
         {id: 'swimlane', label: 'Swimlane'},
         {id: 'status', label: 'Status'},
-        {id: 'user_id', 'label': 'User'},
-        {id: 'title', 'label': 'Title'},
+        {id: 'user_id', label: 'User'},
         {id: 'comment', label: 'Comment'}
 ]
 
@@ -30,6 +30,7 @@ state = {
       ]
 }
 
+
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 
 $el = $('#mygrid')
@@ -44,6 +45,11 @@ kanbansystem = new recline.View.MultiView
       label: 'Grid',
       view: grid
     }
+  ]
+  sidebarViews: [
+    id: 'filterEditor',
+    label: 'Filters',
+    view: new recline.View.FilterEditor({ model: dataset })
   ]
 
 
