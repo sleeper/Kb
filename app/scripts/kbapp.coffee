@@ -16,13 +16,14 @@ fields = [
         {id: 'comment', label: 'Comment'}
 ]
 
-state = {
+grid_state = {
       gridOptions: {
-        editable: true, 
-        autoEdit: false, 
-        forceFitColumns: true, 
-        showHeaderRow: true, 
+        editable: true,
+        autoEdit: false,
+        forceFitColumns: true,
+        showHeaderRow: true,
         enableCellNavigation: true,
+        enableAddRow: false,
         autoHeight: true
       },
       columnsEditor: [
@@ -30,16 +31,29 @@ state = {
       ]
 }
 
+board_state =
+  layout:
+    columns: [ 'backlog', 'in-progress', 'done' ]
+    swimlanes: [ 'projects', 'implementations']
 
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 
 $el = $('#mygrid')
-grid = new recline.View.SlickGrid({ model:dataset, state: state })
+grid = new recline.View.SlickGrid({ model:dataset, state: grid_state })
+board = new recline.View.KanbanBoard
+  model: dataset,
+  state: board_state
+
 
 kanbansystem = new recline.View.MultiView
   model: dataset
   el: $el
   views: [
+    {
+      id: 'board',
+      label: 'Board',
+      view: board
+    },
     { 
       id: 'grid',
       label: 'Grid',
