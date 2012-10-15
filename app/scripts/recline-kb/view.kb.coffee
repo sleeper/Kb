@@ -1,5 +1,5 @@
-recline = recline || {}
-recline.View ||= {}
+# recline = recline || {}
+# recline.View ||= {}
 
 class recline.View.KanbanBoard extends Backbone.View
   # Config notable keys:
