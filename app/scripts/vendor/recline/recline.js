@@ -3732,6 +3732,7 @@ my.SlickGrid = Backbone.View.extend({
     this.model.records.bind('add', this.render);
     this.model.records.bind('reset', this.render);
     this.model.records.bind('remove', this.render);
+    this.model.records.bind('change', this.render);
 
     var state = _.extend({
         hiddenColumns: [],

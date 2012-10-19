@@ -25,6 +25,8 @@ class Kanban.Ticket
       @el.remove()
       @el = @paper.image(@img, @x, @y, @width, @height)
 
+    remove: ()->
+      @el.remove()
 
   class Title
     y_offset: 10
@@ -78,7 +80,8 @@ class Kanban.Ticket
       $(@title).html( @text )
       @resize()
 
-
+    remove: ()->
+      @title_frame.parentNode.removeChild(@title_frame);
 
   constructor: (@board, @record)->
     @board.paper
@@ -156,6 +159,11 @@ class Kanban.Ticket
   update_avatar: ()->
     img = "../assets/imgs/#{@record.avatar}"
     @avatar.update img
+
+  clear: ()->
+    @title.remove()
+    @avatar.remove()
+    @frame.remove()
 
   draw: ()->
     [@x,@y] = @board.compute_absolute_coordinates @record.get('column'), @record.get('swimlane'),@record.get('x'), @record.get('y')

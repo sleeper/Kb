@@ -9,9 +9,10 @@ fields = [
         {id: 'id', label: 'ID'},
         {id: 'title', label: 'Title'},
         {id: 'created_on', type: 'date', label: "Creation"},
+        {id: 'on_board', label: 'on_board'},
         {id: 'entered_on', type: 'date', label: "Entered board"},
         {id: 'swimlane', label: 'Swimlane'},
-        {id: 'on_board', label: 'on_board'},
+        {id: 'column', label: 'Column'},
         {id: 'user_id', label: 'User'},
         {id: 'comment', label: 'Comment'}
 ]
@@ -27,7 +28,8 @@ grid_state = {
         autoHeight: true
       },
       columnsEditor: [
-        { column: 'title', editor: Slick.Editors.Text }
+        { column: 'title', editor: Slick.Editors.Text },
+        { column: 'on_board', editor: Slick.Editors.YesNoSelect }
       ]
 }
 
