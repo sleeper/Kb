@@ -40,7 +40,7 @@ dataset = new recline.Model.Dataset { records: data, fields: fields}
 
 $el = $('#mygrid')
 grid = new recline.View.SlickGrid({ model:dataset, state: grid_state })
-board = new recline.View.KanbanBoard
+board = new recline.View.Board
   model: dataset,
   state: board_state
 

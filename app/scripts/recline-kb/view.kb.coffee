@@ -1,7 +1,7 @@
 # recline = recline || {}
 # recline.View ||= {}
 
-class recline.View.KanbanBoard extends Backbone.View
+class recline.View.Board extends Backbone.View
   # Config notable keys:
   #
   #   * `model`: the dataset model to use
@@ -16,7 +16,7 @@ class recline.View.KanbanBoard extends Backbone.View
   initialize: (config)->
     self = @
     @el = $(@el);
-    @el.addClass('recline-kb');
+    @el.addClass('recline-board');
     _.bindAll(@, 'render');
     @model.records.bind('add', this.render);
     @model.records.bind('reset', this.render);
@@ -26,7 +26,17 @@ class recline.View.KanbanBoard extends Backbone.View
       }, config.state
     );
     @state = new recline.Model.ObjectState(state);
+    @board = new Kanban.Board @state.get('layout'), @el
+    @board.draw()
+    this.model.records.each (record)=>
+      # Keep only the ticket that are on board
+      if record.get('status') == 'board'
+        t = new Kanban.Ticket @board, record
+        t.draw()
+
 
   render: ()->
+
+
 
 
