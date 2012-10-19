@@ -30,7 +30,7 @@ class recline.View.Board extends Backbone.View
     @board.draw()
     this.model.records.each (record)=>
       # Keep only the ticket that are on board
-      if record.get('status') == 'board'
+      if record.get('on_board')
         t = new Kanban.Ticket @board, record
         t.draw()
 
