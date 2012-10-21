@@ -20,7 +20,6 @@ class recline.View.Board extends Backbone.View
     _.bindAll(@, 'render');
     @tickets = []
     @model.records.bind('add', this.render);
-    @model.records.bind('reset', this.render);
     @model.records.bind('remove', this.render);
     state = _.extend({
       layout: {}
@@ -29,15 +28,26 @@ class recline.View.Board extends Backbone.View
     @state = new recline.Model.ObjectState(state);
     @board = new Kanban.Board @state.get('layout'), @el
     @board.draw()
-    this.model.records.on 'reset', ()=>
-      console.log("FRED: reset received")
+
+    @model.records.on 'reset', ()=>
       @clear_tickets()
       @render_tickets()
+
+    @model.records.on 'change', (r)=>
+      # Let's find which ticket must be changed
+      ticket = _.find @tickets, (t)-> t.record.get('id') == r.get('id')
+      # If ticket is not supposed to be on board, remove it
+      if !r.get('on_board')
+        ticket.clear()
+      else
+        ticket.update()
+
     @render_tickets()
 
   clear_tickets: ()->
     _.each @tickets, (t)=>
       t.clear()
+    @tickets = []
 
   render_tickets: ()->
     this.model.records.each (record)=>

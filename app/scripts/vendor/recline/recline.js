@@ -9,17 +9,38 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
   //
   // General notes
   // 
+  // We need 2 things to make most requests:
+  //
+  // 1. CKAN API endpoint
+  // 2. ID of resource for which request is being made
+  //
+  // There are 2 ways to specify this information.
+  //
+  // EITHER (checked in order): 
+  //
   // * Every dataset must have an id equal to its resource id on the CKAN instance
-  // * You should set the CKAN API endpoint for requests by setting API_ENDPOINT value on this module (recline.Backend.Ckan.API_ENDPOINT)
+  // * The dataset has an endpoint attribute pointing to the CKAN API endpoint
+  //
+  // OR:
+  // 
+  // Set the url attribute of the dataset to point to the Resource on the CKAN instance. The endpoint and id will then be automatically computed.
 
   my.__type__ = 'ckan';
 
   // Default CKAN API endpoint used for requests (you can change this but it will affect every request!)
+  //
+  // DEPRECATION: this will be removed in v0.7. Please set endpoint attribute on dataset instead
   my.API_ENDPOINT = 'http://datahub.io/api';
 
   // ### fetch
   my.fetch = function(dataset) {
-    var wrapper = my.DataStore();
+    if (dataset.endpoint) {
+      var wrapper = my.DataStore(dataset.endpoint);
+    } else {
+      var out = my._parseCkanResourceUrl(dataset.url);
+      dataset.id = out.resource_id;
+      var wrapper = my.DataStore(out.endpoint);
+    }
     var dfd = $.Deferred();
     var jqxhr = wrapper.search({resource_id: dataset.id, limit: 0});
     jqxhr.done(function(results) {
@@ -55,8 +76,14 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
   }
 
   my.query = function(queryObj, dataset) {
+    if (dataset.endpoint) {
+      var wrapper = my.DataStore(dataset.endpoint);
+    } else {
+      var out = my._parseCkanResourceUrl(dataset.url);
+      dataset.id = out.resource_id;
+      var wrapper = my.DataStore(out.endpoint);
+    }
     var actualQuery = my._normalizeQuery(queryObj, dataset);
-    var wrapper = my.DataStore();
     var dfd = $.Deferred();
     var jqxhr = wrapper.search(actualQuery);
     jqxhr.done(function(results) {
@@ -89,15 +116,24 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
     }
 
     return that;
-  }
+  };
+
+  // Parse a normal CKAN resource URL and return API endpoint etc
+  //
+  // Normal URL is something like http://demo.ckan.org/dataset/some-dataset/resource/eb23e809-ccbb-4ad1-820a-19586fc4bebd
+  my._parseCkanResourceUrl = function(url) {
+    parts = url.split('/');
+    var len = parts.length;
+    return {
+      resource_id: parts[len-1],
+      endpoint: parts.slice(0,[len-4]).join('/') + '/api'
+    }
+  };
 
   var CKAN_TYPES_MAP = {
     'int4': 'integer',
     'int8': 'integer',
-    'float8': 'float',
-    'text': 'string',
-    'json': 'object',
-    'timestamp': 'date'
+    'float8': 'float'
   };
 
 }(jQuery, this.recline.Backend.Ckan));
@@ -105,16 +141,26 @@ this.recline = this.recline || {};
 this.recline.Backend = this.recline.Backend || {};
 this.recline.Backend.CSV = this.recline.Backend.CSV || {};
 
-(function(my) {
+// Note that provision of jQuery is optional (it is **only** needed if you use fetch on a remote file)
+(function(my, $) {
+
   // ## fetch
   //
-  // 3 options
+  // fetch supports 3 options depending on the attribute provided on the dataset argument
   //
-  // 1. CSV local fileobject -> HTML5 file object + CSV parser
-  // 2. Already have CSV string (in data) attribute -> CSV parser
-  // 2. online CSV file that is ajax-able -> ajax + csv parser
+  // 1. `dataset.file`: `file` is an HTML5 file object. This is opened and parsed with the CSV parser.
+  // 2. `dataset.data`: `data` is a string in CSV format. This is passed directly to the CSV parser
+  // 3. `dataset.url`: a url to an online CSV file that is ajax accessible (note this usually requires either local or on a server that is CORS enabled). The file is then loaded using $.ajax and parsed using the CSV parser (NB: this requires jQuery)
   //
-  // All options generates similar data and give a memory store outcome
+  // All options generates similar data and use the memory store outcome, that is they return something like:
+  //
+  // <pre>
+  // {
+  //   records: [ [...], [...], ... ],
+  //   metadata: { may be some metadata e.g. file name }
+  //   useMemoryStore: true
+  // }
+  // </pre>
   my.fetch = function(dataset) {
     var dfd = $.Deferred();
     if (dataset.file) {
@@ -152,6 +198,8 @@ this.recline.Backend.CSV = this.recline.Backend.CSV || {};
     return dfd.promise();
   };
 
+  // ## parseCSV
+  //
   // Converts a Comma Separated Values string into an array of arrays.
   // Each line in the CSV becomes an array.
   //
@@ -258,7 +306,7 @@ this.recline.Backend.CSV = this.recline.Backend.CSV || {};
     return out;
   };
 
-  // ### serializeCSV
+  // ## serializeCSV
   // 
   // Convert an Object or a simple array of arrays into a Comma
   // Separated Values string.
@@ -376,7 +424,7 @@ this.recline.Backend.CSV = this.recline.Backend.CSV || {};
   }
 
 
-}(this.recline.Backend.CSV));
+}(this.recline.Backend.CSV, jQuery));
 this.recline = this.recline || {};
 this.recline.Backend = this.recline.Backend || {};
 this.recline.Backend.DataProxy = this.recline.Backend.DataProxy || {};
@@ -862,7 +910,7 @@ this.recline.Backend.GDocs = this.recline.Backend.GDocs || {};
   // Convenience function to get GDocs JSON API Url from standard URL
   my.getGDocsAPIUrls = function(url) {
     // https://docs.google.com/spreadsheet/ccc?key=XXXX#gid=YYY
-    var regex = /.*spreadsheet\/ccc?.*key=([^#?&+]+).*gid=([\d]+).*/;
+    var regex = /.*spreadsheet\/ccc?.*key=([^#?&+]+)[^#]*(#gid=([\d]+).*)?/;
     var matches = url.match(regex);
     var key;
     var worksheet;
@@ -871,7 +919,10 @@ this.recline.Backend.GDocs = this.recline.Backend.GDocs || {};
     if(!!matches) {
         key = matches[1];
         // the gid in url is 0-based and feed url is 1-based
-        worksheet = parseInt(matches[2]) + 1;
+        worksheet = parseInt(matches[3]) + 1;
+        if (isNaN(worksheet)) {
+          worksheet = 1;
+        }
         urls = {
           worksheet  : 'https://spreadsheets.google.com/feeds/list/'+ key +'/'+ worksheet +'/public/values?alt=json',
           spreadsheet: 'https://spreadsheets.google.com/feeds/worksheets/'+ key +'/public/basic?alt=json'
@@ -1027,12 +1078,19 @@ this.recline.Backend.Memory = this.recline.Backend.Memory || {};
       }
 
       function range(record, filter) {
+        var startnull = (filter.start == null || filter.start === '');
+        var stopnull = (filter.stop == null || filter.stop === '');
         var parse = getDataParser(filter);
         var value = parse(record[filter.field]);
         var start = parse(filter.start);
         var stop  = parse(filter.stop);
 
-        return (value >= start && value <= stop);
+        // if at least one end of range is set do not allow '' to get through
+        // note that for strings '' <= {any-character} e.g. '' <= 'a'
+        if ((!startnull || !stopnull) && value === '') {
+          return false;
+        }
+        return ((startnull || value >= start) && (stopnull || value <= stop));
       }
 
       function geo_distance() {
@@ -1122,6 +1180,71 @@ this.recline.Backend.Memory = this.recline.Backend.Memory || {};
   };
 
 }(jQuery, this.recline.Backend.Memory));
+this.recline = this.recline || {};
+this.recline.Backend = this.recline.Backend || {};
+this.recline.Backend.Solr = this.recline.Backend.Solr || {};
+
+(function($, my) {
+  my.__type__ = 'solr';
+
+  // ### fetch
+  //
+  // dataset must have a solr or url attribute pointing to solr endpoint
+  my.fetch = function(dataset) {
+    var jqxhr = $.ajax({
+      url: dataset.solr || dataset.url,
+      data: {
+        rows: 1,
+        wt: 'json'
+      },
+      dataType: 'jsonp',
+      jsonp: 'json.wrf'
+    });
+    var dfd = $.Deferred();
+    jqxhr.done(function(results) {
+      // if we get 0 results we cannot get fields
+      var fields = []
+      if (results.response.numFound > 0) {
+        fields =  _.map(_.keys(results.response.docs[0]), function(fieldName) {
+          return { id: fieldName };
+        });
+      }
+      var out = {
+        fields: fields,
+        useMemoryStore: false
+      };
+      dfd.resolve(out);
+    });
+    return dfd.promise();
+  }
+
+  // TODO - much work on proper query support is needed!!
+  my.query = function(queryObj, dataset) {
+    var q = queryObj.q || '*:*';
+    var data = {
+      q: q,
+      rows: queryObj.size,
+      start: queryObj.from,
+      wt: 'json'
+    };
+    var jqxhr = $.ajax({
+      url: dataset.solr || dataset.url,
+      data: data,
+      dataType: 'jsonp',
+      jsonp: 'json.wrf'
+    });
+    var dfd = $.Deferred();
+    jqxhr.done(function(results) {
+      var out = {
+        total: results.response.numFound,
+        hits: results.response.docs
+      };
+      dfd.resolve(out);  
+    });
+    return dfd.promise();
+  };
+
+}(jQuery, this.recline.Backend.Solr));
 this.recline = this.recline || {};
 this.recline.Data = this.recline.Data || {};
 
@@ -1362,11 +1485,12 @@ my.Dataset = Backbone.Model.extend({
     } 
 
     // fields is an array of strings (i.e. list of field headings/ids)
-    if (fields && fields.length > 0 && typeof fields[0] === 'string') {
+    if (fields && fields.length > 0 && typeof(fields[0]) != 'object') {
       // Rename duplicate fieldIds as each field name needs to be
       // unique.
       var seen = {};
       fields = _.map(fields, function(field, index) {
+        field = field.toString();
         // cannot use trim as not supported by IE7
         var fieldId = field.replace(/^\s+|\s+$/g, '');
         if (fieldId === '') {
@@ -1637,6 +1761,9 @@ my.Field = Backbone.Model.extend({
     if (this.attributes.label === null) {
       this.set({label: this.id});
     }
+    if (this.attributes.type.toLowerCase() in this._typeMap) {
+      this.attributes.type = this._typeMap[this.attributes.type.toLowerCase()];
+    }
     if (options) {
       this.renderer = options.renderer;
       this.deriver = options.deriver;
@@ -1646,6 +1773,17 @@ my.Field = Backbone.Model.extend({
     }
     this.facets = new my.FacetList();
   },
+  _typeMap: {
+    'text': 'string',
+    'double': 'number',
+    'float': 'number',
+    'numeric': 'number',
+    'int': 'integer',
+    'datetime': 'date-time',
+    'bool': 'boolean',
+    'timestamp': 'date-time',
+    'json': 'object'
+  },
   defaultRenderers: {
     object: function(val, field, doc) {
       return JSON.stringify(val);
@@ -1653,7 +1791,7 @@ my.Field = Backbone.Model.extend({
     geo_point: function(val, field, doc) {
       return JSON.stringify(val);
     },
-    'float': function(val, field, doc) {
+    'number': function(val, field, doc) {
       var format = field.get('format'); 
       if (format === 'percentage') {
         return val + '%';
@@ -1972,7 +2110,8 @@ my.Graph = Backbone.View.extend({
       var xfield = self.model.fields.get(self.state.attributes.group);
 
       // time series
-      var isDateTime = xfield.get('type') === 'date';
+      var xtype = xfield.get('type');
+      var isDateTime = (xtype === 'date' || xtype === 'date-time' || xtype  === 'time');
 
       if (self.model.records.models[parseInt(x)]) {
         x = self.model.records.models[parseInt(x)].get(self.state.attributes.group);
@@ -2086,7 +2225,8 @@ my.Graph = Backbone.View.extend({
         var x = doc.getFieldValue(xfield);
 
         // time series
-        var isDateTime = xfield.get('type') === 'date';
+        var xtype = xfield.get('type');
+        var isDateTime = (xtype === 'date' || xtype === 'date-time' || xtype  === 'time');
         
         if (isDateTime) {
           // datetime
@@ -3732,7 +3872,7 @@ my.SlickGrid = Backbone.View.extend({
     this.model.records.bind('add', this.render);
     this.model.records.bind('reset', this.render);
     this.model.records.bind('remove', this.render);
-    this.model.records.bind('change', this.render);
+    this.model.records.bind('change', this.data_changed, this)
 
     var state = _.extend({
         hiddenColumns: [],
@@ -3750,6 +3890,19 @@ my.SlickGrid = Backbone.View.extend({
   },
 
   events: {
+  },
+
+  data_changed: function(model) {
+    // Ignore if the grid is not yet drawn
+    if (!this.grid) {
+      return;
+    }
+
+    // Let's find the row corresponding to the index
+    var row_index = this.grid.getData().getModelRow( model );
+    this.grid.invalidateRow(row_index);
+    this.grid.getData().updateItem(model, row_index);
+    this.grid.render();
   },
 
   render: function() {
@@ -3804,7 +3957,7 @@ my.SlickGrid = Backbone.View.extend({
     });
 
     // Order them if there is ordering info on the state
-    if (this.state.get('columnsOrder')){
+    if (this.state.get('columnsOrder') && this.state.get('columnsOrder').length > 0) {
       visibleColumns = visibleColumns.sort(function(a,b){
         return _.indexOf(self.state.get('columnsOrder'),a.id) > _.indexOf(self.state.get('columnsOrder'),b.id) ? 1 : -1;
       });
@@ -3823,6 +3976,15 @@ my.SlickGrid = Backbone.View.extend({
     }
     columns = columns.concat(tempHiddenColumns);
 
+    // Transform a model object into a row
+    function toRow(m) {
+      var row = {};
+      self.model.fields.each(function(field){
+        row[field.id] = m.getFieldValueUnrendered(field);
+      });
+      return row;
+    }
+
     function RowSet() {
       var models = [];
       var rows = [];
@@ -3836,16 +3998,17 @@ my.SlickGrid = Backbone.View.extend({
       this.getItem = function(index) { return rows[index];}
       this.getItemMetadata= function(index) { return {};}
       this.getModel= function(index) { return models[index]; }
+      this.getModelRow = function(m) { return $.inArray(m, models);}
+      this.updateItem = function(m,i) { 
+        rows[i] = toRow(m);
+        models[i] = m
+      };
     };
 
     var data = new RowSet();
 
     this.model.records.each(function(doc){
-      var row = {};
-      self.model.fields.each(function(field){
-        row[field.id] = doc.getFieldValueUnrendered(field);
-      });
-      data.push(doc, row);
+      data.push(doc, toRow(doc));
     });
 
     this.grid = new Slick.Grid(this.el, data, visibleColumns, options);
@@ -4572,17 +4735,17 @@ my.FilterEditor = Backbone.View.extend({
       <a href="#" class="js-add-filter">Add filter</a> \
       <form class="form-stacked js-add" style="display: none;"> \
         <fieldset> \
-          <label>Filter type</label> \
-          <select class="filterType"> \
-            <option value="term">Term (text)</option> \
-            <option value="range">Range</option> \
-            <option value="geo_distance">Geo distance</option> \
-          </select> \
           <label>Field</label> \
           <select class="fields"> \
             {{#fields}} \
             <option value="{{id}}">{{label}}</option> \
             {{/fields}} \
+          </select> \
+          <label>Filter type</label> \
+          <select class="filterType"> \
+            <option value="term">Value</option> \
+            <option value="range">Range</option> \
+            <option value="geo_distance">Geo distance</option> \
           </select> \
           <button type="submit" class="btn">Add</button> \
         </fieldset> \
@@ -4603,7 +4766,7 @@ my.FilterEditor = Backbone.View.extend({
         <fieldset> \
           <legend> \
             {{field}} <small>{{type}}</small> \
-            <a class="js-remove-filter" href="#" title="Remove this filter">&times;</a> \
+            <a class="js-remove-filter" href="#" title="Remove this filter" data-filter-id="{{id}}">&times;</a> \
           </legend> \
           <input type="text" value="{{term}}" name="term" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
         </fieldset> \
@@ -4614,7 +4777,7 @@ my.FilterEditor = Backbone.View.extend({
         <fieldset> \
           <legend> \
             {{field}} <small>{{type}}</small> \
-            <a class="js-remove-filter" href="#" title="Remove this filter">&times;</a> \
+            <a class="js-remove-filter" href="#" title="Remove this filter" data-filter-id="{{id}}">&times;</a> \
           </legend> \
           <label class="control-label" for="">From</label> \
           <input type="text" value="{{start}}" name="start" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
@@ -4628,7 +4791,7 @@ my.FilterEditor = Backbone.View.extend({
         <fieldset> \
           <legend> \
             {{field}} <small>{{type}}</small> \
-            <a class="js-remove-filter" href="#" title="Remove this filter">&times;</a> \
+            <a class="js-remove-filter" href="#" title="Remove this filter" data-filter-id="{{id}}">&times;</a> \
           </legend> \
           <label class="control-label" for="">Longitude</label> \
           <input type="text" value="{{point.lon}}" name="lon" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
@@ -4688,7 +4851,7 @@ my.FilterEditor = Backbone.View.extend({
   onRemoveFilter: function(e) {
     e.preventDefault();
     var $target = $(e.target);
-    var filterId = $target.closest('.filter').attr('data-filter-id');
+    var filterId = $target.attr('data-filter-id');
     this.model.queryState.removeFilter(filterId);
   },
   onTermFiltersUpdate: function(e) {

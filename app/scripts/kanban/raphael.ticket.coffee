@@ -81,11 +81,17 @@ class Kanban.Ticket
       @resize()
 
     remove: ()->
-      @title_frame.parentNode.removeChild(@title_frame);
+      if @title_frame.parentNode
+        @title_frame.parentNode.removeChild(@title_frame);
 
+  # This is our Ticket constructor.
+  # You have to pass it the board object as well
+  # as the record the new Kanban ticket
+  # is supposed to represent.
+  #
   constructor: (@board, @record)->
+    @cleared = true
     @board.paper
-
 
   dragged: (dx, dy)=>
     @x = @ox + dx
@@ -161,11 +167,23 @@ class Kanban.Ticket
     @avatar.update img
 
   clear: ()->
+    @cleared = true
     @title.remove()
     @avatar.remove()
     @frame.remove()
 
+  # Update the ticket position and representation following 
+  # a change in the record
+  update: ()->
+    if @cleared
+      @draw()
+    else
+      @update_title()
+      @update_avatar()
+      @move()
+
   draw: ()->
+    @cleared = false
     [@x,@y] = @board.compute_absolute_coordinates @record.get('column'), @record.get('swimlane'),@record.get('x'), @record.get('y')
 
     @draw_frame()
