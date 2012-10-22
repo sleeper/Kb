@@ -146,7 +146,8 @@ class Kanban.Ticket
   setup_events: (e)->
     _.each ['click', 'dblclick'], (evt)=>
       if @events[evt]
-        e[evt]( @events[evt] )
+        e[evt] ()=> @events[evt](@)
+         
 
   draw_frame: ()->
     @frame = @board.paper.rect( @x, @y, @width, @height)
@@ -187,6 +188,7 @@ class Kanban.Ticket
       @update_title()
       @update_avatar()
       @move()
+
   on: (evt, callback)=>
     @events[evt] = callback
 
@@ -201,8 +203,4 @@ class Kanban.Ticket
     @avatar = new Avatar(@board.paper, img, @x, @y)
 
     @frame.drag(@dragged, @start, @up)
-    # @frame.dblclick ()=> 
-    #   console.log "Double click on ticket " + @record.get('id')
-    #   # We do want to display the ticket details
-    #   @record.collection.trigger 'details', @record
     @

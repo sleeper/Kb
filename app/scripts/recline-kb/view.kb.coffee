@@ -39,7 +39,7 @@ class recline.View.Board extends Backbone.View
 
       if !ticket
         # Let's creste a new one !
-        ticket = new Kanban.Ticket @board, r
+        ticket = @create_ticket r
 
       # If ticket is not supposed to be on board, remove it
       if !r.get('on_board')
@@ -58,12 +58,16 @@ class recline.View.Board extends Backbone.View
       t.clear()
     @tickets = []
 
+  create_ticket: (r)->
+    t = new Kanban.Ticket @board, r
+    t.on 'dblclick', (t)=> console.log "FRED: ticket for record " + t.record.get('id') + " is double-clicked !!!!"
+    t
+
   render_tickets: ()->
     this.model.records.each (record)=>
       # Keep only the ticket that are on board
       if record.get('on_board')
-        t = new Kanban.Ticket @board, record
-        t.on 'dblclick', ()=> console.log "FRED: ticket is double-clicked !!!!"
+        t = @create_ticket record 
         t.draw()
         @tickets.push t
 
