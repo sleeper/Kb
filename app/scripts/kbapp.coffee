@@ -8,13 +8,13 @@ data = [
 fields = [
         {id: 'id', label: 'ID'},
         {id: 'title', label: 'Title'},
+        {id: 'comment', label: 'Comment'},
         {id: 'created_on', type: 'date', label: "Creation"},
         {id: 'on_board', label: 'on_board'},
         {id: 'entered_on', type: 'date', label: "Entered board"},
         {id: 'swimlane', label: 'Swimlane'},
         {id: 'column', label: 'Column'},
-        {id: 'user_id', label: 'User'},
-        {id: 'comment', label: 'Comment'}
+        {id: 'user_id', label: 'User'}
 ]
 
 grid_state = {

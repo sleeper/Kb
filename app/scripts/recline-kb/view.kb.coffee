@@ -29,6 +29,9 @@ class recline.View.Board extends Backbone.View
     @board = new Kanban.Board @state.get('layout'), @el
     @board.draw()
 
+    # Add a space for the detailed information
+    @add_details_container()
+
     @model.records.on 'reset', ()=>
       @clear_tickets()
       @render_tickets()
@@ -53,6 +56,46 @@ class recline.View.Board extends Backbone.View
 
     @render_tickets()
 
+
+  resume_overlay: ()=>
+    # Navigate to this ticket
+    @ticket_detail.empty()
+    @ticket_detail.hide()
+    @overlay.toggle()
+    # @ticket_detail.removeClass('visible')
+    # Backbone.history.navigate('/tickets', true)
+
+  add_details_container: ()->
+    $(@el).append('<div id="overlay">&nbsp;</div>')
+    @overlay = $('#overlay', $(@el))
+    @overlay.show()
+    @overlay.on('click', @resume_overlay)
+    $(@el).append("<div id=\"ticket_detail\"></div>")
+    @ticket_detail = $('#ticket_detail', $(@el))
+    # @resize()
+
+  display_ticket_detail: (t)=>
+    @overlay.toggle()
+    @ticket_detail.append("<h1>#{t.record.get('title')}</h1>")
+    @ticket_detail.append("<div class=\"date\"> #{t.record.get('created_on')} / #{t.record.get('entered_on')}</div>")
+    @ticket_detail.append("<div class=\"comment\">#{t.record.get('comment')}</div>")
+
+    # FIXME: Add the avatar of the user OR a button for the user to take care 
+    #        of the ticket.
+
+    img = "../assets/imgs/#{t.record.avatar}"
+    @ticket_detail.append("<img class=\"avatar\" src=\"#{img}\">")
+    # $('.avatar', @ticket_detail).on 'click', () => t.model.set('user_id', Kb.board.current_user.get('id'))
+    @ticket_detail.css('opacity',1)
+    @ticket_detail.show();    
+    width = @ticket_detail.width()
+    height = @ticket_detail.height()
+    @ticket_detail.css
+                position: 'fixed',
+                left: ($(window).width() - width) / 2 
+                top: ($(window).height() - height) / 2
+  
+
   clear_tickets: ()->
     _.each @tickets, (t)=>
       t.clear()
@@ -60,7 +103,8 @@ class recline.View.Board extends Backbone.View
 
   create_ticket: (r)->
     t = new Kanban.Ticket @board, r
-    t.on 'dblclick', (t)=> console.log "FRED: ticket for record " + t.record.get('id') + " is double-clicked !!!!"
+    t.on 'dblclick', (t)=> 
+      @display_ticket_detail(t)
     t
 
   render_tickets: ()->
