@@ -32,6 +32,11 @@ class recline.View.Board extends Backbone.View
     # Add a space for the detailed information
     @add_details_container()
 
+    @bind_events()
+    @render_tickets()
+
+
+  bind_events: ()->
     @model.records.on 'reset', ()=>
       @clear_tickets()
       @render_tickets()
@@ -45,25 +50,17 @@ class recline.View.Board extends Backbone.View
         ticket = @create_ticket r
 
       # If ticket is not supposed to be on board, remove it
-      if !r.get('on_board')
+      if r.get('status') == 'on board'
         ticket.clear()
       else
         ticket.update()
 
-    @model.records.on 'details', (r)=>
-      console.log "FRED: details requested on record " + r.get('id')
-      # FIXME: display detailled view for given ticket
-
-    @render_tickets()
-
 
   resume_overlay: ()=>
-    # Navigate to this ticket
     @ticket_detail.empty()
     @ticket_detail.hide()
     @overlay.toggle()
-    # @ticket_detail.removeClass('visible')
-    # Backbone.history.navigate('/tickets', true)
+
 
   add_details_container: ()->
     $(@el).append('<div id="overlay">&nbsp;</div>')
@@ -110,7 +107,7 @@ class recline.View.Board extends Backbone.View
   render_tickets: ()->
     this.model.records.each (record)=>
       # Keep only the ticket that are on board
-      if record.get('on_board')
+      if record.get('status') == 'on board'
         t = @create_ticket record 
         t.draw()
         @tickets.push t

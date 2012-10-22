@@ -1,11 +1,25 @@
-[ ] Catch 'resize' event for the window (includes zoom)
-    and notify board elements
-[ ] If a moved ticket land on a non-droppable cell,
-    move it back to its original position
-[ ] Add avatars to ticket
-[ ] Double click on ticket opens an edition view
-[ ] WebSocket protocol to devise
-[ ] Backend
-[ ] Styling
+
+[ ] ID: not numeric but alphanumeric  ==> to be discussed
+[x] Project name
+[x] priority needed (in order to sort by priority)
+[x] POC: the one who is proficient on this item
+[ ] on_board to become a multi-status field
+[ ] wake-up date for all 'on hold' items
+[ ] Target date
+[ ] Estimated sized
+[ ] Start date (i.e. date when the ticket migrated from backlog column to real action)
+[ ] Finished date: will be automatic
+[ ] Help needed
+[ ] Expedite
+[ ] Urgent (to be treated ASAP): mainly a signal to show this record has a high priority (i.e. next one to be taken), and is mostly relevant only for 'backlog' column
+[ ] Need for wiki that would store rules, reference documents
+[ ] Visual: target dates
+[ ] Visual: start dates (this ticket takes ages)
+[ ] Visual: entered date
+[ ] WebSockets
+[ ] Users
+[ ] Read-only 
+[ ] User management
+[ ] Handle column properties (backlog, done, on-hold, ...)
 
 
