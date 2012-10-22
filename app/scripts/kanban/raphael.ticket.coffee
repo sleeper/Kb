@@ -91,6 +91,7 @@ class Kanban.Ticket
   #
   constructor: (@board, @record)->
     @cleared = true
+    @events = {}
     @board.paper
 
   dragged: (dx, dy)=>
@@ -142,6 +143,10 @@ class Kanban.Ticket
     @title.move @x, @y
     @avatar.move @x, @y
 
+  setup_events: (e)->
+    _.each ['click', 'dblclick'], (evt)=>
+      if @events[evt]
+        e[evt]( @events[evt] )
 
   draw_frame: ()->
     @frame = @board.paper.rect( @x, @y, @width, @height)
@@ -158,6 +163,7 @@ class Kanban.Ticket
     filter1.appendOperation(blur1);
     filter1.appendOperation(offset1);
     filter1.appendOperation(merge1); 
+    @setup_events( @frame ) 
 
   update_title: ()->
     @title.update_title @record.get('title')
@@ -181,6 +187,8 @@ class Kanban.Ticket
       @update_title()
       @update_avatar()
       @move()
+  on: (evt, callback)=>
+    @events[evt] = callback
 
   draw: ()->
     @cleared = false
@@ -193,8 +201,8 @@ class Kanban.Ticket
     @avatar = new Avatar(@board.paper, img, @x, @y)
 
     @frame.drag(@dragged, @start, @up)
-    @frame.dblclick ()=> 
-      console.log "Double click on ticket " + @record.get('id')
-      # Notify my view
-      @tview.dblclick()
+    # @frame.dblclick ()=> 
+    #   console.log "Double click on ticket " + @record.get('id')
+    #   # We do want to display the ticket details
+    #   @record.collection.trigger 'details', @record
     @

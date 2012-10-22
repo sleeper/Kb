@@ -2,8 +2,8 @@ data = [
   {id: 1, title: "Buy some bread", on_board: true, column: "backlog", swimlane: "projects", x: 60, y:60, user_id: 1, created_on: "2012-09-20 15:32:12", entered_on: "2012-09-22 09:23:21", comment:" This is a simple task just to check"},
   {id: 2, title: "Buy some milk", on_board: true, column: "in-progress", swimlane: "implementations", x:80, y: 60, user_id: 2, created_on: "2012-09-21 17:32:12", entered_on: "2012-09-23 19:13:11", comment:" This is a simple task just to check"},
   {id: 3, title: "Start working", on_board: true, column: "backlog", swimlane: "implementations", x:80, y: 60, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "2012-09-23 19:13:11", comment:"This is the most ennoying ticket ever written"},
-  {id: 4, title: "Still thinking about it", on_board: false, column: "", swimlane: "", x:0, y:0, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "", comment:"This is the most ennoying ticket ever written"},
-  {id: 5, title: "Are you sure ?", on_board: false, column: "", swimlane: "", x:0, y: 0, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "", comment:"This is the most ennoying ticket ever written"}
+  {id: 4, title: "Still thinking about it", on_board: false, column: "backlog", swimlane: "implementations", x:0, y:0, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "", comment:"This is the most ennoying ticket ever written"},
+  {id: 5, title: "Are you sure ?", on_board: false, column: "backlog", swimlane: "projects", x:0, y: 0, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "", comment:"This is the most ennoying ticket ever written"}
 ]
 fields = [
         {id: 'id', label: 'ID'},
@@ -22,14 +22,14 @@ grid_state = {
         editable: true,
         autoEdit: false,
         forceFitColumns: true,
-        showHeaderRow: true,
         enableCellNavigation: true,
         enableAddRow: false,
         autoHeight: true
       },
       columnsEditor: [
         { column: 'title', editor: Slick.Editors.Text },
-        { column: 'on_board', editor: Slick.Editors.YesNoSelect }
+        { column: 'on_board', editor: Slick.Editors.YesNoSelect },
+        { column: 'comment', editor: Slick.Editors.LongText }
       ]
 }
 

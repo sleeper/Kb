@@ -36,11 +36,20 @@ class recline.View.Board extends Backbone.View
     @model.records.on 'change', (r)=>
       # Let's find which ticket must be changed
       ticket = _.find @tickets, (t)-> t.record.get('id') == r.get('id')
+
+      if !ticket
+        # Let's creste a new one !
+        ticket = new Kanban.Ticket @board, r
+
       # If ticket is not supposed to be on board, remove it
       if !r.get('on_board')
         ticket.clear()
       else
         ticket.update()
+
+    @model.records.on 'details', (r)=>
+      console.log "FRED: details requested on record " + r.get('id')
+      # FIXME: display detailled view for given ticket
 
     @render_tickets()
 
@@ -54,6 +63,7 @@ class recline.View.Board extends Backbone.View
       # Keep only the ticket that are on board
       if record.get('on_board')
         t = new Kanban.Ticket @board, record
+        t.on 'dblclick', ()=> console.log "FRED: ticket is double-clicked !!!!"
         t.draw()
         @tickets.push t
 
