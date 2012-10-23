@@ -51,9 +51,9 @@ class recline.View.Board extends Backbone.View
 
       # If ticket is not supposed to be on board, remove it
       if r.get('status') == 'on board'
-        ticket.clear()
-      else
         ticket.update()
+      else
+        ticket.clear()
 
 
   resume_overlay: ()=>
