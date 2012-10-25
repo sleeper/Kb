@@ -35,10 +35,29 @@ grid_state = {
       ]
 }
 
+# The board (or we should say boards) layout is an array composed of several boards
+# or individual cells (i.e. degraded board)
+# Each item of the array is either:
+#  * a hash: with 2 different keys: columns and swimlanes. Each of these columns
+#    is associated to an array value which is the list of columns and swimlanes
+#    Note that the name of a column (plain string) can be postfixed by the type of
+#    the column, preceded by ':' (e.g. 'backlog:done'). The type of a column can be:
+#       - start: entry for this swimlane
+#       - end: output for the swimlane (i.e. 'done')
+#       - onhold: ticket placed in this cell/column will be put on hold (i.e. no more displayed
+#            on the board, and associated with a wake-up date)
+
 board_state =
-  layout:
-    columns: [ 'backlog', 'in-progress', 'done' ]
-    swimlanes: [ 'projects', 'implementations']
+  layout: [
+    {    
+      columns: [ 'backlog:start', 'in-progress', 'done:end' ]
+      swimlanes: [ 'projects', 'implementations']
+    },
+    {
+      cell: ['On hold:onhold']
+    }
+
+  ]
 
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 
