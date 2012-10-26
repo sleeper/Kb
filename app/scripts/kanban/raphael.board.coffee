@@ -124,7 +124,7 @@ class Kanban.Config
         @swimlanes[swimlane] = new Kanban.Swimlane swimlane
 
       for column in columns
-        (name,type) = column.split(':')
+        [name,type] = column.split(':')
         @columns[name] = new Kanban.Column name, type
 
   #
@@ -157,7 +157,7 @@ class Kanban.Config
       # Let's normalize: we're looking only at the first element
       cell = item.cell[0]
       delete item[cell]
-      (name, type) = cell.split(':')
+      [name, type] = cell.split(':')
       type ?='default' 
       item.columns = [ cell ]
       item.swimlanes = [ name ]
