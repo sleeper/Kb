@@ -31,7 +31,8 @@ grid_state = {
       columnsEditor: [
         { column: 'title', editor: Slick.Editors.Text },
         { column: 'status', editor: Slick.Editors.Text },
-        { column: 'comment', editor: Slick.Editors.LongText }
+        { column: 'comment', editor: Slick.Editors.LongText },
+        { column: 'project', editor: Slick.Editors.Text }
       ]
 }
 

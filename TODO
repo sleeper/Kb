@@ -1,5 +1,3 @@
-
-[ ] ID: not numeric but alphanumeric  ==> to be discussed
 [x] Project name
 [x] priority needed (in order to sort by priority)
 [x] POC: the one who is proficient on this item
@@ -7,7 +5,7 @@
 [ ] wake-up date for all 'on hold' items
 [ ] Target date
 [ ] Estimated sized
-[ ] Start date (i.e. date when the ticket migrated from backlog column to real action)
+[ ] Start date (i.e. date when the ticket migrated from backlog column to real action). Must be automatic.
 [ ] Finished date: will be automatic
 [ ] Help needed
 [ ] Expedite
@@ -21,5 +19,7 @@
 [ ] Read-only 
 [ ] User management
 [ ] Handle column properties (backlog, done, on-hold, ...)
+[ ] Need to differentiate if a ticket has been analysed or not (i.e. new one in the product backlog)
+
 
 
