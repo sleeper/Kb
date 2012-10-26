@@ -50,13 +50,12 @@ grid_state = {
 board_state =
   layout: [
     {    
-      columns: [ 'backlog:start', 'in-progress', 'done:end' ]
+      columns: [ 'backlog:start', 'in-progress', 'done:end' ],
       swimlanes: [ 'projects', 'implementations']
     },
     {
       cell: ['On hold:onhold']
     }
-
   ]
 
 dataset = new recline.Model.Dataset { records: data, fields: fields}

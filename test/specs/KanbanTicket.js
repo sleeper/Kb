@@ -1,8 +1,9 @@
 describe("Tests for Kanban tickets", function() {
-	describe("init", function(){
+
+		describe("init", function(){
 		var el;
 		var layout = {
-			columns: [ 'backlog', 'in-progress', 'done' ]
+			columns: [ 'backlog', 'in-progress', 'done' ],
     		swimlanes: [ 'projects', 'implementations']
 		};
 
@@ -13,6 +14,4 @@ describe("Tests for Kanban tickets", function() {
 		
 		it("should create the ticket as 'cleared'");
 	});
-
-
 });
