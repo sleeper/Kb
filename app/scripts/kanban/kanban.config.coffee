@@ -12,10 +12,10 @@ class Kanban.Config
       @swimlanes = {}
       @columns = {}
 
-      for swimlane in swimlanes
+      for swimlane in cfg.swimlanes
         @swimlanes[swimlane] = new Kanban.Swimlane swimlane
 
-      for column in columns
+      for column in cfg.columns
         [name,type] = column.split(':')
         @columns[name] = new Kanban.Column name, type
 
@@ -24,44 +24,42 @@ class Kanban.Config
   constructor: (cfg)->
     # Let's first check the consistency of the config: we should receive an Array
     # with a defined set of element
-    if !(cfg instanceof Array)
-      # FIXME: We should yelll out LOUD !
-      console.log "ERROR: Cfg is not en array !"
-      return
+    # if !(cfg instanceof Array)
+    throw new TypeError('layout is not ana array.') unless (cfg instanceof Array)
+    throw new TypeError('empty layout') if cfg.length == 0
 
     # Look at items
-    #$.each cfg, (i)=> 
+    # Throws exceptions if layout is not valid
     for item in cfg
-      if !@check_item(item)
-        return {}
+      @check_item(item)
 
     # So now we can start creating the config
     @bundles = []
     # $.each cfg, (i)=>
     for item in cfg
-      @bundles.push new Kanban.Config.Bundle item
+      @bundles.push new Bundle item
 
 
   check_item: (item)->
     # Items should either have 2 keys (columns/swimlanes) or only one (cell)
     # in which case we're normalizing it.
     if item.cell
+      if (typeof item.cell isnt 'string') && !(item.cell instanceof String)
+        throw new TypeError('cell attribute must point to a String')
       # Let's normalize: we're looking only at the first element
-      cell = item.cell[0]
+      cell = item.cell
       delete item[cell]
       [name, type] = cell.split(':')
       item.columns = [ cell ]
       item.swimlanes = [ name ]
 
     if !item.columns? || !item.swimlanes?
-      # FIXME: Shout really LOUD
-      console.log "ERROR: The item must have both columns and swimlanes defined"
-      return false
+      throw new TypeError( item + ' has not cell, columns or swimlanes attribute')
 
     if !(item.columns instanceof Array) || !(item.swimlanes instanceof Array)
-      # FIXME: Shout really LOUD3yy
-      console.log "ERROR: item's columns and swimlanes must be Arrays"
-      return false
+      throw new TypeError( item + ': columns and swimlanes attributes must be arrays')
+
+    true
 
 
 

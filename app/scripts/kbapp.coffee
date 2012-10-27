@@ -54,7 +54,7 @@ board_state =
       swimlanes: [ 'projects', 'implementations']
     },
     {
-      cell: ['On hold:onhold']
+      cell: 'On hold:onhold'
     }
   ]
 
