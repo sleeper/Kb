@@ -5,7 +5,7 @@ class Kanban.Column
 class Kanban.Swimlane
   constructor: (@name)->
 
-class Kanban.Config
+class Kanban.Layout
 
   class Bundle
     constructor: (cfg)->
@@ -33,7 +33,7 @@ class Kanban.Config
     for item in cfg
       @check_item(item)
 
-    # So now we can start creating the config
+    # So now we can start creating the Layout
     @bundles = []
     # $.each cfg, (i)=>
     for item in cfg
