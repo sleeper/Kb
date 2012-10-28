@@ -48,15 +48,22 @@ grid_state = {
 #            on the board, and associated with a wake-up date)
 
 board_state =
-  layout: [
-    {    
-      columns: [ 'backlog:start', 'in-progress', 'done:end' ],
-      swimlanes: [ 'projects', 'implementations']
-    },
-    {
-      cell: 'On hold:onhold'
-    }
-  ]
+  layout: {
+    bundles: [
+      {    
+        name: 'board',
+        columns: [ 'backlog:start', 'in-progress', 'done:end' ],
+        swimlanes: [ 'projects', 'implementations']
+      },
+      {
+        name: 'on hold',
+        cell: 'On hold:onhold'
+      }
+    ],
+    positions: [
+      [ 'board', 'on hold']
+    ]
+  }
 
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 

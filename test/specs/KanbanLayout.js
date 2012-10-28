@@ -29,25 +29,57 @@ describe("Tests for Kanban layout", function() {
 	describe("constructor", function(){
 
 		it("should work for simple layout", function(){
-			var layout = [
-			{ 
-				columns: ['backlog', 'wip', 'done'],
-				swimlanes: ['projects', 'ptrs']
-			}
-			];
+			var layout = {
+				layout: [ 
+				{ 
+					name: 'board',
+					columns: ['backlog', 'wip', 'done'],
+					swimlanes: ['projects', 'ptrs']
+				}
+				],
+				positions: ['board']
+		};
 			var cfg = new Kanban.Layout(layout);
 			cfg.should.be.an.instanceof(Kanban.Layout);
 		});
 
 		describe("should reject", function() {
-			it("non array layout", function(){
-				var t = function() { new Kanban.Layout( 1 );}
+
+			it("object with missing keys", function() {
+				var t = function() { new Kanban.Layout( {layout: ['foo']} );}
 				t.should.throw( TypeError );
 			});
+
+			it("non-array layout", function(){
+				var t = function() { new Kanban.Layout( {layout:{}, positions:[]} );}
+				t.should.throw( TypeError );
+			});
+
+			it("non-array positions", function(){
+				var t = function() { new Kanban.Layout( {layout:[], positions:{}} );}
+				t.should.throw( TypeError );
+			});
+
 			it("empty layout", function(){
-				var t = function() { new Kanban.Layout( [] );}
+				var t = function() { new Kanban.Layout( {layout:[], positions: []} );}
 				t.should.throw( TypeError );
 			});
+
+			it("empty positions", function() {
+				var t = function() { new Kanban.Layout( {layout: [{name: 'fred', cell: 'prj'}]} );}
+				t.should.throw( TypeError );
+			});
+
+			it("positions with invalid format", function() {
+				var t = function() { new Kanban.Layout( {layout: [{name: 'fred', cell: 'prj'}], positions: 'foo'} );}
+				t.should.throw( TypeError );
+			});
+
+			it("positions with invalid content", function() {
+				var t = function() { new Kanban.Layout( {layout: [{name: 'fred', cell: 'prj'}], positions: ['foo']} );}
+				t.should.throw( TypeError );
+			});
+
 			it("invalid bundle", function() {
 				var t = function() { new Kanban.Layout( [{foo: 'bar'}] );}
 				t.should.throw( TypeError );
@@ -67,7 +99,17 @@ describe("Tests for Kanban layout", function() {
 		});
 
 		it("should accept 'cell'", function() {
-			var cfg = new Kanban.Layout([{cell: 'fred'}]);
+			var layout = {
+				layout: [ 
+				{ 
+					name: 'board',
+					cell: ['projects']
+				}
+				],
+				positions: ['board']
+		};
+
+			var cfg = new Kanban.Layout(layout);
 			cfg.bundles[0].should.have.property('swimlanes');
 			cfg.bundles[0].should.have.property('columns');
 		});

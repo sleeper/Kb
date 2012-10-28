@@ -29,7 +29,46 @@ class Kanban.Layout
       [@width, @height]
 
   #
-  # FIXME: Document extensively the format of the config
+  # This object describes the layout of the Kanban board.
+  # A board can be composed of several bundles, each of them representing either
+  # a 'full board' (i.e. columns and swimlanes), or single cells ('trash bin' for example)
+  # This constructor can be passed 2 parameters:
+  # * the config (bundles and relative position of the bundles)
+  # * the measurement to use for column width, swimlanes height, ... (optional)
+  #
+  # # Layout config
+  #   The layout config gives the config of the various bundle plus their 
+  #   relative positions.
+  #   It is implemented as an object with 2 properties:
+  #    * bundles: pointing to an array of the board's bundles
+  #    * positions: pointing to an array of positions
+  #  
+  #  ## Bundles
+  #    The bundles'configuration is represented as an array with on item per bundle
+  #    Each of these items is an object that can have to following properties:
+  #     * name: bundle name for reference in the positions array
+  #     * swimlanes: Name of the swimlanes that composed this bundle
+  #     * columns: the columns of the bundle
+  #     * cell: shortcut when the bundle is composed of only 1 column and 1 swimlane
+  # 
+  #    Note that the `cell` and (`columns`, `swimlanes`) are mutualy exclusive.
+  #    The swimlanes are represented by strings (the name of the swimlane).
+  #    The columns are represented by strings, repesenting then name and optionally the 
+  #    type of column. The name and optional type are separated by a `:`.
+  #    For example, `foo:onhold` represents a column named `foo` with type `onhold`.
+  #     
+  #    Each column can have the following type:
+  #      * start: this is where the tickets for the swimlane are starting. There can be only 
+  #               1 start column per swimlane.
+  #      * end: this is where the tickets for the swimlane are terminating (i.e. done). There can be only 
+  #               1 end column per swimlane.
+  #      * onhold: in this column, the tickets will be considered as 'on hold" and a 'wake up date' will
+  #                be requested.
+  #
+  # # Measurements
+  #
+  #  FIXME
+  #
   constructor: (cfg, meas={})->
     sizes = 
         swimlane_height: 10
@@ -42,8 +81,10 @@ class Kanban.Layout
     # Let's first check the consistency of the config: we should receive an Array
     # with a defined set of element
     # if !(cfg instanceof Array)
-    throw new TypeError('layout is not ana array.') unless (cfg instanceof Array)
-    throw new TypeError('empty layout') if cfg.length == 0
+    throw new TypeError('Missing keys') unless cfg.layout? && cfg.positions?
+    throw new TypeError('Layout is not an array') unless (cfg.layout instanceof Array)
+    throw new TypeError('Positions is not an array') unless (cfg.positions instanceof Array)
+    throw new TypeError('Empty layout') if cfg.layout.length == 0
 
     # FIXME: extend measure_default with meas
     for prop in meas
@@ -59,6 +100,12 @@ class Kanban.Layout
     # $.each cfg, (i)=>
     for item in cfg
       @bundles.push new Kanban.Layout.Bundle item, sizes
+
+    # Check position has the right format
+    for name in cfg.positions
+      # Look for the name in the list of Bundle
+      b = (bundle for bundle in @bundles when bundle.name is name)
+      throw new TypeError(name +'bundle does not exist') if b.length == 0
 
 
   check_item: (item)->
