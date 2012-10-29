@@ -1,20 +1,46 @@
 describe("Tests for Kanban.Layout.Bundle", function(){
 	describe("constructor", function() {
 		it("should work", function() {
-			var b = new Kanban.Layout.Bundle({swimlanes:[ 'foo', 'bar'], columns: ['backlog', 'wip', 'done']});
+			var b = new Kanban.Layout.Bundle({name: 'fred', swimlanes:[ 'foo', 'bar'], columns: ['backlog', 'wip', 'done']});
 			b.should.be.an.instanceof(Kanban.Layout.Bundle);
 			b.swimlanes['foo'].should.exist;
 			b.swimlanes['bar'].should.exist;
 			b.swimlanes['bar'].should.be.an.instanceof(Kanban.Swimlane);
 			b.columns['wip'].should.exist;
 			b.columns['wip'].should.be.an.instanceof(Kanban.Column);
+			b.name.should.exist;
+			b.name.should.equal('fred');
+		});
+
+		describe("it shoud reject ", function() {
+			it("invalid bundle", function() {
+				var t = function() { new Kanban.Layout.Bundle( {foo: 'bar'} );}
+				t.should.throw( TypeError );
+			});
+			it("missing name", function() {
+				var t = function() { new Kanban.Layout.Bundle( {swimlanes:[], columns:[]} );}
+				t.should.throw( TypeError );
+			});
+
+			it("non-array swimlanes", function() {
+				var t = function() { new Kanban.Layout.Bundle( {name: 'fred', swimlanes:1, columns:[]} );}
+				t.should.throw( TypeError );
+			});
+			it("non-array columns", function() {
+				var t = function() { new Kanban.Layout.Bundle( {name: "fred", columns: 1, swimlanes:[]} );}
+				t.should.throw( TypeError );
+			});
+			it("non-string cell", function() {
+				var t = function() { new Kanban.Layout.Bundle( {name: "fred", cell: 1} );}
+				t.should.throw( TypeError );
+			});
 		});
 	});
 
 	describe("size", function() {
 		it("should return the size of the bundle", function() {
 			cfg = { swimlane_height: 10, column_width: 10, swimlane_title_width: 10, column_title_height: 10, column_margin: 10, swimlane_margin: 10};
-			var b = new Kanban.Layout.Bundle({swimlanes:[ 'foo', 'bar'], columns: ['backlog', 'wip', 'done']}, cfg);
+			var b = new Kanban.Layout.Bundle({name: 'fred', swimlanes:[ 'foo', 'bar'], columns: ['backlog', 'wip', 'done']}, cfg);
 			var width = 3 * cfg.column_width + cfg.swimlane_title_width + cfg.column_margin;
 			var height = 2 * cfg.swimlane_height + cfg.column_title_height + cfg.swimlane_margin;
 			var size = b.size();
@@ -80,22 +106,6 @@ describe("Tests for Kanban layout", function() {
 				t.should.throw( TypeError );
 			});
 
-			it("invalid bundle", function() {
-				var t = function() { new Kanban.Layout( [{foo: 'bar'}] );}
-				t.should.throw( TypeError );
-			});
-			it("non-array swimlanes", function() {
-				var t = function() { new Kanban.Layout( [{swimlanes:1, columns:[]}] );}
-				t.should.throw( TypeError );
-			});
-			it("non-array columns", function() {
-				var t = function() { new Kanban.Layout( [{columns: 1, swimlanes:[]}] );}
-				t.should.throw( TypeError );
-			});
-			it("non-string cell", function() {
-				var t = function() { new Kanban.Layout( [{cell: 1}] );}
-				t.should.throw( TypeError );
-			});
 		});
 
 		it("should accept 'cell'", function() {
@@ -103,7 +113,7 @@ describe("Tests for Kanban layout", function() {
 				layout: [ 
 				{ 
 					name: 'board',
-					cell: ['projects']
+					cell: 'projects'
 				}
 				],
 				positions: ['board']
@@ -119,6 +129,8 @@ describe("Tests for Kanban layout", function() {
 	});
 
 	describe("compute_viewport_size", function(){
-
+		it("should work when there's only 1 bundle");
+		it("should work for several bundle on a line");
+		it("should work for several bundle on lines and columns");
 	});
 });

@@ -14,6 +14,11 @@ class Kanban.Layout
       @nb_of_swimlanes = 0
       @nb_of_columns = 0
 
+      # Check everything is fine with the input
+      @check(cfg)
+
+      @name = cfg.name
+      
       for swimlane in cfg.swimlanes
         @nb_of_swimlanes += 1
         @swimlanes[swimlane] = new Kanban.Swimlane swimlane
@@ -23,6 +28,27 @@ class Kanban.Layout
         [name,type] = column.split(':')
         @columns[name] = new Kanban.Column name, type
 
+    check: (cfg)->
+      throw new TypeError('Missing name') unless cfg.name?
+
+      if cfg.cell
+        if (typeof cfg.cell isnt 'string') && !(cfg.cell instanceof String)
+          throw new TypeError('cell attribute must point to a String')
+        # Let's normalize: we're looking only at the first element
+        cell = cfg.cell
+        delete cfg[cell]
+        [name, type] = cell.split(':')
+        cfg.columns = [ cell ]
+        cfg.swimlanes = [ name ]
+
+      if !cfg.columns? || !cfg.swimlanes?
+        throw new TypeError( 'Bundle has not cell, columns or swimlanes attribute')
+
+      if !(cfg.columns instanceof Array) || !(cfg.swimlanes instanceof Array)
+        throw new TypeError( 'Bundle: columns and swimlanes attributes must be arrays')
+
+      true
+     
     size: ()->
       @width ?= @nb_of_columns * @sizes.column_width + @sizes.column_margin + @sizes.swimlane_title_width
       @height ?= @nb_of_swimlanes * @sizes.swimlane_height + @sizes.swimlane_margin + @sizes.column_title_height
@@ -92,42 +118,42 @@ class Kanban.Layout
 
     # Look at items
     # Throws exceptions if layout is not valid
-    for item in cfg
-      @check_item(item)
+    # for item in cfg
+    #   @check_item(item)
 
     # So now we can start creating the Layout
     @bundles = []
     # $.each cfg, (i)=>
-    for item in cfg
+    for item in cfg.layout
       @bundles.push new Kanban.Layout.Bundle item, sizes
 
     # Check position has the right format
     for name in cfg.positions
       # Look for the name in the list of Bundle
       b = (bundle for bundle in @bundles when bundle.name is name)
-      throw new TypeError(name +'bundle does not exist') if b.length == 0
+      throw new TypeError('Bundle does not exist') if b.length == 0
 
 
-  check_item: (item)->
+  # check_item: (item)->
     # Items should either have 2 keys (columns/swimlanes) or only one (cell)
     # in which case we're normalizing it.
-    if item.cell
-      if (typeof item.cell isnt 'string') && !(item.cell instanceof String)
-        throw new TypeError('cell attribute must point to a String')
-      # Let's normalize: we're looking only at the first element
-      cell = item.cell
-      delete item[cell]
-      [name, type] = cell.split(':')
-      item.columns = [ cell ]
-      item.swimlanes = [ name ]
+    # if item.cell
+    #   if (typeof item.cell isnt 'string') && !(item.cell instanceof String)
+    #     throw new TypeError('cell attribute must point to a String')
+    #   # Let's normalize: we're looking only at the first element
+    #   cell = item.cell
+    #   delete item[cell]
+    #   [name, type] = cell.split(':')
+    #   item.columns = [ cell ]
+    #   item.swimlanes = [ name ]
 
-    if !item.columns? || !item.swimlanes?
-      throw new TypeError( item + ' has not cell, columns or swimlanes attribute')
+    # if !item.columns? || !item.swimlanes?
+    #   throw new TypeError( item + ' has not cell, columns or swimlanes attribute')
 
-    if !(item.columns instanceof Array) || !(item.swimlanes instanceof Array)
-      throw new TypeError( item + ': columns and swimlanes attributes must be arrays')
+    # if !(item.columns instanceof Array) || !(item.swimlanes instanceof Array)
+    #   throw new TypeError( item + ': columns and swimlanes attributes must be arrays')
 
-    true
+    # true
 
   compute_view_port_size: ()->
     console.log "FRED: FIXME"
