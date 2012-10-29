@@ -18,7 +18,7 @@ class Kanban.Layout
       @check(cfg)
 
       @name = cfg.name
-      
+
       for swimlane in cfg.swimlanes
         @nb_of_swimlanes += 1
         @swimlanes[swimlane] = new Kanban.Swimlane swimlane
@@ -96,13 +96,14 @@ class Kanban.Layout
   #  FIXME
   #
   constructor: (cfg, meas={})->
-    sizes = 
+    @sizes = 
         swimlane_height: 10
         column_width: 10
         swimlane_title_width: 10
         column_title_height: 10
         column_margin: 10
         swimlane_margin: 10
+        bundle_margin: 10
 
     # Let's first check the consistency of the config: we should receive an Array
     # with a defined set of element
@@ -114,7 +115,7 @@ class Kanban.Layout
 
     # FIXME: extend measure_default with meas
     for prop in meas
-      sizes[prop] = meas[prop]
+      @sizes[prop] = meas[prop]
 
     # Look at items
     # Throws exceptions if layout is not valid
@@ -125,7 +126,7 @@ class Kanban.Layout
     @bundles = []
     # $.each cfg, (i)=>
     for item in cfg.layout
-      @bundles.push new Kanban.Layout.Bundle item, sizes
+      @bundles.push new Kanban.Layout.Bundle item, @sizes
 
     # Check position has the right format
     for name in cfg.positions
@@ -155,8 +156,15 @@ class Kanban.Layout
 
     # true
 
-  compute_view_port_size: ()->
-    console.log "FRED: FIXME"
+  compute_viewport_size: ()->
+    @width = 0
+    @height = 0
+
+    bsize = (bundle.size() for bundle in @bundles).reduce (x,y)=> [x[0] + y[0] + @sizes.bundle_margin, x[1] + y[1]];
+
+    @width = bsize[0]
+    @height = bsize[1] 
+    [@width, @height]
 
 
 

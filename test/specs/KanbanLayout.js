@@ -39,7 +39,7 @@ describe("Tests for Kanban.Layout.Bundle", function(){
 
 	describe("size", function() {
 		it("should return the size of the bundle", function() {
-			cfg = { swimlane_height: 10, column_width: 10, swimlane_title_width: 10, column_title_height: 10, column_margin: 10, swimlane_margin: 10};
+			var cfg = { swimlane_height: 10, column_width: 10, swimlane_title_width: 10, column_title_height: 10, column_margin: 10, swimlane_margin: 10};
 			var b = new Kanban.Layout.Bundle({name: 'fred', swimlanes:[ 'foo', 'bar'], columns: ['backlog', 'wip', 'done']}, cfg);
 			var width = 3 * cfg.column_width + cfg.swimlane_title_width + cfg.column_margin;
 			var height = 2 * cfg.swimlane_height + cfg.column_title_height + cfg.swimlane_margin;
@@ -129,8 +129,60 @@ describe("Tests for Kanban layout", function() {
 	});
 
 	describe("compute_viewport_size", function(){
-		it("should work when there's only 1 bundle");
-		it("should work for several bundle on a line");
+		var sizes = { swimlane_height: 10, 
+					  column_width: 10, 
+					  swimlane_title_width: 10, 
+					  column_title_height: 10, 
+					  column_margin: 10, 
+					  swimlane_margin: 10,
+					  bundle_margin: 10
+					};
+
+		it("should work when there's only 1 bundle", function(){
+			var layout = {
+				layout: [ 
+				{ 
+					name: 'board',
+					columns: ['backlog', 'wip', 'done'],
+					swimlanes: ['projects', 'ptrs']
+				}
+				],
+				positions: ['board']
+			};
+			
+			var cfg = new Kanban.Layout(layout);
+			var bsize = cfg.bundles[0].size();
+			var size = cfg.compute_viewport_size();
+			size.should.eql( bsize );
+		});
+
+		it("should work for several bundle on a line", function() {
+			var layout = {
+				layout: [ 
+				{ 
+					name: 'board',
+					columns: ['backlog', 'wip', 'done'],
+					swimlanes: ['projects', 'ptrs']
+				},
+				{ name: 'onhold', cell: 'On Old'}
+				],
+				positions: ['board', 'onhold']
+			};
+			
+			var cfg = new Kanban.Layout(layout);
+			var size = cfg.compute_viewport_size();
+			// var bsize = (bundle.size() for bundle in cfg.bundles).reduce (x,y)-> x + sizes.bundle_margin;
+			var bsize = [0,0];
+			cfg.bundles.forEach(function(b) {
+				var s =  b.size();
+				bsize[0] += s[0] + sizes.bundle_margin;
+				bsize[1] += s[1];
+			});
+			bsize[0] -= sizes.bundle_margin;
+
+			size.should.eql( bsize );
+		});
+
 		it("should work for several bundle on lines and columns");
 	});
 });
