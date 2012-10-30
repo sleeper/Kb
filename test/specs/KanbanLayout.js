@@ -53,7 +53,7 @@ describe("Tests for Kanban.Layout.Bundle", function(){
 describe("Tests for Kanban layout", function() {
 
 	describe("constructor", function(){
-
+		it("should check that a given swimlane belongs to only one bundle");
 		it("should work for simple layout", function(){
 			var layout = {
 				layout: [ 
@@ -159,7 +159,14 @@ describe("Tests for Kanban layout", function() {
 			cfg.bundles['board'].should.have.property('columns');
 		});
 
-		it("should accept typed column");
+		describe("Typed columns", function() {
+			it("should accept start column");
+			it("should accept end column");
+			it("should accept nohold column");
+			it("should check that there's only one start command by bundle");
+			it("should check that there's only one end command by bundle");
+
+		});
 		
 	});
 
