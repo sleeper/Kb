@@ -123,47 +123,81 @@ class Kanban.Layout
     #   @check_item(item)
 
     # So now we can start creating the Layout
-    @bundles = []
-    # $.each cfg, (i)=>
+    @bundles = {} 
     for item in cfg.layout
-      @bundles.push new Kanban.Layout.Bundle item, @sizes
+      kl = new Kanban.Layout.Bundle item, @sizes
+      @bundles[kl.name] = kl
 
     # Check position has the right format
-    for name in cfg.positions
-      # Look for the name in the list of Bundle
-      b = (bundle for bundle in @bundles when bundle.name is name)
-      throw new TypeError('Bundle does not exist') if b.length == 0
+    @positions = @check_positions(cfg.positions)
 
 
-  # check_item: (item)->
-    # Items should either have 2 keys (columns/swimlanes) or only one (cell)
-    # in which case we're normalizing it.
-    # if item.cell
-    #   if (typeof item.cell isnt 'string') && !(item.cell instanceof String)
-    #     throw new TypeError('cell attribute must point to a String')
-    #   # Let's normalize: we're looking only at the first element
-    #   cell = item.cell
-    #   delete item[cell]
-    #   [name, type] = cell.split(':')
-    #   item.columns = [ cell ]
-    #   item.swimlanes = [ name ]
+  check_positions: (pos)->
+    # Positions are either array of strings (i.e. the name of the bundles, all on the same 'line')
+    # or an array of arrays: each "subarray" represent a "line" of bundle
+    # For example if I do want the following arrangement:
+    #   
+    #       A                             B
+    #   +-----+-----+-----+-----+     +---------+
+    #   |     |     |     |     |     |         |
+    #   |     |     |     |     |     |         |
+    #   +-----+-----+-----+-----+     +---------+
+    #
+    #      C
+    #   +-----+
+    #   |     |
+    #   |     |
+    #   +-----+
+    # where A, B and C are the name of the bundles, we'll use the following positions:
+    #  [ ['A', 'B'], ['C'] ]
+    #
 
-    # if !item.columns? || !item.swimlanes?
-    #   throw new TypeError( item + ' has not cell, columns or swimlanes attribute')
+    # FIXME: Check that *all* the items are string ...
+    if (typeof pos[0] is 'string') || (pos[0] instanceof String)
+      # Mono line
+      for name in pos
+        # Look for the name in the list of Bundle
+        throw new TypeError('Bundle does not exist') unless @bundles[name]
+      # Normalize it
+      pos = [ pos ]
+    else if (pos[0] instanceof Array)
+      # Multi-line ...
+      # FIXME: Check all items of all the lines are strings
+      for line in pos
+        for name in line
+          # Look for the name in the list of Bundle
+          throw new TypeError('Bundle does not exist') unless @bundles[name]
+    pos
 
-    # if !(item.columns instanceof Array) || !(item.swimlanes instanceof Array)
-    #   throw new TypeError( item + ': columns and swimlanes attributes must be arrays')
+  # The size of a line is:
+  #  * the sum of the width of each of the line bundle (plus the bundle margin between each bundle)
+  #  * the maximum height of all of the line's bundles
 
-    # true
+  line_size: (line)->
+    # Compute the size of each bundle
+    bundle_sizes = (@bundles[name].size() for name in line)
+
+
+    width = bundle_sizes.reduce ((x,y)=> x + y[0] + @sizes.bundle_margin), 0
+    width -= @sizes.bundle_margin
+    list_of_height = (s[1] for s in bundle_sizes)
+    height = Math.max.apply(null, list_of_height)
+    [width, height]
+
 
   compute_viewport_size: ()->
     @width = 0
     @height = 0
 
-    bsize = (bundle.size() for bundle in @bundles).reduce (x,y)=> [x[0] + y[0] + @sizes.bundle_margin, x[1] + y[1]];
+    # The with will be the maximum width for all the lines
+    # The height will be the height of each line plus the bundle margin between each line
+    # So let's compute the size of each line
+    line_sizes = (@line_size(line) for line in @positions)
 
-    @width = bsize[0]
-    @height = bsize[1] 
+    @height = line_sizes.reduce ((x,y)=> x + y[1] + @sizes.bundle_margin),0
+    @height -= @sizes.bundle_margin
+    @width = Math.max.apply(null, ( s[0] for s in line_sizes))
+
     [@width, @height]
 
 

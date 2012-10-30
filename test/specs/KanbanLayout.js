@@ -106,6 +106,41 @@ describe("Tests for Kanban layout", function() {
 				t.should.throw( TypeError );
 			});
 
+			describe("positions can be:", function() {
+				it("an array with only bundle names -- one line of bundles", function() {
+					var layout = {
+						layout: [ 
+						{ 
+							name: 'board',
+							columns: ['backlog', 'wip', 'done'],
+							swimlanes: ['projects', 'ptrs']
+						}
+						],
+						positions: ['board']
+					};
+					var l = new Kanban.Layout( layout );
+					l.should.be.an.instanceof( Kanban.Layout);
+				});
+
+				it("an array with a collection of arrays -- bundle on several lines", function() {
+					var layout = {
+						layout: [ 
+						{ 
+							name: 'board',
+							columns: ['backlog', 'wip', 'done'],
+							swimlanes: ['projects', 'ptrs']
+						}, {
+							name: 'onhold',
+							cell: 'On Hold'
+						}
+						],
+						positions: [['board'],['onhold']]
+					};
+					var l = new Kanban.Layout( layout );
+					l.should.be.an.instanceof( Kanban.Layout);					
+				});
+			});
+
 		});
 
 		it("should accept 'cell'", function() {
@@ -120,8 +155,8 @@ describe("Tests for Kanban layout", function() {
 		};
 
 			var cfg = new Kanban.Layout(layout);
-			cfg.bundles[0].should.have.property('swimlanes');
-			cfg.bundles[0].should.have.property('columns');
+			cfg.bundles['board'].should.have.property('swimlanes');
+			cfg.bundles['board'].should.have.property('columns');
 		});
 
 		it("should accept typed column");
@@ -151,7 +186,7 @@ describe("Tests for Kanban layout", function() {
 			};
 			
 			var cfg = new Kanban.Layout(layout);
-			var bsize = cfg.bundles[0].size();
+			var bsize = cfg.bundles['board'].size();
 			var size = cfg.compute_viewport_size();
 			size.should.eql( bsize );
 		});
@@ -171,18 +206,26 @@ describe("Tests for Kanban layout", function() {
 			
 			var cfg = new Kanban.Layout(layout);
 			var size = cfg.compute_viewport_size();
-			// var bsize = (bundle.size() for bundle in cfg.bundles).reduce (x,y)-> x + sizes.bundle_margin;
-			var bsize = [0,0];
-			cfg.bundles.forEach(function(b) {
-				var s =  b.size();
-				bsize[0] += s[0] + sizes.bundle_margin;
-				bsize[1] += s[1];
-			});
-			bsize[0] -= sizes.bundle_margin;
-
+			var bsize = [90,40];
 			size.should.eql( bsize );
 		});
 
-		it("should work for several bundle on lines and columns");
+		it("should work for several bundle on lines and columns", function() {
+			var layout = {
+				layout: [ 
+				{ 
+					name: 'board',
+					columns: ['backlog', 'wip', 'done'],
+					swimlanes: ['projects', 'ptrs']
+				},
+				{ name: 'onhold', cell: 'On Old'}
+				],
+				positions: [['board'], ['onhold']]
+			};
+			var cfg = new Kanban.Layout(layout);
+			var size = cfg.compute_viewport_size();
+			var bsize = [50,80];
+			size.should.eql( bsize );
+		});
 	});
 });
