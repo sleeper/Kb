@@ -1,3 +1,4 @@
+window.Kanban = window.Kanban || {}
 
 class Kanban.Column
   on_drop_start: (swimlane, column, ticket)=>
@@ -124,10 +125,10 @@ class Kanban.Layout
     # Let's first check the consistency of the config: we should receive an Array
     # with a defined set of element
     # if !(cfg instanceof Array)
-    throw new TypeError('Missing keys') unless cfg.layout? && cfg.positions?
-    throw new TypeError('Layout is not an array') unless (cfg.layout instanceof Array)
+    throw new TypeError('Missing keys') unless cfg.bundles? && cfg.positions?
+    throw new TypeError('Bundles is not an array') unless (cfg.bundles instanceof Array)
     throw new TypeError('Positions is not an array') unless (cfg.positions instanceof Array)
-    throw new TypeError('Empty layout') if cfg.layout.length == 0
+    throw new TypeError('Empty bundles') if cfg.bundles.length == 0
 
     # FIXME: extend measure_default with meas
     for prop in meas
@@ -140,13 +141,17 @@ class Kanban.Layout
 
     # So now we can start creating the Layout
     @bundles = {} 
-    for item in cfg.layout
+    for item in cfg.bundles
       kl = new Kanban.Layout.Bundle item, @sizes
       @bundles[kl.name] = kl
 
     # Check position has the right format
     @positions = @check_positions(cfg.positions)
 
+  each_bundle: (cb)->
+    for line in @positions
+      for name in line
+        cb( @bundles[name])
 
   check_positions: (pos)->
     # Positions are either array of strings (i.e. the name of the bundles, all on the same 'line')

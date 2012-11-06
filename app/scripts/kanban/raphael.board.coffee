@@ -112,7 +112,7 @@ class Kanban.Board
 
   constructor: (cfg, @el) ->
     @_cells = new Kanban.CellCache()
-    @layout = @new Kanban.Layout(cfg)
+    @layout = new Kanban.Layout(cfg)
     [@width, @height] = @layout.compute_viewport_size()
 
     # Size correctly the container
@@ -124,15 +124,6 @@ class Kanban.Board
       $('.ticket').trigger('window:resized')
 
     @paper = Raphael jnode[0], @width, @height
-
-  compute_sizes: () ->
-    cw = Kanban.Cell.column_width
-    stw = Kanban.Cell.swimlane_title_width
-    sh = Kanban.Cell.swimlane_height
-    cth = Kanban.Cell.column_title_height
-    width = @config.columns.length * cw + stw + 2
-    height = @config.swimlanes.length * sh + cth + 2
-    [width, height]
 
   # Each ticket on the board has a x and y coordinate, relative to 
   # the cell it is placed in.
@@ -190,6 +181,6 @@ class Kanban.Board
 
   draw: () ->
     # Let's draw cells
-    @config.each (bundle)=> @drawBundle(bundle)
+    @layout.each_bundle (bundle)=> bundle.draw()
 
 

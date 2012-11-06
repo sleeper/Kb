@@ -56,7 +56,7 @@ describe("Tests for Kanban layout", function() {
 		it("should check that a given swimlane belongs to only one bundle");
 		it("should work for simple layout", function(){
 			var layout = {
-				layout: [ 
+				bundles: [ 
 				{ 
 					name: 'board',
 					columns: ['backlog', 'wip', 'done'],
@@ -109,7 +109,7 @@ describe("Tests for Kanban layout", function() {
 			describe("positions can be:", function() {
 				it("an array with only bundle names -- one line of bundles", function() {
 					var layout = {
-						layout: [ 
+						bundles: [ 
 						{ 
 							name: 'board',
 							columns: ['backlog', 'wip', 'done'],
@@ -124,7 +124,7 @@ describe("Tests for Kanban layout", function() {
 
 				it("an array with a collection of arrays -- bundle on several lines", function() {
 					var layout = {
-						layout: [ 
+						bundles: [ 
 						{ 
 							name: 'board',
 							columns: ['backlog', 'wip', 'done'],
@@ -145,7 +145,7 @@ describe("Tests for Kanban layout", function() {
 
 		it("should accept 'cell'", function() {
 			var layout = {
-				layout: [ 
+				bundles: [ 
 				{ 
 					name: 'board',
 					cell: 'projects'
@@ -162,7 +162,7 @@ describe("Tests for Kanban layout", function() {
 		describe("Typed columns", function() {
 			before(function(){
 				this.layout = {
-					layout: [ 
+					bundles: [ 
 					{ 
 						name: 'board',
 						columns: ['backlog:start', 'in progress', 'done:end'],
@@ -206,6 +206,35 @@ describe("Tests for Kanban layout", function() {
 		
 	});
 
+	describe("each", function(){
+		it("should iterate over bundles, line by line", function() {
+			var layout = {
+				bundles: [ 
+				{ 
+					name: 'board',
+					columns: ['backlog', 'in progress', 'done'],
+					swimlanes: ['projects']
+				},
+				{
+					name: 'trash',
+					cell: 'Trash'
+				},
+				{
+					name: 'bellow',
+					cell: 'On Hold:onhold'
+				}
+				],
+				positions: [['board', 'trash'], ['bellow']]
+		};
+		var acc = "";
+		var cfg = new Kanban.Layout(layout);
+		cfg.each_bundle(function(b) {
+			acc += b.name + " ";
+		})
+		acc.should.equal("board trash bellow ");
+		})
+	});
+
 	describe("compute_viewport_size", function(){
 		var sizes = { swimlane_height: 10, 
 					  column_width: 10, 
@@ -218,7 +247,7 @@ describe("Tests for Kanban layout", function() {
 
 		it("should work when there's only 1 bundle", function(){
 			var layout = {
-				layout: [ 
+				bundles: [ 
 				{ 
 					name: 'board',
 					columns: ['backlog', 'wip', 'done'],
@@ -236,7 +265,7 @@ describe("Tests for Kanban layout", function() {
 
 		it("should work for several bundle on a line", function() {
 			var layout = {
-				layout: [ 
+				bundles: [ 
 				{ 
 					name: 'board',
 					columns: ['backlog', 'wip', 'done'],
@@ -255,7 +284,7 @@ describe("Tests for Kanban layout", function() {
 
 		it("should work for several bundle on lines and columns", function() {
 			var layout = {
-				layout: [ 
+				bundles: [ 
 				{ 
 					name: 'board',
 					columns: ['backlog', 'wip', 'done'],
