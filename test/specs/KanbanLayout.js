@@ -160,9 +160,45 @@ describe("Tests for Kanban layout", function() {
 		});
 
 		describe("Typed columns", function() {
-			it("should accept start column");
-			it("should accept end column");
-			it("should accept nohold column");
+			before(function(){
+				this.layout = {
+					layout: [ 
+					{ 
+						name: 'board',
+						columns: ['backlog:start', 'in progress', 'done:end'],
+						swimlanes: ['projects']
+					},
+					{
+						name: 'aside',
+						cell: 'On Hold:onhold'
+					}
+					],
+					positions: ['board', 'aside']
+				};
+			});
+
+			it("should accept start column", function() {
+				var cfg = new Kanban.Layout(this.layout);
+				var col = cfg.bundles['board'].columns['backlog'];
+				col.type.should.equal('start');
+				col.on_drop.should.not.be.null;
+
+			});
+
+			it("should accept end column", function() {
+				var cfg = new Kanban.Layout(this.layout);
+				var col = cfg.bundles['board'].columns['done'];
+				col.type.should.equal('end');
+				col.on_drop.should.not.be.null;
+			});
+
+			it("should accept nohold column", function() {
+				var cfg = new Kanban.Layout(this.layout);
+				var col = cfg.bundles['aside'].columns['On Hold'];
+				col.type.should.equal('onhold');
+				col.on_drop.should.not.be.null;
+			});
+
 			it("should check that there's only one start command by bundle");
 			it("should check that there's only one end command by bundle");
 

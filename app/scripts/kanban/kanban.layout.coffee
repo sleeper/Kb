@@ -1,6 +1,22 @@
 
 class Kanban.Column
+  on_drop_start: (swimlane, column, ticket)=>
+    console.log 'FIXME: On drop in a start column'
+
+  on_drop_end: (swimlane, column, ticket)=>
+    console.log 'FIXME: On drop in a end column'
+
+  on_drop_onhold: (swimlane, column, ticket)=>
+    console.log 'FIXME: On drop in a onhold column'
+
   constructor: (@name, @type = 'default')->
+    callbacks= 
+      start: @on_drop_start
+      end: @on_drop_end
+      onhold: @on_drop_onhold
+
+    # FIXME: Check @type is "in range"
+    @on_drop = callbacks[@type]
 
 class Kanban.Swimlane
   constructor: (@name)->
