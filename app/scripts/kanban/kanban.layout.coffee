@@ -146,14 +146,38 @@ class Kanban.Layout
       @bundles[kl.name] = kl
 
     # Check position has the right format
-    @positions = @check_positions(cfg.positions)
+    @positions = @create_positions(cfg.positions)
+
+    @compute_bundles_location()
+
+  compute_bundles_location: ()->
+    @width = 0
+    @height = 0
+
+    lines_width = []
+
+    for line in @positions
+      lwidth = 0
+      lheight = 0
+      for name in line
+        b = @bundles[name]
+        b.x = lwidth
+        b.y = @height
+        [bw, bh] = b.size()
+        lwidth += bw + @sizes.bundle_margin
+        lheight = if bh > lheight then bh else lheight
+      @height += lheight + @sizes.bundle_margin
+      lines_width.push lwidth
+
+    @width = Math.max.apply(null, lines_width)
+
 
   each_bundle: (cb)->
     for line in @positions
       for name in line
         cb( @bundles[name])
 
-  check_positions: (pos)->
+  create_positions: (pos)->
     # Positions are either array of strings (i.e. the name of the bundles, all on the same 'line')
     # or an array of arrays: each "subarray" represent a "line" of bundle
     # For example if I do want the following arrangement:
@@ -206,20 +230,5 @@ class Kanban.Layout
     [width, height]
 
 
-  compute_viewport_size: ()->
-    @width = 0
-    @height = 0
-
-    # The with will be the maximum width for all the lines
-    # The height will be the height of each line plus the bundle margin between each line
-    # So let's compute the size of each line
-    line_sizes = (@line_size(line) for line in @positions)
-
-    @height = line_sizes.reduce ((x,y)=> x + y[1] + @sizes.bundle_margin),0
-    @height -= @sizes.bundle_margin
-    @width = Math.max.apply(null, ( s[0] for s in line_sizes))
-
-    [@width, @height]
-
-
-
+  size: ()->
+    return [@width, @height]

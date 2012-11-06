@@ -159,6 +159,35 @@ describe("Tests for Kanban layout", function() {
 			cfg.bundles['board'].should.have.property('columns');
 		});
 
+		it("should assign bundles positions", function(){
+			var layout = {
+				bundles: [ 
+				{ 
+					name: 'board',
+					columns: ['backlog', 'in progress', 'done'],
+					swimlanes: ['projects']
+				},
+				{
+					name: 'trash',
+					cell: 'Trash'
+				},
+				{
+					name: 'bellow',
+					cell: 'On Hold:onhold'
+				}
+				],
+				positions: [['board', 'trash'], ['bellow']]
+		};
+		var cfg = new Kanban.Layout(layout);
+		cfg.bundles['board'].x.should.equal(0);
+		cfg.bundles['board'].y.should.equal(0);
+		cfg.bundles['trash'].x.should.equal(60);
+		cfg.bundles['trash'].y.should.equal(0);
+		cfg.bundles['bellow'].x.should.equal(0);
+		cfg.bundles['bellow'].y.should.equal(40);
+
+		});
+
 		describe("Typed columns", function() {
 			before(function(){
 				this.layout = {
@@ -235,7 +264,7 @@ describe("Tests for Kanban layout", function() {
 		})
 	});
 
-	describe("compute_viewport_size", function(){
+	describe("layout size", function(){
 		var sizes = { swimlane_height: 10, 
 					  column_width: 10, 
 					  swimlane_title_width: 10, 
@@ -258,8 +287,8 @@ describe("Tests for Kanban layout", function() {
 			};
 			
 			var cfg = new Kanban.Layout(layout);
-			var bsize = cfg.bundles['board'].size();
-			var size = cfg.compute_viewport_size();
+			var bsize = [60, 50]
+			var size = cfg.size();
 			size.should.eql( bsize );
 		});
 
@@ -277,8 +306,8 @@ describe("Tests for Kanban layout", function() {
 			};
 			
 			var cfg = new Kanban.Layout(layout);
-			var size = cfg.compute_viewport_size();
-			var bsize = [90,40];
+			var size = cfg.size();
+			var bsize = [100,50];
 			size.should.eql( bsize );
 		});
 
@@ -295,8 +324,8 @@ describe("Tests for Kanban layout", function() {
 				positions: [['board'], ['onhold']]
 			};
 			var cfg = new Kanban.Layout(layout);
-			var size = cfg.compute_viewport_size();
-			var bsize = [50,80];
+			var size = cfg.size();
+			var bsize = [60,90];
 			size.should.eql( bsize );
 		});
 	});
