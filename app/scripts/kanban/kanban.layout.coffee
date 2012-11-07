@@ -1,5 +1,51 @@
 window.Kanban = window.Kanban || {}
 
+class Kanban.Cell
+  hovered_color: "rgb(227,225,226)"
+  background_color: "white"
+
+  @center: (el)->
+    x =  el.attr('x') + (el.attr('width')  / 2 )
+    y =  el.attr('y') + (el.attr('height')  / 2 )
+    [x,y]
+
+  constructor: (@paper, @col_name, @sl_name, @x, @y, @width, @height)->
+    @scope = @
+    eve.on "cell.leaving", @left
+    eve.on 'cell.entering', @entered
+    eve.on 'cell.dropped', @dropped
+
+  # Return the absolute x and y coordinates from the relative ones
+  compute_absolute_coordinates: (rx, ry)->
+    [ @x + rx, @y + ry ]
+
+  # Return the (x,y) relatives to this cell
+  compute_relative_coordinates: (ax, ay)->
+    [ ax - @x, ay - @y]
+
+  isPointInside: (x,y)->
+    @el.isPointInside(x,y)
+
+  entered: (col, sl)=>
+    if col == @col_name && sl == @sl_name
+      @el.attr({fill: @hovered_color})
+
+  left: (col, sl)=>
+    if col == @col_name && sl == @sl_name
+      @el.attr({fill: @background_color})
+
+  dropped: (col,sl)=>
+    if col == @col_name && sl == @sl_name
+      @el.attr({fill: @background_color})
+
+  draw: ()->
+    @el = @paper.rect @x, @y, @width, @height
+    @el.node.id = "cell #{@col_name}-#{@sl_name}"
+    @el.attr({fill: @background_color, 'stroke-linejoin': "round", 'stroke-width': 3})
+    @el.droppable = this
+    @el
+
+
 class Kanban.Column
   on_drop_start: (swimlane, column, ticket)=>
     console.log 'FIXME: On drop in a start column'
@@ -10,7 +56,19 @@ class Kanban.Column
   on_drop_onhold: (swimlane, column, ticket)=>
     console.log 'FIXME: On drop in a onhold column'
 
-  constructor: (@name, @type = 'default')->
+  draw_title: (paper, x, y)->
+    t = paper.rect x, y, @width, @title_height
+    t.node.id = "column #{@name} title"
+    t.attr fill: "white", stroke: "none"
+    [cx,cy] = Kanban.Cell.center t 
+    text = paper.print cx, cy, @name, paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle"
+    bbox = text.getBBox()
+    # Correct text position
+    text.transform "t-#{bbox.width/2},-5"
+    text.attr("fill", "black")
+
+
+  constructor: (@name, @type, @twidth, @title_height)->
     callbacks= 
       start: @on_drop_start
       end: @on_drop_end
@@ -20,12 +78,39 @@ class Kanban.Column
     @on_drop = callbacks[@type]
 
 class Kanban.Swimlane
-  constructor: (@name)->
+  constructor: (@name, @title_width, @height)->
+
+  draw_title: (paper, x, y)->
+    t = paper.rect x, y, @title_width, @height
+    t.attr fill: "white", stroke: "none"
+    t.node.id = "swimlane #{@name} title"
+    [cx,cy] = Kanban.Cell.center t
+    text = paper.print cx, cy, @name, paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle"
+    bbox = text.getBBox()
+    # Correct text position
+    text.transform "R-90T-#{bbox.width/2+10},0"
+    text.attr("fill", "black");
+
+
+class Kanban.CellCache
+  constructor: ()-> @_cache = {}
+  hash: (col_name, sl_name)-> "#{col_name}-#{sl_name}"
+  put: (droppable)-> @_cache[@hash(droppable.col_name, droppable.sl_name)] = droppable
+  get: (col_name, sl_name)-> @_cache[@hash(col_name, sl_name)]
+
+  # Iterates over the cached elements
+  # The callback will receive 2 parameters:
+  #   - the key
+  #   - the cell
+  #
+  forEach: (cb)->
+    for key,cell of @_cache
+      cb(key,cell)
 
 class Kanban.Layout
 
   class @Bundle
-    constructor: (cfg, @sizes)->
+    constructor: (cfg, @sizes, @_cells)->
       @swimlanes = {}
       @columns = {}
       @nb_of_swimlanes = 0
@@ -38,15 +123,18 @@ class Kanban.Layout
 
       for swimlane in cfg.swimlanes
         @nb_of_swimlanes += 1
-        @swimlanes[swimlane] = new Kanban.Swimlane swimlane
+        @swimlanes[swimlane] = new Kanban.Swimlane swimlane, @sizes.swimlane_title_width, @sizes.swimlane_height
 
       for column in cfg.columns
         @nb_of_columns += 1
         [name,type] = column.split(':')
-        @columns[name] = new Kanban.Column name, type
+        type ?= 'default'
+        @columns[name] = new Kanban.Column name, type, @sizes.column_width, @sizes.column_title_height
 
     check: (cfg)->
       throw new TypeError('Missing name') unless cfg.name?
+      throw new TypeError("Missing sizes") unless @sizes?
+      throw new TypeError("Missing cell cache") unless @_cells? && (@_cells instanceof Kanban.CellCache)
 
       if cfg.cell
         if (typeof cfg.cell isnt 'string') && !(cfg.cell instanceof String)
@@ -70,6 +158,32 @@ class Kanban.Layout
       @width ?= @nb_of_columns * @sizes.column_width + @sizes.column_margin + @sizes.swimlane_title_width
       @height ?= @nb_of_swimlanes * @sizes.swimlane_height + @sizes.swimlane_margin + @sizes.column_title_height
       [@width, @height]
+
+    draw: (paper)->
+      # Add swimlane titles
+      x = 0
+      y = @sizes.column_title_height
+      for sl_name of @swimlanes
+        sl = @swimlanes[sl_name] 
+        sl.draw_title paper, x, y
+        y += @sizes.swimlane_height
+
+      cells = []
+      x = @sizes.swimlane_title_width 
+      for cl_name of @columns
+        y = 0
+        cl = @columns[cl_name]
+        cl.draw_title paper, x, y
+
+        y += @sizes.column_title_height
+        for sl_name of @swimlanes
+          sl = @swimlanes[sl_name]
+          c = new Kanban.Cell paper, cl_name, sl_name, x, y
+          c.draw()
+          @_cells.put c
+          y += @sizes.swimlane_height
+
+        x += @sizes.column_width
 
   #
   # This object describes the layout of the Kanban board.
@@ -130,6 +244,8 @@ class Kanban.Layout
     throw new TypeError('Positions is not an array') unless (cfg.positions instanceof Array)
     throw new TypeError('Empty bundles') if cfg.bundles.length == 0
 
+    @_cells = new Kanban.CellCache()
+
     # FIXME: extend measure_default with meas
     for prop in meas
       @sizes[prop] = meas[prop]
@@ -142,7 +258,7 @@ class Kanban.Layout
     # So now we can start creating the Layout
     @bundles = {} 
     for item in cfg.bundles
-      kl = new Kanban.Layout.Bundle item, @sizes
+      kl = new Kanban.Layout.Bundle item, @sizes, @_cells
       @bundles[kl.name] = kl
 
     # Check position has the right format
@@ -150,6 +266,9 @@ class Kanban.Layout
 
     @compute_bundles_location()
 
+  get_cell: (col_name, sl_name)->
+    @_cells.get col_name, sl_name
+    
   compute_bundles_location: ()->
     @width = 0
     @height = 0
