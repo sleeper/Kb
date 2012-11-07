@@ -68,7 +68,7 @@ class Kanban.Column
     text.attr("fill", "black")
 
 
-  constructor: (@name, @type, @twidth, @title_height)->
+  constructor: (@name, @type, @width, @title_height)->
     callbacks= 
       start: @on_drop_start
       end: @on_drop_end
@@ -160,25 +160,25 @@ class Kanban.Layout
       [@width, @height]
 
     draw: (paper)->
-      # Add swimlane titles
-      x = 0
-      y = @sizes.column_title_height
+      # We need to draw the bundle starting at its positions (@x, @y)
+      x = @x
+      y = @y + @sizes.column_title_height
       for sl_name of @swimlanes
         sl = @swimlanes[sl_name] 
         sl.draw_title paper, x, y
         y += @sizes.swimlane_height
 
       cells = []
-      x = @sizes.swimlane_title_width 
+      x = @x + @sizes.swimlane_title_width 
       for cl_name of @columns
-        y = 0
+        y = @y
         cl = @columns[cl_name]
         cl.draw_title paper, x, y
 
         y += @sizes.column_title_height
         for sl_name of @swimlanes
           sl = @swimlanes[sl_name]
-          c = new Kanban.Cell paper, cl_name, sl_name, x, y
+          c = new Kanban.Cell paper, cl_name, sl_name, x, y, @sizes.column_width, @sizes.swimlane_height
           c.draw()
           @_cells.put c
           y += @sizes.swimlane_height
@@ -247,7 +247,7 @@ class Kanban.Layout
     @_cells = new Kanban.CellCache()
 
     # FIXME: extend measure_default with meas
-    for prop in meas
+    for prop of meas
       @sizes[prop] = meas[prop]
 
     # Look at items
@@ -268,7 +268,7 @@ class Kanban.Layout
 
   get_cell: (col_name, sl_name)->
     @_cells.get col_name, sl_name
-    
+
   compute_bundles_location: ()->
     @width = 0
     @height = 0
@@ -333,20 +333,20 @@ class Kanban.Layout
           throw new TypeError('Bundle does not exist') unless @bundles[name]
     pos
 
-  # The size of a line is:
-  #  * the sum of the width of each of the line bundle (plus the bundle margin between each bundle)
-  #  * the maximum height of all of the line's bundles
+  # # The size of a line is:
+  # #  * the sum of the width of each of the line bundle (plus the bundle margin between each bundle)
+  # #  * the maximum height of all of the line's bundles
 
-  line_size: (line)->
-    # Compute the size of each bundle
-    bundle_sizes = (@bundles[name].size() for name in line)
+  # line_size: (line)->
+  #   # Compute the size of each bundle
+  #   bundle_sizes = (@bundles[name].size() for name in line)
 
 
-    width = bundle_sizes.reduce ((x,y)=> x + y[0] + @sizes.bundle_margin), 0
-    width -= @sizes.bundle_margin
-    list_of_height = (s[1] for s in bundle_sizes)
-    height = Math.max.apply(null, list_of_height)
-    [width, height]
+  #   width = bundle_sizes.reduce ((x,y)=> x + y[0] + @sizes.bundle_margin), 0
+  #   width -= @sizes.bundle_margin
+  #   list_of_height = (s[1] for s in bundle_sizes)
+  #   height = Math.max.apply(null, list_of_height)
+  #   [width, height]
 
 
   size: ()->

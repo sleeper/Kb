@@ -26,7 +26,7 @@ class recline.View.Board extends Backbone.View
       }, config.state
     );
     @state = new recline.Model.ObjectState(state);
-    @board = new Kanban.Board @state.get('layout'), @el
+    @board = new Kanban.Board @state.get('layout'), @el, @state.get('measures')
     @board.draw()
 
     # Add a space for the detailed information

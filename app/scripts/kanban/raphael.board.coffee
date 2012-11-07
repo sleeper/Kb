@@ -110,9 +110,9 @@ window.Kanban = window.Kanban || {}
 
 class Kanban.Board
 
-  constructor: (cfg, @el) ->
+  constructor: (cfg, @el, @measures) ->
     # @_cells = new Kanban.CellCache()
-    @layout = new Kanban.Layout(cfg)
+    @layout = new Kanban.Layout(cfg, @measures)
     [@width, @height] = @layout.size()
 
     # Size correctly the container

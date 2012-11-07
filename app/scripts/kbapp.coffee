@@ -64,6 +64,14 @@ board_state =
       [ 'board', 'on hold']
     ]
   }
+  measures: 
+        swimlane_height: 600
+        column_width: 400
+        swimlane_title_width: 50
+        column_title_height: 50
+        column_margin: 20
+        swimlane_margin: 20
+        bundle_margin: 20
 
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 
