@@ -269,6 +269,16 @@ class Kanban.Layout
   get_cell: (col_name, sl_name)->
     @_cells.get col_name, sl_name
 
+  # Return the cell that is under point x, y
+  get_cell_by_point: (x, y)->
+    cell = null
+    @_cells.forEach (k, c)->
+      if c.isPointInside(x,y)
+        cell = c
+        false
+    cell
+
+
   compute_bundles_location: ()->
     @width = 0
     @height = 0
