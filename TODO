@@ -1,12 +1,12 @@
 
-[ ] ID: not numeric but alphanumeric  ==> to be discussed
+[x] ID: not numeric but alphanumeric  ==> keep them numeric
 [x] Project name
 [x] priority needed (in order to sort by priority)
 [x] POC: the one who is proficient on this item
 [ ] on_board to become a multi-status field
 [ ] wake-up date for all 'on hold' items
 [ ] Target date
-[ ] Estimated sized
+[ ] Estimated size
 [ ] Start date (i.e. date when the ticket migrated from backlog column to real action)
 [ ] Finished date: will be automatic
 [ ] Help needed
