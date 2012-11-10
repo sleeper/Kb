@@ -63,9 +63,10 @@ class recline.View.Board extends Backbone.View
 
 
   add_details_container: ()->
+    # $('body').append('<div id="overlay">&nbsp;</div>')
     $(@el).append('<div id="overlay">&nbsp;</div>')
-    @overlay = $('#overlay', $(@el))
-    @overlay.show()
+    @overlay = $('#overlay', @el)
+    @overlay.hide()
     @overlay.on('click', @resume_overlay)
     $(@el).append("<div id=\"ticket_detail\"></div>")
     @ticket_detail = $('#ticket_detail', $(@el))
