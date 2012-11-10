@@ -14,10 +14,25 @@ describe("Tests for Kanban.Column", function() {
 		$('svg', bel).remove();
 	});
 
+	it("should reject invalid type");
+
 	describe("on_drop behaviours", function(){
 		var create_ticket = function( set_fn ) {
 			return { record: { set: set_fn } };
 		};
+
+		describe("'start' columns", function() {
+			it("should record the date/time, as well as swimlane and column name", function(done) {
+				var cl = new Kanban.Column("fred", "start", 10, 10);
+				var t = create_ticket( function(attributes) {
+						attributes.should.have.property('started_on');
+						attributes.should.have.property('swimlane', "swimlane");
+						attributes.should.have.property('column', "fred");
+						done();
+				});
+				cl.on_drop('fred', 'swimlane', t );
+			});
+		});
 
 		describe("'end' columns", function() {
 			it("should record the date/time, as well as swimlane and column name", function(done) {
@@ -28,7 +43,7 @@ describe("Tests for Kanban.Column", function() {
 						attributes.should.have.property('column', "fred");
 						done();
 				});
-				cl.on_drop({name: 'swimlane'}, t );
+				cl.on_drop('fred', 'swimlane', t );
 			});
 		});
 
@@ -40,7 +55,7 @@ describe("Tests for Kanban.Column", function() {
 						attributes.should.have.property('column', "fred");
 						done();
 					});
-				cl.on_drop({name: 'swimlane'}, t  );
+				cl.on_drop('fred', 'swimlane', t  );
 			});
 			it("should record the date it has been placed on hold", function(done) {
 				var cl = new Kanban.Column("fred", "onhold", 10, 10);
@@ -48,7 +63,7 @@ describe("Tests for Kanban.Column", function() {
 						attributes.should.have.property('onhold_on');
 						done();
 					});
-				cl.on_drop({name: 'swimlane'}, t  );
+				cl.on_drop('fred', 'swimlane', t  );
 			});
 			it("should request a 'wake up' date");
 			it("should save the wake-up date");
@@ -62,7 +77,7 @@ describe("Tests for Kanban.Column", function() {
 						attributes.should.have.property('column', "fred");
 						done();
 					});
-				cl.on_drop({name: 'swimlane'}, t  );
+				cl.on_drop('fred', 'swimlane', t  );
 			});
 		});
 	});

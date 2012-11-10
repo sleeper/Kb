@@ -131,10 +131,18 @@ class Kanban.Ticket
         # but no change event will be fired.
         # So we do need to force the move
         force_move = true
+    # Let's broadcast the fact we've land ...
     eve "cell.dropped", @el, @cur_col, @cur_sl
+    eve "column.dropped", @el, @cur_col, @cur_sl, @
+
+    # ... and launch handlers if there's any registered
+    # for these events
+    for evt in ['cell.dropped', 'column.dropped']
+      # The callbacks needs to be called in the context of the current Ticket 
+      @events[evt].apply(@, [@cur_col, @cur_sl]) if @events[evt]
+
     @frame.animate({opacity: 1}, 500, ">");
     [x,y] = @board.compute_relative_coordinates @cur_col, @cur_sl, @x, @y
-    @record.set column: @cur_col, swimlane: @cur_sl, x: x, y: y
     @move() if force_move
 
   move: ()->
@@ -144,10 +152,10 @@ class Kanban.Ticket
     @avatar.move @x, @y
 
   setup_events: (e)->
-    _.each ['click', 'dblclick'], (evt)=>
+    # Handle Raphaeljs own events
+    for evt in ['click', 'dblclick']
       if @events[evt]
         e[evt] ()=> @events[evt](@)
-         
 
   draw_frame: ()->
     @frame = @board.paper.rect( @x, @y, @width, @height)
