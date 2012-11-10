@@ -1,12 +1,21 @@
 class Kanban.Column
-  on_drop_start: (swimlane, column, ticket)=>
-    console.log 'FIXME: On drop in a start column'
+  on_drop_start: (swimlane, ticket)=>
 
-  on_drop_end: (swimlane, column, ticket)=>
-    console.log 'FIXME: On drop in a end column'
+  on_drop_end: (swimlane, ticket)=>
+    ticket.record.set 
+      swimlane: swimlane.name
+      column: @name
+      finished_on: new Date()
 
-  on_drop_onhold: (swimlane, column, ticket)=>
-    console.log 'FIXME: On drop in a onhold column'
+  on_drop_onhold: (swimlane, ticket)=>
+    ticket.record.set 
+      column: @name
+      onhold_on: new Date()
+
+  on_drop_default: (swimlane, ticket)=>
+    ticket.record.set
+      swimlane: swimlane.name
+      column: @name
 
   draw_title: (paper, x, y)->
     t = paper.rect x, y, @width, @title_height
@@ -25,6 +34,7 @@ class Kanban.Column
       start: @on_drop_start
       end: @on_drop_end
       onhold: @on_drop_onhold
+      default: @on_drop_default
 
     # FIXME: Check @type is "in range"
     @on_drop = callbacks[@type]
