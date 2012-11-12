@@ -22,7 +22,7 @@
   position: fixed;
   /*width: 10px;*/
   /* Embiggen */
-  -webkit-transform: scale(1.5);
+  /*-webkit-transform: scale(1.5);*/
 
   /* Hidden */
   opacity: 0;
@@ -44,5 +44,19 @@
 .recline-board #ticket_detail > .comment {
   margin-top: 0.5em;
   font-size: 18pt;
+}
+
+.recline-board #onhold {
+  background-color: #fff;
+  border:1px solid #000;
+  border-radius: 15px;
+  padding:15px;
+  position: fixed;
+  /*width: 10px;*/
+  /* Embiggen */
+  -webkit-transform: scale(1.5);
+
+  /* Hidden */
+  opacity: 0;
 }
 

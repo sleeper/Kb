@@ -17,24 +17,17 @@ class Kanban.Board
 
     @paper = Raphael jnode[0], @width, @height
 
-  # Each ticket on the board has a x and y coordinate, relative to 
-  # the cell it is placed in.
-  # This method allows for computation of the absolute x and y
-  compute_absolute_coordinates: (cl_name, sl_name, rx, ry)->
-    cell = @layout.get_cell(cl_name, sl_name)
-    # FIXME: handle the case cell is empty
-    # delegate to cell
-    cell.compute_absolute_coordinates(rx, ry)
-
-  compute_relative_coordinates: (cl_name, sl_name, ax, ay)->
-    cell = @layout.get_cell(cl_name, sl_name)
-    cell.compute_relative_coordinates(ax, ay)
-
   getColumnAndSwimlane: (x,y)->
     [column,swimlane] = [null,null]
     cell = @layout.get_cell_by_point(x,y)
     [column,swimlane] = [cell.col_name, cell.sl_name] if cell != null
     [column,swimlane]
+
+  get_cell_by_point: (x,y)->
+    @layout.get_cell_by_point(x,y)
+
+  get_cell: (sl_name, cl_name)->
+    @layout.get_cell(cl_name, sl_name)
 
   draw: () ->
     # Let's draw cells

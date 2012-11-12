@@ -23,6 +23,14 @@ class Kanban.Cell
   compute_relative_coordinates: (ax, ay)->
     [ ax - @x, ay - @y]
 
+  # Return the absolute x and y coordinates from the relative ones
+  to_absolute: (rx, ry)->
+    [ @x + rx, @y + ry ]
+    
+  # Return the (x,y) relatives to this cell
+  to_rel: (ax, ay)->
+    [ ax - @x, ay - @y]
+
   isPointInside: (x,y)->
     @el.isPointInside(x,y)
 

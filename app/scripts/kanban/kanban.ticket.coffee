@@ -131,8 +131,13 @@ class Kanban.Ticket
         # but no change event will be fired.
         # So we do need to force the move
         force_move = true
+
+    @frame.animate({opacity: 1}, 500, ">");
+    @cell = @board.get_cell_by_point @x, @y
+    [ @xrel, @yrel ] = @cell.to_rel @x, @y
+
     # Let's broadcast the fact we've land ...
-    eve "cell.dropped", @el, @cur_col, @cur_sl
+    eve "cell.dropped", @el, @cur_col, @cur_sl, @
     eve "column.dropped", @el, @cur_col, @cur_sl, @
 
     # ... and launch handlers if there's any registered
@@ -141,12 +146,10 @@ class Kanban.Ticket
       # The callbacks needs to be called in the context of the current Ticket 
       @events[evt].apply(@, [@cur_col, @cur_sl]) if @events[evt]
 
-    @frame.animate({opacity: 1}, 500, ">");
-    [x,y] = @board.compute_relative_coordinates @cur_col, @cur_sl, @x, @y
     @move() if force_move
 
   move: ()->
-    [@x,@y] = @board.compute_absolute_coordinates @record.get('column'), @record.get('swimlane'),@record.get('x'), @record.get('y')
+    [@x, @y] = @cell.to_absolute @record.get('x'), @record.get('y')
     @frame.attr x: @x, y: @y
     @title.move @x, @y
     @avatar.move @x, @y
@@ -202,7 +205,10 @@ class Kanban.Ticket
 
   draw: ()->
     @cleared = false
-    [@x,@y] = @board.compute_absolute_coordinates @record.get('column'), @record.get('swimlane'),@record.get('x'), @record.get('y')
+    rx = @record.get 'x'
+    ry = @record.get 'y'
+    @cell = @board.get_cell @record.get('swimlane'), @record.get('column')
+    [@x, @y] = @cell.to_absolute @record.get('x'), @record.get('y')
 
     @draw_frame()
     @title = new Title(@board.paper, @record.get('title'), @x, @y, @width, @height)
