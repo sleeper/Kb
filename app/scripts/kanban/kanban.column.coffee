@@ -3,68 +3,57 @@ class Kanban.Column
     ticket.record.set 
       swimlane: swimlane
       column: @name
-      started_on: new Date(),
-      x: ticket.xrel,
+      started_on: new Date()
+      x: ticket.xrel
       y: ticket.yrel
+      wakeup_on: null
+
 
   on_drop_end: (swimlane, ticket)=>
     ticket.record.set 
       swimlane: swimlane
       column: @name
-      finished_on: new Date(),
-      x: ticket.xrel,
+      finished_on: new Date()
+      x: ticket.xrel
       y: ticket.yrel
+      wakeup_on: null
+
 
   on_drop_onhold: (swimlane, ticket)=>
-    # FIXME: We need to get a wake-up date from user and save it
-    #        Ticket as-well should have its opacity reduced
-
-    # Get dirty: we already know that view.kb.coffee has created
-    # an #overlay element : let's us it an put our form on top of it
-    # overlay = $('#overlay');
-    # Remove it if it exists
-    # overlay.remove() if overlay.length > 0
-
+    # Let's request a wake-up date from user
     root = $(@paper.canvas.parentNode)
     so = new SimpleOverlay( root )
-    so.dialog.append('<h1> Enter wake-up date </h1><input type="text" id="datepicker"/>')
-    # so.overlay = 
-    # root.append('<div id="overlay">&nbsp;</div>')
-    # overlay = $('#overlay', root)
-    # overlay.hide()
-    # overlay.toggle();
-    # root.append '<div id="onhold"><h1> Enter wake-up date </h1><input type="text" id="datepicker"/></div>' 
-    # ohe = $('#onhold')
+    so.dialog.append('<h1> Enter wake-up date </h1><p/><input type="text" id="datepicker"/>')
+    date_input = $('#datepicker', so.dialog)
     so.overlay.on 'click', ()=> 
+      # This is equivalent to cancel ...
       so.overlay.remove()
-      so.dialog.remove();
+      so.dialog.remove()
+      ticket.reset()
 
-    # Place it 
-    # $('.avatar', @ticket_detail).on 'click', () => t.model.set('user_id', Kb.board.current_user.get('id'))
-    # ohe.css('opacity',1)
-    # ohe.show();    
-    # width = ohe.width()
-    # height = ohe.height()
-    # ohe.css
-    #       position: 'fixed',
-    #       left: ($(window).width() - width) / 2 
-    #       top: ($(window).height() - height) / 2
-    so.dialog.show();
-    so.center_dialog()
-    $('#datepicker').pikaday({ bound: true, firstDay: 1 });
+    so.show();
+    $('#datepicker').pikaday
+      bound: true
+      minDate: new Date()
+      firstDay: 1
+      onSelect: ()=>
+        ticket.record.set wakeup_on: new Date(date_input.val())
+        ticket.record.set 
+          column: @name
+          onhold_on: new Date()
+          x: ticket.xrel
+          y: ticket.yrel
+        so.overlay.remove()
+        so.dialog.remove()
 
-    ticket.record.set 
-      column: @name
-      onhold_on: new Date(),
-      x: ticket.xrel,
-      y: ticket.yrel
 
   on_drop_default: (swimlane, ticket)=>
     ticket.record.set
       swimlane: swimlane
-      column: @name,
-      x: ticket.xrel,
+      column: @name
+      x: ticket.xrel
       y: ticket.yrel
+      wakeup_on: null
 
   draw_title: (@paper, x, y)->
     t = @paper.rect x, y, @width, @title_height

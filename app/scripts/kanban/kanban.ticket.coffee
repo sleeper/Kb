@@ -147,6 +147,16 @@ class Kanban.Ticket
       @events[evt].apply(@, [@cur_col, @cur_sl]) if @events[evt]
 
     @move() if force_move
+  
+  # reset the ticket to the swimlane, column, x and y
+  # stored in the Record
+  reset: ()->
+    @ocol = @cur_col = @record.get('column')
+    @osl = @cur_sl = @record.get('swimlane')
+    @ox = @x = @record.get('x')
+    @oy = @y = @record.get('y')
+    @cell = @board.get_cell @osl, @ocol
+    @move @x, @y
 
   move: ()->
     [@x, @y] = @cell.to_absolute @record.get('x'), @record.get('y')
