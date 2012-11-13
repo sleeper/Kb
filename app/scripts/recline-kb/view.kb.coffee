@@ -105,7 +105,7 @@ class recline.View.Board extends Backbone.View
       @display_ticket_detail(t)
     # t.on 'cell.dropped', (col,sl)=>
     #   console.log "FRED: Ticket dropped and generated event : (#{col}, #{sl})"
-
+    @tickets.push t
     t
 
   render_tickets: ()->
@@ -114,7 +114,6 @@ class recline.View.Board extends Backbone.View
       if record.get('status') == 'on board'
         t = @create_ticket record 
         t.draw()
-        @tickets.push t
 
   render: ()->
     console.log "FRED"
