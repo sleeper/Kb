@@ -25,7 +25,7 @@ describe("Tests for Kanban.Column", function() {
 			it("should record the date/time, as well as swimlane and column name", function(done) {
 				var cl = new Kanban.Column("fred", "start", 10, 10);
 				var t = create_ticket( function(attributes) {
-						attributes.should.have.property('started_on');
+						attributes.should.have.property('entered_on');
 						attributes.should.have.property('swimlane', "swimlane");
 						attributes.should.have.property('column', "fred");
 						done();

@@ -117,6 +117,7 @@ class recline.View.Board extends Backbone.View
         @tickets.push t
 
   render: ()->
+    console.log "FRED"
 
 
 
