@@ -3,7 +3,7 @@ class Kanban.Column
     ticket.record.set 
       swimlane: swimlane
       column: @name
-      started_on: new Date()
+      entered_on: new Date()
       x: ticket.xrel
       y: ticket.yrel
       wakeup_on: null
