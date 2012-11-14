@@ -21,7 +21,7 @@ class SimpleOverlay
 	constructor: (root)->
 		@root = $(root)
 		@root.append('<div id="simpleoverlay-overlay">&nbsp;</div>')
-		@root.append('<div id="simpleoverlay-dialog">&nbsp;</div>')
+		@root.append('<div id="simpleoverlay-dialog"></div>')
 		@overlay = $('#simpleoverlay-overlay', @root)
 		@dialog = $('#simpleoverlay-dialog', @root)
 
