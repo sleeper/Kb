@@ -29,9 +29,6 @@ class recline.View.Board extends Backbone.View
     @board = new Kanban.Board @state.get('layout'), @el, @state.get('measures')
     @board.draw()
 
-    # Add a space for the detailed information
-    @add_details_container()
-
     @bind_events()
     @render_tickets()
 
@@ -59,21 +56,17 @@ class recline.View.Board extends Backbone.View
   resume_overlay: ()=>
     @ticket_detail.empty()
     @ticket_detail.hide()
-    @overlay.toggle()
-
-
-  add_details_container: ()->
-    # $('body').append('<div id="overlay">&nbsp;</div>')
-    $(@el).append('<div id="overlay">&nbsp;</div>')
-    @overlay = $('#overlay', @el)
-    @overlay.hide()
-    @overlay.on('click', @resume_overlay)
-    $(@el).append("<div id=\"ticket_detail\"></div>")
-    @ticket_detail = $('#ticket_detail', $(@el))
-    # @resize()
+    # @overlay.toggle()
+    @so.overlay.remove()
+    @so.dialog.remove()
 
   display_ticket_detail: (t)=>
-    @overlay.toggle()
+    @so = new SimpleOverlay $(@el)
+    @so.overlay.on 'click', @resume_overlay
+    @so.dialog.append "<div id=\"ticket_detail\"></div>"
+    @ticket_detail = $('#ticket_detail', $(@el))
+
+    # @overlay.toggle()
     @ticket_detail.append("<h1>#{t.record.get('title')}</h1>")
     @ticket_detail.append("<div class=\"date\"> #{t.record.get('created_on')} / #{t.record.get('entered_on')}</div>")
     @ticket_detail.append("<div class=\"comment\">#{t.record.get('comment')}</div>")
@@ -83,16 +76,7 @@ class recline.View.Board extends Backbone.View
 
     img = "../assets/imgs/#{t.record.avatar}"
     @ticket_detail.append("<img class=\"avatar\" src=\"#{img}\">")
-    # $('.avatar', @ticket_detail).on 'click', () => t.model.set('user_id', Kb.board.current_user.get('id'))
-    @ticket_detail.css('opacity',1)
-    @ticket_detail.show();    
-    width = @ticket_detail.width()
-    height = @ticket_detail.height()
-    @ticket_detail.css
-                position: 'fixed',
-                left: ($(window).width() - width) / 2 
-                top: ($(window).height() - height) / 2
-  
+    @so.show()  
 
   clear_tickets: ()->
     _.each @tickets, (t)=>
@@ -103,8 +87,6 @@ class recline.View.Board extends Backbone.View
     t = new Kanban.Ticket @board, r
     t.on 'dblclick', (t)=> 
       @display_ticket_detail(t)
-    # t.on 'cell.dropped', (col,sl)=>
-    #   console.log "FRED: Ticket dropped and generated event : (#{col}, #{sl})"
     @tickets.push t
     t
 
