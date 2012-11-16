@@ -191,8 +191,8 @@ class Kanban.Ticket
     @title.update_title @record.get('title')
 
   update_avatar: ()->
-    img = "../assets/imgs/#{@record.avatar}"
-    @avatar.update img
+    # img = "../assets/imgs/#{@record.avatar}"
+    @avatar.update @record.avatar
 
   clear: ()->
     @cleared = true
@@ -223,8 +223,9 @@ class Kanban.Ticket
     @draw_frame()
     @title = new Title(@board.paper, @record.get('title'), @x, @y, @width, @height)
 
-    img = "../assets/imgs/#{@record.avatar}"
-    @avatar = new Avatar(@board.paper, img, @x, @y)
+    # img = "../assets/imgs/#{@record.avatar}"
+    console.log "FRED --> #{@record.avatar}"
+    @avatar = new Avatar(@board.paper, @record.avatar, @x, @y)
 
     @frame.drag(@dragged, @start, @up)
     @

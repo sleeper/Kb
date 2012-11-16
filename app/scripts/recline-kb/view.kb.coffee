@@ -74,8 +74,8 @@ class recline.View.Board extends Backbone.View
     # FIXME: Add the avatar of the user OR a button for the user to take care 
     #        of the ticket.
 
-    img = "../assets/imgs/#{t.record.avatar}"
-    @ticket_detail.append("<img class=\"avatar\" src=\"#{img}\">")
+    # img = "../assets/imgs/#{t.record.avatar}"
+    @ticket_detail.append("<img class=\"avatar\" src=\"#{t.record.avatar}\">")
     @so.show()  
 
   clear_tickets: ()->
@@ -83,7 +83,17 @@ class recline.View.Board extends Backbone.View
       t.clear()
     @tickets = []
 
+  setup_user: (r)->
+    return if r.user? && r.avatar?
+    r.user = @state.get('users').get( r.get('user_id') )
+    if r.user
+      r.avatar = r.user.get('avatar')
+    else
+      r.avatar = "/images/question-mark-icon.png"
+
+
   create_ticket: (r)->
+    @setup_user( r )
     t = new Kanban.Ticket @board, r
     t.on 'dblclick', (t)=> 
       @display_ticket_detail(t)

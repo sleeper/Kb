@@ -5,6 +5,13 @@ data = [
   {id: 4, project: 'sles 9 decom', title: "Still thinking about it", poc: 'fatma', status: 'product backlog', priority: 200, column: "backlog", swimlane: "implementations", x:1, y:1, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "", comment:"This is the most ennoying ticket ever written"},
   {id: 5, project: 'sles 9 decom', title: "Are you sure ?", poc: 'vincent', status: 'product backlog', priority: 400, column: "backlog", swimlane: "projects", x:1, y: 1, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "", comment:"This is the most ennoying ticket ever written"}
 ]
+
+user_data = [
+  {id: 1, name: "fred", avatar: "/images/Hulk-01.png"},
+  {id: 2, name: "fatma", avatar: "/images/Voodoo\ Doll.png"},
+  {id: 3, name: "vincent", avatar: "/images/Iron\ Man-01.png"}
+]
+
 fields = [
         {id: 'id', label: 'ID'},
         {id: 'project', lable: 'Project'}
@@ -34,6 +41,9 @@ grid_state = {
         { column: 'comment', editor: Slick.Editors.LongText }
       ]
 }
+
+users = new Kanban.UserList();
+users.reset( user_data );
 
 # The board (or we should say boards) layout is an array composed of several boards
 # or individual cells (i.e. degraded board)
@@ -72,6 +82,8 @@ board_state =
         column_margin: 20
         swimlane_margin: 20
         bundle_margin: 20
+  users: users
+
 
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 
