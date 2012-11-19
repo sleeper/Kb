@@ -68,7 +68,7 @@ class Kanban.Ticket
       @title_frame.appendChild body
       @title = document.createElement "div"
       body.appendChild @title
-      $(@title).html( @text ) 
+      $(@title).html( @text )
       @paper.canvas.appendChild @title_frame
       @resize()
 
@@ -143,11 +143,11 @@ class Kanban.Ticket
     # ... and launch handlers if there's any registered
     # for these events
     for evt in ['cell.dropped', 'column.dropped']
-      # The callbacks needs to be called in the context of the current Ticket 
+      # The callbacks needs to be called in the context of the current Ticket
       @events[evt].apply(@, [@cur_col, @cur_sl]) if @events[evt]
 
     @move() if force_move
-  
+
   # reset the ticket to the swimlane, column, x and y
   # stored in the Record
   reset: ()->
@@ -176,7 +176,7 @@ class Kanban.Ticket
     @frame.node.setAttribute("class", "ticket")
     $(@frame.node).on("window:resized", ()=> @title.resize())
     filter1 = @board.paper.filterCreate("filter1");
-    @frame.filterInstall(filter1); 
+    @frame.filterInstall(filter1);
     blur1 = Raphael.filterOps.feGaussianBlur(
         {stdDeviation: "1.2", "in": "SourceAlpha", result: "blur1"});
     offset1 = Raphael.filterOps.feOffset(
@@ -184,15 +184,15 @@ class Kanban.Ticket
     merge1 = Raphael.filterOps.feMerge(["offsetBlur", "SourceGraphic"]);
     filter1.appendOperation(blur1);
     filter1.appendOperation(offset1);
-    filter1.appendOperation(merge1); 
-    @setup_events( @frame ) 
+    filter1.appendOperation(merge1);
+    @setup_events( @frame )
 
   update_title: ()->
     @title.update_title @record.get('title')
 
   update_avatar: ()->
     # img = "../assets/imgs/#{@record.avatar}"
-    @avatar.update @record.avatar
+    @avatar.update @record.avatar()
 
   clear: ()->
     @cleared = true
@@ -200,7 +200,7 @@ class Kanban.Ticket
     @avatar.remove()
     @frame.remove()
 
-  # Update the ticket position and representation following 
+  # Update the ticket position and representation following
   # a change in the record
   update: ()->
     if @cleared
@@ -223,9 +223,7 @@ class Kanban.Ticket
     @draw_frame()
     @title = new Title(@board.paper, @record.get('title'), @x, @y, @width, @height)
 
-    # img = "../assets/imgs/#{@record.avatar}"
-    console.log "FRED --> #{@record.avatar}"
-    @avatar = new Avatar(@board.paper, @record.avatar, @x, @y)
+    @avatar = new Avatar(@board.paper, @record.avatar(), @x, @y)
 
     @frame.drag(@dragged, @start, @up)
     @

@@ -45,6 +45,8 @@ grid_state = {
 users = new Kanban.UserList();
 users.reset( user_data );
 
+users.current_user = users.get(1)
+
 # The board (or we should say boards) layout is an array composed of several boards
 # or individual cells (i.e. degraded board)
 # Each item of the array is either:
@@ -60,7 +62,7 @@ users.reset( user_data );
 board_state =
   layout: {
     bundles: [
-      {    
+      {
         name: 'board',
         columns: [ 'backlog:start', 'in-progress', 'done:end' ],
         swimlanes: [ 'projects', 'implementations']
@@ -74,7 +76,7 @@ board_state =
       [ 'board', 'on hold']
     ]
   }
-  measures: 
+  measures:
         swimlane_height: 600
         column_width: 400
         swimlane_title_width: 50
@@ -103,7 +105,7 @@ kanbansystem = new recline.View.MultiView
       label: 'Board',
       view: board
     },
-    { 
+    {
       id: 'grid',
       label: 'Grid',
       view: grid

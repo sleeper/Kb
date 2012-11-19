@@ -1,6 +1,6 @@
 class Kanban.Column
   on_drop_start: (swimlane, ticket)=>
-    ticket.record.set 
+    ticket.record.set
       swimlane: swimlane
       column: @name
       entered_on: new Date()
@@ -10,7 +10,7 @@ class Kanban.Column
 
 
   on_drop_end: (swimlane, ticket)=>
-    ticket.record.set 
+    ticket.record.set
       swimlane: swimlane
       column: @name
       finished_on: new Date()
@@ -25,7 +25,7 @@ class Kanban.Column
     so = new SimpleOverlay( root )
     so.dialog.append('<h1> Enter wake-up date </h1><p/><input type="text" id="datepicker"/>')
     date_input = $('#datepicker', so.dialog)
-    so.overlay.on 'click', ()=> 
+    so.overlay.on 'click', ()=>
       # This is equivalent to cancel ...
       so.overlay.remove()
       so.dialog.remove()
@@ -38,7 +38,7 @@ class Kanban.Column
       firstDay: 1
       onSelect: ()=>
         ticket.record.set wakeup_on: new Date(date_input.val())
-        ticket.record.set 
+        ticket.record.set
           column: @name
           onhold_on: new Date()
           x: ticket.xrel
@@ -59,7 +59,7 @@ class Kanban.Column
     t = @paper.rect x, y, @width, @title_height
     t.node.id = "column #{@name} title"
     t.attr fill: "white", stroke: "none"
-    [cx,cy] = Kanban.Cell.center t 
+    [cx,cy] = Kanban.Cell.center t
     text = @paper.print cx, cy, @name, @paper.getFont("Yanone Kaffeesatz Bold"), 40, "middle"
     bbox = text.getBBox()
     # Correct text position
@@ -67,13 +67,14 @@ class Kanban.Column
     text.attr("fill", "black")
 
   on_drop: (col, sl, ticket)=>
-    callbacks= 
+    callbacks=
       start: @on_drop_start
       end: @on_drop_end
       onhold: @on_drop_onhold
       default: @on_drop_default
 
-    return unless col == @name
+    # Call the handler only if: the target column is us and the ticket (swimlane, column) has changed
+    return if col != @name || ( col == ticket.ocol && sl == ticket.osl)
     callbacks[@type](sl, ticket)
 
   constructor: (@name, @type, @width, @title_height)->
