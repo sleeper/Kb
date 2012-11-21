@@ -70,6 +70,7 @@ class recline.View.Board extends Backbone.View
     @ticket_detail.append("<h1>#{t.record.get('title')}</h1>")
     @ticket_detail.append("<div class=\"date\"> #{t.record.get('created_on')} / #{t.record.get('entered_on')}</div>")
     @ticket_detail.append("<div class=\"comment\">#{t.record.get('comment')}</div>")
+    @ticket_detail.append("<button class=\"btn btn-danger help-needed\">Help needed !</button>")
 
     # FIXME: Add the avatar of the user OR a button for the user to take care
     #        of the ticket.
