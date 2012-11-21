@@ -1,7 +1,7 @@
-describe("Raphael.CellCache", function() {
+describe("Kanban.CellCache", function() {
   describe("basic put/get", function() {
     it("must work", function() {
-      var c = new Kb.Raphael.CellCache()
+      var c = new Kanban.CellCache()
       c.put({col_name: "foo", sl_name: "bar", value: "fred"})
       var d = c.get("foo", "bar")
       d.col_name.should.equal("foo");
@@ -12,7 +12,7 @@ describe("Raphael.CellCache", function() {
 
   describe("forEach", function(){
     it("must iterate over all cells", function(){
-      var c = new Kb.Raphael.CellCache()
+      var c = new Kanban.CellCache()
       c.put({col_name: "foo", sl_name: "bar", value: "fred"})
       c.put({col_name: "bar", sl_name: "bar", value: "fred"})
       var s = "";
@@ -23,7 +23,7 @@ describe("Raphael.CellCache", function() {
     });
 
     it("must stop iterating when callback returns false", function(){
-      var c = new Kb.Raphael.CellCache()
+      var c = new Kanban.CellCache()
       c.put({col_name: "foo", sl_name: "bar", value: "fred"})
       c.put({col_name: "bar", sl_name: "bar", value: "fred"})
       var s = "";

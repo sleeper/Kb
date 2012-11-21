@@ -21,25 +21,33 @@
   <!-- -->
 
   <!-- include source files here... -->
-  <script src="scripts/vendor/underscore-min.js"></script>
-  <script src="scripts/vendor/backbone-min.js"></script>
+  <!--script src="scripts/vendor/underscore-min.js"></script>
+  <script src="scripts/vendor/backbone-min.js"></script-->
   <script src="scripts/vendor/jquery.min.js"></script>
   <script src="scripts/vendor/raphael.js"></script>
-  <script src="scripts/vendor/raphael-svg-filter.js"></script>
-  <script src="scripts/build/kb.js"></script>
-  <script src="scripts/build/user_model.js"></script>
-  <script src="scripts/build/ticket_model.js"></script>
-  <script src="scripts/build/board_model.js"></script>
-  <script src="scripts/build/ticketlist.js"></script>
-  <script src="scripts/build/board.js"></script>
+  <script type="text/javascript" src="scripts/vendor/Yanone_Kaffeesatz.font.js"></script>
+  <!--script src="scripts/vendor/raphael-svg-filter.js"></script-->
+  <script>window.Kanban = window.Kanban || {}</script>
+  <!--script src="scripts/build/raphael.board.js"></script>
+  <script src="scripts/build/raphael.ticket.js"></script-->
+  <script src="scripts/build/kanban.cell.js"></script>
+  <script src="scripts/build/kanban.column.js"></script>
+  <script src="scripts/build/kanban.swimlane.js"></script>
+  <script src="scripts/build/kanban.cellcache.js"></script>
+  <script src="scripts/build/kanban.bundle.js"></script>
+  <script src="scripts/build/kanban.layout.js"></script>
 
   <!-- include spec files here... -->
   <!--script src="specs/CollectionTicketListSpec.js"></script>
   <script src="specs/ModelBoardSpec.js"></script>
   <script src="specs/ModelTicketSpec.js"></script>
   <script src="specs/ModelUserSpec.js"></script>
-  <script src="specs/RaphaelCellCacheSpec.js"></script-->
-  <script src="specs/KanbanTicket.js"></script>
+  <!--script src="specs/KanbanTicket.js"></script-->
+  <script src="specs/KanbanColumn.js"></script>
+  <script src="specs/KanbanSwimlane.js"></script>
+  <script src="specs/KanbanCellCache.js"></script>
+  <script src="specs/KanbanBundle.js"></script>
+  <script src="specs/KanbanLayout.js"></script>
 
   <!-- trigger the mocha runner -->
   <script src="runner/mocha.js"></script>

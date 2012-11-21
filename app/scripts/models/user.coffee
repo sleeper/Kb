@@ -3,7 +3,7 @@
 #  - name: the name of this user
 #  - avatar: Name of the picture to be used as avatar
 #
-class Kb.Models.User extends Backbone.Model
+class Kanban.User extends Backbone.Model
   defaults:
     id: 0
     name: ""

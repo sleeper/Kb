@@ -68,7 +68,7 @@ class Kanban.Ticket
       @title_frame.appendChild body
       @title = document.createElement "div"
       body.appendChild @title
-      $(@title).html( @text ) 
+      $(@title).html( @text )
       @paper.canvas.appendChild @title_frame
       @resize()
 
@@ -131,23 +131,44 @@ class Kanban.Ticket
         # but no change event will be fired.
         # So we do need to force the move
         force_move = true
-    eve "cell.dropped", @el, @cur_col, @cur_sl
+
     @frame.animate({opacity: 1}, 500, ">");
-    [x,y] = @board.compute_relative_coordinates @cur_col, @cur_sl, @x, @y
-    @record.set column: @cur_col, swimlane: @cur_sl, x: x, y: y
+    @cell = @board.get_cell_by_point @x, @y
+    [ @xrel, @yrel ] = @cell.to_rel @x, @y
+
+    # Let's broadcast the fact we've land ...
+    eve "cell.dropped", @el, @cur_col, @cur_sl, @
+    eve "column.dropped", @el, @cur_col, @cur_sl, @
+
+    # ... and launch handlers if there's any registered
+    # for these events
+    for evt in ['cell.dropped', 'column.dropped']
+      # The callbacks needs to be called in the context of the current Ticket
+      @events[evt].apply(@, [@cur_col, @cur_sl]) if @events[evt]
+
     @move() if force_move
 
+  # reset the ticket to the swimlane, column, x and y
+  # stored in the Record
+  reset: ()->
+    @ocol = @cur_col = @record.get('column')
+    @osl = @cur_sl = @record.get('swimlane')
+    @ox = @x = @record.get('x')
+    @oy = @y = @record.get('y')
+    @cell = @board.get_cell @osl, @ocol
+    @move @x, @y
+
   move: ()->
-    [@x,@y] = @board.compute_absolute_coordinates @record.get('column'), @record.get('swimlane'),@record.get('x'), @record.get('y')
+    [@x, @y] = @cell.to_absolute @record.get('x'), @record.get('y')
     @frame.attr x: @x, y: @y
     @title.move @x, @y
     @avatar.move @x, @y
 
   setup_events: (e)->
-    _.each ['click', 'dblclick'], (evt)=>
+    # Handle Raphaeljs own events
+    for evt in ['click', 'dblclick']
       if @events[evt]
         e[evt] ()=> @events[evt](@)
-         
 
   draw_frame: ()->
     @frame = @board.paper.rect( @x, @y, @width, @height)
@@ -155,7 +176,7 @@ class Kanban.Ticket
     @frame.node.setAttribute("class", "ticket")
     $(@frame.node).on("window:resized", ()=> @title.resize())
     filter1 = @board.paper.filterCreate("filter1");
-    @frame.filterInstall(filter1); 
+    @frame.filterInstall(filter1);
     blur1 = Raphael.filterOps.feGaussianBlur(
         {stdDeviation: "1.2", "in": "SourceAlpha", result: "blur1"});
     offset1 = Raphael.filterOps.feOffset(
@@ -163,15 +184,15 @@ class Kanban.Ticket
     merge1 = Raphael.filterOps.feMerge(["offsetBlur", "SourceGraphic"]);
     filter1.appendOperation(blur1);
     filter1.appendOperation(offset1);
-    filter1.appendOperation(merge1); 
-    @setup_events( @frame ) 
+    filter1.appendOperation(merge1);
+    @setup_events( @frame )
 
   update_title: ()->
     @title.update_title @record.get('title')
 
   update_avatar: ()->
-    img = "../assets/imgs/#{@record.avatar}"
-    @avatar.update img
+    # img = "../assets/imgs/#{@record.avatar}"
+    @avatar.update @record.avatar()
 
   clear: ()->
     @cleared = true
@@ -179,7 +200,7 @@ class Kanban.Ticket
     @avatar.remove()
     @frame.remove()
 
-  # Update the ticket position and representation following 
+  # Update the ticket position and representation following
   # a change in the record
   update: ()->
     if @cleared
@@ -194,13 +215,15 @@ class Kanban.Ticket
 
   draw: ()->
     @cleared = false
-    [@x,@y] = @board.compute_absolute_coordinates @record.get('column'), @record.get('swimlane'),@record.get('x'), @record.get('y')
+    rx = @record.get 'x'
+    ry = @record.get 'y'
+    @cell = @board.get_cell @record.get('swimlane'), @record.get('column')
+    [@x, @y] = @cell.to_absolute @record.get('x'), @record.get('y')
 
     @draw_frame()
     @title = new Title(@board.paper, @record.get('title'), @x, @y, @width, @height)
 
-    img = "../assets/imgs/#{@record.avatar}"
-    @avatar = new Avatar(@board.paper, img, @x, @y)
+    @avatar = new Avatar(@board.paper, @record.avatar(), @x, @y)
 
     @frame.drag(@dragged, @start, @up)
     @

@@ -15,22 +15,20 @@ class recline.View.Board extends Backbone.View
   #
   initialize: (config)->
     self = @
-    @el = $(@el);
-    @el.addClass('recline-board');
-    _.bindAll(@, 'render');
+    @el = $(@el)
+    @el.addClass 'recline-board'
+    _.bindAll @, 'render'
     @tickets = []
-    @model.records.bind('add', this.render);
-    @model.records.bind('remove', this.render);
+    @model.records.bind 'add', this.render
+    @model.records.bind 'remove', this.render
     state = _.extend({
       layout: {}
       }, config.state
     );
-    @state = new recline.Model.ObjectState(state);
-    @board = new Kanban.Board @state.get('layout'), @el
+    @state = new recline.Model.ObjectState state
+    @users = @state.get 'users'
+    @board = new Kanban.Board @state.get('layout'), @el, @state.get('measures')
     @board.draw()
-
-    # Add a space for the detailed information
-    @add_details_container()
 
     @bind_events()
     @render_tickets()
@@ -59,60 +57,68 @@ class recline.View.Board extends Backbone.View
   resume_overlay: ()=>
     @ticket_detail.empty()
     @ticket_detail.hide()
-    @overlay.toggle()
-
-
-  add_details_container: ()->
-    $(@el).append('<div id="overlay">&nbsp;</div>')
-    @overlay = $('#overlay', $(@el))
-    @overlay.show()
-    @overlay.on('click', @resume_overlay)
-    $(@el).append("<div id=\"ticket_detail\"></div>")
-    @ticket_detail = $('#ticket_detail', $(@el))
-    # @resize()
+    @so.overlay.remove()
+    @so.dialog.remove()
 
   display_ticket_detail: (t)=>
-    @overlay.toggle()
+    @so = new SimpleOverlay $(@el)
+    @so.overlay.on 'click', @resume_overlay
+    @so.dialog.append "<div id=\"ticket_detail\"></div>"
+    @ticket_detail = $('#ticket_detail', $(@el))
+
+    # @overlay.toggle()
     @ticket_detail.append("<h1>#{t.record.get('title')}</h1>")
     @ticket_detail.append("<div class=\"date\"> #{t.record.get('created_on')} / #{t.record.get('entered_on')}</div>")
     @ticket_detail.append("<div class=\"comment\">#{t.record.get('comment')}</div>")
 
-    # FIXME: Add the avatar of the user OR a button for the user to take care 
+    # FIXME: Add the avatar of the user OR a button for the user to take care
     #        of the ticket.
 
-    img = "../assets/imgs/#{t.record.avatar}"
-    @ticket_detail.append("<img class=\"avatar\" src=\"#{img}\">")
-    # $('.avatar', @ticket_detail).on 'click', () => t.model.set('user_id', Kb.board.current_user.get('id'))
-    @ticket_detail.css('opacity',1)
-    @ticket_detail.show();    
-    width = @ticket_detail.width()
-    height = @ticket_detail.height()
-    @ticket_detail.css
-                position: 'fixed',
-                left: ($(window).width() - width) / 2 
-                top: ($(window).height() - height) / 2
-  
+    @ticket_detail.append("<img class=\"avatar\" src=\"#{t.record.avatar()}\">")
+    avatar = $('.avatar', @ticket_detail)
+    avatar.on 'click', () =>
+      t.record.set('user_id',  @users.current_user.get('id'))
+      avatar.attr('src', t.record.avatar())
+    @so.show()
 
   clear_tickets: ()->
     _.each @tickets, (t)=>
       t.clear()
     @tickets = []
 
+  setup_user: (r)->
+    return if r.user? && r.avatar?
+    # r.user = @state.get('users').get( r.get('user_id') )
+    # if r.user()
+    #   r.avatar = r.user.get('avatar')
+    # else
+    #   r.avatar = "/images/question-mark-icon.png"
+    r.user = ()=> @state.get('users').get( r.get('user_id') )
+    r.avatar = () =>
+      u = r.user()
+      if u
+        u.get('avatar')
+      else
+        "/images/question-mark-icon.png"
+
+
   create_ticket: (r)->
+    @setup_user( r )
     t = new Kanban.Ticket @board, r
-    t.on 'dblclick', (t)=> 
+    t.on 'dblclick', (t)=>
       @display_ticket_detail(t)
+    @tickets.push t
     t
 
   render_tickets: ()->
     this.model.records.each (record)=>
       # Keep only the ticket that are on board
       if record.get('status') == 'on board'
-        t = @create_ticket record 
+        t = @create_ticket record
         t.draw()
-        @tickets.push t
 
   render: ()->
+    console.log "FRED"
 
 
 

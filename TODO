@@ -1,12 +1,13 @@
 [x] Project name
 [x] priority needed (in order to sort by priority)
 [x] POC: the one who is proficient on this item
+[x] Handle column properties (backlog, done, on-hold, ...)
+[x] Finished date: will be automatic (finished_on)
+[x] Start date (i.e. date when the ticket migrated from backlog column to real action: started_on)
 [ ] on_board to become a multi-status field
 [ ] wake-up date for all 'on hold' items
 [ ] Target date
-[ ] Estimated sized
-[ ] Start date (i.e. date when the ticket migrated from backlog column to real action). Must be automatic.
-[ ] Finished date: will be automatic
+[ ] Estimated size
 [ ] Help needed
 [ ] Expedite
 [ ] Urgent (to be treated ASAP): mainly a signal to show this record has a high priority (i.e. next one to be taken), and is mostly relevant only for 'backlog' column
@@ -18,8 +19,5 @@
 [ ] Users
 [ ] Read-only 
 [ ] User management
-[ ] Handle column properties (backlog, done, on-hold, ...)
-[ ] Need to differentiate if a ticket has been analysed or not (i.e. new one in the product backlog)
-
 
 
