@@ -54,33 +54,19 @@ class recline.View.Board extends Backbone.View
         ticket.clear()
 
 
-  resume_overlay: ()=>
-    @ticket_detail.empty()
-    @ticket_detail.hide()
-    @so.overlay.remove()
-    @so.dialog.remove()
-
   display_ticket_detail: (t)=>
-    @so = new SimpleOverlay $(@el)
-    @so.overlay.on 'click', @resume_overlay
-    @so.dialog.append "<div id=\"ticket_detail\"></div>"
-    @ticket_detail = $('#ticket_detail', $(@el))
-
-    # @overlay.toggle()
-    @ticket_detail.append("<h1>#{t.record.get('title')}</h1>")
-    @ticket_detail.append("<div class=\"date\"> #{t.record.get('created_on')} / #{t.record.get('entered_on')}</div>")
-    @ticket_detail.append("<div class=\"comment\">#{t.record.get('comment')}</div>")
-    @ticket_detail.append("<button class=\"btn btn-danger help-needed\">Help needed !</button>")
-
-    # FIXME: Add the avatar of the user OR a button for the user to take care
-    #        of the ticket.
-
-    @ticket_detail.append("<img class=\"avatar\" src=\"#{t.record.avatar()}\">")
-    avatar = $('.avatar', @ticket_detail)
-    avatar.on 'click', () =>
+    @ticket_detail = new TicketDetailView $(@el), t
+    @ticket_detail.on_avatar_click ()=>
       t.record.set('user_id',  @users.current_user.get('id'))
-      avatar.attr('src', t.record.avatar())
-    @so.show()
+      @ticket_detail.update_avatar(t.record.avatar())
+
+    @ticket_detail.on_help_click ()=>
+      if t.record.get('help_needed')
+        t.record.set('help_needed', false)
+      else
+        t.record.set('help_needed', true)
+
+    @ticket_detail.show()
 
   clear_tickets: ()->
     _.each @tickets, (t)=>

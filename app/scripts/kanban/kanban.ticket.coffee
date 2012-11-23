@@ -1,7 +1,10 @@
 class Kanban.Ticket
   width: 70
   height: 90
-  fill_color: '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100'
+  fill_color:
+    default: '223.19625301042-#f7ec9a:0-#f6ea8d:13.400906-#f5e98a:45.673525-#f8ed9d:80.933785-#f5e98a:100'
+    help_needed: '#f00'
+
 
   class Avatar
     x_offset: 50
@@ -170,9 +173,15 @@ class Kanban.Ticket
       if @events[evt]
         e[evt] ()=> @events[evt](@)
 
+  get_fill_color: ()->
+    if @record.get('help_needed')
+      @fill_color['help_needed']
+    else
+      @fill_color['default']
+
   draw_frame: ()->
     @frame = @board.paper.rect( @x, @y, @width, @height)
-    @frame.attr({fill:@fill_color})
+    @frame.attr({fill:@get_fill_color()})
     @frame.node.setAttribute("class", "ticket")
     $(@frame.node).on("window:resized", ()=> @title.resize())
     filter1 = @board.paper.filterCreate("filter1");
@@ -186,6 +195,9 @@ class Kanban.Ticket
     filter1.appendOperation(offset1);
     filter1.appendOperation(merge1);
     @setup_events( @frame )
+
+  update_frame: ()->
+    @frame.attr({fill:@get_fill_color()})
 
   update_title: ()->
     @title.update_title @record.get('title')
@@ -206,6 +218,7 @@ class Kanban.Ticket
     if @cleared
       @draw()
     else
+      @update_frame()
       @update_title()
       @update_avatar()
       @move()
