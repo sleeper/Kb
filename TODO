@@ -4,11 +4,12 @@
 [x] Handle column properties (backlog, done, on-hold, ...)
 [x] Finished date: will be automatic (finished_on)
 [x] Start date (i.e. date when the ticket migrated from backlog column to real action: started_on)
+[x] Help needed
+[x] wake-up date for all 'on hold' items
+[x] Users
 [ ] on_board to become a multi-status field
-[ ] wake-up date for all 'on hold' items
 [ ] Target date
 [ ] Estimated size
-[ ] Help needed
 [ ] Expedite
 [ ] Urgent (to be treated ASAP): mainly a signal to show this record has a high priority (i.e. next one to be taken), and is mostly relevant only for 'backlog' column
 [ ] Need for wiki that would store rules, reference documents
@@ -16,7 +17,6 @@
 [ ] Visual: start dates (this ticket takes ages)
 [ ] Visual: entered date
 [ ] WebSockets
-[ ] Users
 [ ] Read-only 
 [ ] User management
 
