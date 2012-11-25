@@ -21,6 +21,7 @@ fields = [
         {id: 'created_on', type: 'date', label: "Creation"},
         {id: 'status', label: 'status'},
         {id: 'entered_on', type: 'date', label: "Entered board"},
+        {id: 'target_date', type: 'date', label: "Target date"},
         {id: 'help_needed', type: 'boolean', label: "Help needed"},
         {id: 'swimlane', label: 'Swimlane'},
         {id: 'column', label: 'Column'},
