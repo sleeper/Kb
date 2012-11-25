@@ -98,26 +98,31 @@ board = new recline.View.Board
   model: dataset,
   state: board_state
 
+grid.render()
+$el.append grid.el
 
-kanbansystem = new recline.View.MultiView
-  model: dataset
-  el: $el
-  views: [
-    {
-      id: 'board',
-      label: 'Board',
-      view: board
-    },
-    {
-      id: 'grid',
-      label: 'Grid',
-      view: grid
-    }
-  ]
-  sidebarViews: [
-    id: 'filterEditor',
-    label: 'Filters',
-    view: new recline.View.FilterEditor({ model: dataset })
-  ]
+board.render()
+$el.append board.el
+
+# kanbansystem = new recline.View.MultiView
+#   model: dataset
+#   el: $el
+#   views: [
+#     {
+#       id: 'board',
+#       label: 'Board',
+#       view: board
+#     },
+#     {
+#       id: 'grid',
+#       label: 'Grid',
+#       view: grid
+#     }
+#   ]
+#   sidebarViews: [
+#     id: 'filterEditor',
+#     label: 'Filters',
+#     view: new recline.View.FilterEditor({ model: dataset })
+#   ]
 
 

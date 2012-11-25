@@ -33,6 +33,8 @@ class recline.View.Board extends Backbone.View
     @bind_events()
     @render_tickets()
 
+  show: ()-> @el.show()
+  hide: ()-> @el.hide()
 
   bind_events: ()->
     @model.records.on 'reset', ()=>
