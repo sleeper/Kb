@@ -104,6 +104,19 @@ $el.append grid.el
 board.render()
 $el.append board.el
 
+router = new Kanban.AppRouter()
+
+router.on 'route:grid', ()=>
+  console.log "FRED: GRID !!!!!"
+
+router.on 'route:board', ()=>
+  console.log "FRED: BOARD !!!!!"
+
+
+Backbone.history.start()
+  # pushState: true
+  # root: '/grid'
+
 # kanbansystem = new recline.View.MultiView
 #   model: dataset
 #   el: $el
