@@ -14,7 +14,7 @@ user_data = [
 
 fields = [
         {id: 'id', label: 'ID'},
-        {id: 'project', lable: 'Project'}
+        {id: 'project', lable: 'Project'},
         {id: 'title', label: 'Title'},
         {id: 'comment', label: 'Comment'},
         {id: 'priority', label: 'Priority'},
@@ -92,30 +92,91 @@ board_state =
 
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 
-$el = $('#mygrid')
+$el = $('#kanban')
+$el.append '<div id="grid"></div>'
+$el.append '<div id="board"></div>'
+$kb = $("#board", $el)
+$grid = $("#grid", $el)
+
+
 grid = new recline.View.SlickGrid({ model:dataset, state: grid_state })
 board = new recline.View.Board
   model: dataset,
   state: board_state
 
 grid.render()
-$el.append grid.el
+$grid.append grid.el
+$grid.append '<button id="new" class="btn btn-primary btn-large">New item</button>'
+
+$('#new').click ()=>
+  so = new SimpleOverlay $('body')
+  so.overlay.on 'click', ()=>
+    so.overlay.remove()
+    so.dialog.remove()
+  so.dialog.append '<form class="form-horizontal">' +
+    '<legend> New Item </legend>' +
+    '<div class="control-group">' +
+    '<label class="control-label" for="inputTitle">Title</label>' +
+    '<div class="controls"><input type="text" id="inputTile" placeholder="Title"></div>' +
+    '</div>' +
+    '<div class="control-group">' +
+    '<label class="control-label" for="inputProject">Project</label>' +
+    '<div class="controls"><input type="text" id="inputProject" placeholder="Project"></div>' +
+    '</div>' +
+    '<div class="control-group">' +
+    '<label class="control-label" for="inputPriority">Priority</label>' +
+    '<div class="controls"><input type="number" id="inputPriority" placeholder="100"></div>' +
+    '</div>' +
+    '<div class="control-group">' +
+    '<label class="control-label" for="inputSwimlane">Swimlane</label>' +
+    '<div class="controls"><input type="text" id="inputSwimlane" placeholder="Swimlane"></div>' +
+    '</div>' +
+    '<div class="control-group">' +
+    '<label class="control-label" for="inputPOC">POC</label>' +
+    '<div class="controls"><input type="text" id="inputPOC" placeholder="POC"></div>' +
+    '</div>' +
+    '<div class="control-group">' +
+    '<label class="control-label" for="inputComment">Comment</label>' +
+    '<div class="controls"><input type="textarea" id="inputComment" placeholder="Comment"></div>' +
+    '</div>' +
+    '<div class="form-actions">' +
+    '<button type="submit" class="submit btn btn-primary">Save changes</button>' +
+    '<button type="button" class="cancel btn">Cancel</button>' +
+    '</div>' +
+    '</form>'
+  so.show()
 
 board.render()
-$el.append board.el
+$kb.append board.el
 
 router = new Kanban.AppRouter()
 
 router.on 'route:grid', ()=>
-  console.log "FRED: GRID !!!!!"
+  console.log "FRED: Grid"
+  board.hide()
+  $grid.show()
+  grid.el.show()
+  grid.show()
 
 router.on 'route:board', ()=>
-  console.log "FRED: BOARD !!!!!"
+  console.log "FRED: Board"
+  board.show()
+  $grid.hide()
+  grid.hide()
+  grid.el.hide()
 
 
 Backbone.history.start()
-  # pushState: true
-  # root: '/grid'
+router.navigate("/board")
+
+# To be moved elsewhere
+
+$('.navbar li').click (e)->
+  $('.navbar li').removeClass('active')
+  $el = $(@)
+  if !$el.hasClass('active')
+    $el.addClass 'active'
+  # e.preventDefault()
 
 # kanbansystem = new recline.View.MultiView
 #   model: dataset

@@ -59,3 +59,7 @@ input.editor-text {
   padding: 0;
   vertical-align: top;
 }
+
+#simpleoverlay-dialog {
+  z-index: 1000;
+}
