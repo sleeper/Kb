@@ -98,8 +98,8 @@ class Kanban.Layout
   # return name of all the swimlanes in the layout
   swimlane_names: ()->
     sl_names = []
-    for b in @bundles
-      sl_names += b.swimlane_names()
+    for _,b of @bundles
+      Array::push.apply sl_names, b.swimlane_names()
 
     sl_names
 

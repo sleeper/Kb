@@ -36,6 +36,7 @@ class ItemForm
         @so.dialog.remove()
 
     constructor: (@el, @swimlane_names)->
+        @swimlane_names.sort()
         @so = new SimpleOverlay @el
         @so.overlay.on 'click', ()=>
             @destroy()
