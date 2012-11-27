@@ -13,9 +13,9 @@ class ItemForm
     '<label class="control-label" for="inputPriority">Priority</label>' +
     '<div class="controls"><input type="number" id="inputPriority" placeholder="100"></div>' +
     '</div>' +
-    '<div class="control-group">' +
+    '<div class="control-group" id="control-swimlanes">' +
     '<label class="control-label" for="inputSwimlane">Swimlane</label>' +
-    '<div class="controls"><input type="text" id="inputSwimlane" placeholder="Swimlane"></div>' +
+    # '<div class="controls"><input type="text" id="inputSwimlane" placeholder="Swimlane"></div>' +
     '</div>' +
     '<div class="control-group">' +
     '<label class="control-label" for="inputPOC">POC</label>' +
@@ -35,11 +35,16 @@ class ItemForm
         @so.overlay.remove()
         @so.dialog.remove()
 
-    constructor: (el)->
-        @so = new SimpleOverlay $('body')
+    constructor: (@el, @swimlane_names)->
+        @so = new SimpleOverlay @el
         @so.overlay.on 'click', ()=>
             @destroy()
         @so.dialog.append template
+        slc = $('#control-swimlanes', @so.dialog)
+        select_str = '<div class="controls"><select id="inputSwimlane">'
+        select_str += "<option>#{opt}</option>" for opt in @swimlane_names
+        select_str += "</select></div>"
+        slc.append select_str
         @so.hide()
         @submit = $('.submit', @so.dialog)
         @cancel = $('.cancel', @so.dialog)
