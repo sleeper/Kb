@@ -36,28 +36,33 @@ class Kanban.Bundle
 
     if !cfg.columns? || !cfg.swimlanes?
       throw new TypeError( 'Bundle has not cell, columns or swimlanes attribute')
-      
+
     if !(cfg.columns instanceof Array) || !(cfg.swimlanes instanceof Array)
       throw new TypeError( 'Bundle: columns and swimlanes attributes must be arrays')
 
     true
-     
+
   size: ()->
     @width ?= @nb_of_columns * @sizes.column_width + @sizes.column_margin + @sizes.swimlane_title_width
     @height ?= @nb_of_swimlanes * @sizes.swimlane_height + @sizes.swimlane_margin + @sizes.column_title_height
     [@width, @height]
+
+  swimlane_names: ()->
+    sl_names = []
+    sl_names.push sl for sl, _ of @swimlanes
+    sl_names
 
   draw: (paper)->
     # We need to draw the bundle starting at its positions (@x, @y)
     x = @x
     y = @y + @sizes.column_title_height
     for sl_name of @swimlanes
-      sl = @swimlanes[sl_name] 
+      sl = @swimlanes[sl_name]
       sl.draw_title paper, x, y
       y += @sizes.swimlane_height
 
     cells = []
-    x = @x + @sizes.swimlane_title_width 
+    x = @x + @sizes.swimlane_title_width
     for cl_name of @columns
       y = @y
       cl = @columns[cl_name]

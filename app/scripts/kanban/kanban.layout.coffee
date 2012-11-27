@@ -11,12 +11,12 @@ class Kanban.Layout
   # * the measurement to use for column width, swimlanes height, ... (optional)
   #
   # # Layout config
-  #   The layout config gives the config of the various bundle plus their 
+  #   The layout config gives the config of the various bundle plus their
   #   relative positions.
   #   It is implemented as an object with 2 properties:
   #    * bundles: pointing to an array of the board's bundles
   #    * positions: pointing to an array of positions
-  #  
+  #
   #  ## Bundles
   #    The bundles'configuration is represented as an array with on item per bundle
   #    Each of these items is an object that can have to following properties:
@@ -24,17 +24,17 @@ class Kanban.Layout
   #     * swimlanes: Name of the swimlanes that composed this bundle
   #     * columns: the columns of the bundle
   #     * cell: shortcut when the bundle is composed of only 1 column and 1 swimlane
-  # 
+  #
   #    Note that the `cell` and (`columns`, `swimlanes`) are mutualy exclusive.
   #    The swimlanes are represented by strings (the name of the swimlane).
-  #    The columns are represented by strings, repesenting then name and optionally the 
+  #    The columns are represented by strings, repesenting then name and optionally the
   #    type of column. The name and optional type are separated by a `:`.
   #    For example, `foo:onhold` represents a column named `foo` with type `onhold`.
-  #     
+  #
   #    Each column can have the following type:
-  #      * start: this is where the tickets for the swimlane are starting. There can be only 
+  #      * start: this is where the tickets for the swimlane are starting. There can be only
   #               1 start column per swimlane.
-  #      * end: this is where the tickets for the swimlane are terminating (i.e. done). There can be only 
+  #      * end: this is where the tickets for the swimlane are terminating (i.e. done). There can be only
   #               1 end column per swimlane.
   #      * onhold: in this column, the tickets will be considered as 'on hold" and a 'wake up date' will
   #                be requested.
@@ -44,7 +44,7 @@ class Kanban.Layout
   #  FIXME
   #
   constructor: (cfg, meas={})->
-    @sizes = 
+    @sizes =
         swimlane_height: 10
         column_width: 10
         swimlane_title_width: 10
@@ -73,7 +73,7 @@ class Kanban.Layout
     #   @check_item(item)
 
     # So now we can start creating the Layout
-    @bundles = {} 
+    @bundles = {}
     for item in cfg.bundles
       kl = new Kanban.Bundle item, @sizes, @_cells
       @bundles[kl.name] = kl
@@ -94,6 +94,14 @@ class Kanban.Layout
         cell = c
         false
     cell
+
+  # return name of all the swimlanes in the layout
+  swimlane_names: ()->
+    sl_names = []
+    for b in @bundles
+      sl_names += b.swimlane_names()
+
+    sl_names
 
 
   compute_bundles_location: ()->
@@ -127,7 +135,7 @@ class Kanban.Layout
     # Positions are either array of strings (i.e. the name of the bundles, all on the same 'line')
     # or an array of arrays: each "subarray" represent a "line" of bundle
     # For example if I do want the following arrangement:
-    #   
+    #
     #       A                             B
     #   +-----+-----+-----+-----+     +---------+
     #   |     |     |     |     |     |         |

@@ -36,6 +36,9 @@ class recline.View.Board extends Backbone.View
   show: ()-> @el.show()
   hide: ()-> @el.hide()
 
+  swimlanes: ()->
+    @board.swimlanes()
+
   bind_events: ()->
     @model.records.on 'reset', ()=>
       @clear_tickets()

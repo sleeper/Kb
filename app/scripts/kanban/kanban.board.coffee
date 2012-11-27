@@ -12,7 +12,7 @@ class Kanban.Board
     jnode.width(@width)
     jnode.height(@height)
 
-    $(window).resize ()-> 
+    $(window).resize ()->
       $('.ticket').trigger('window:resized')
 
     @paper = Raphael jnode[0], @width, @height
@@ -29,8 +29,12 @@ class Kanban.Board
   get_cell: (sl_name, cl_name)->
     @layout.get_cell(cl_name, sl_name)
 
+  # Return all swimlanes name
+  swimlanes: ()->
+    @layout.swimlane_names()
+
   draw: () ->
     # Let's draw cells
-    @layout.each_bundle (bundle)=> bundle.draw @paper 
+    @layout.each_bundle (bundle)=> bundle.draw @paper
 
 

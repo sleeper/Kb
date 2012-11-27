@@ -60,6 +60,15 @@ describe("Tests for Kanban.Bundle", function(){
 		});
 	});
 
+	describe("swimlane_names", function() {
+		it("should return the name of the configured swimlanes", function() {
+			var b = new Kanban.Bundle({name: 'fred', swimlanes:[ 'foo', 'bar'], columns: ['backlog', 'wip', 'done']}, gsizes, cells);
+			var sl_names = b.swimlane_names();
+			sl_names.should.eql(['foo', 'bar']);
+		});
+	});
+
+
 	describe("draw()", function(){
 		it("should draw itself at the right position", function() {
 			var cfg = { swimlane_height: 10, column_width: 10, swimlane_title_width: 10, column_title_height: 10, column_margin: 10, swimlane_margin: 10};

@@ -111,7 +111,7 @@ $grid.append grid.el
 $grid.append '<button id="new" class="btn btn-primary btn-large">New item</button>'
 
 $('#new').click ()=>
-  nif = new ItemForm $('body')
+  nif = new ItemForm $('body'), board.swimlanes()
   nif.show()
   nif.on_submit ()->
     # For the time being:
