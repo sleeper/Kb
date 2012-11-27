@@ -6,6 +6,8 @@ data = [
   {id: 5, project: 'sles 9 decom', title: "Are you sure ?", poc: 'vincent', status: 'product backlog', help_needed: false, priority: 400, column: "backlog", swimlane: "projects", x:1, y: 1, user_id: null, created_on: "2012-09-21 17:32:12", entered_on: "", comment:"This is the most ennoying ticket ever written"}
 ]
 
+ticket_id = 6
+
 user_data = [
   {id: 1, name: "fred", avatar: "/images/Hulk-01.png"},
   {id: 2, name: "fatma", avatar: "/images/Voodoo\ Doll.png"},
@@ -115,6 +117,19 @@ $('#new').click ()=>
     # For the time being:
     #   - check the parameters
     #   - add it to the items
+    ticket_data = nif.data()
+    # FIXME: Here we should do a first set of checks, then add it to the collection
+    # where it will be sent over the line to the server to get a real ID
+    # Let's fake the idea for now
+    ticket_data.id = ticket_id
+    ticket_id += 1
+    ticket_data.created_on = new Date()
+    ticket_data.x = 1
+    ticket_data.y = 1
+    ticket_data.help_needed = false
+    ticket_data.status = "product backlog"
+    ticket_data.column ?= "backlog"
+    dataset.records.add [ ticket_data]
     console.log "FRED: New item submitted"
 
 board.render()

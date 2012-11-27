@@ -3,7 +3,7 @@ class ItemForm
     '<legend> New Item </legend>' +
     '<div class="control-group">' +
     '<label class="control-label" for="inputTitle">Title</label>' +
-    '<div class="controls"><input type="text" id="inputTile" placeholder="Title" autofocus></div>' +
+    '<div class="controls"><input type="text" id="inputTitle" placeholder="Title" autofocus></div>' +
     '</div>' +
     '<div class="control-group">' +
     '<label class="control-label" for="inputProject">Project</label>' +
@@ -55,5 +55,31 @@ class ItemForm
     on_submit: (cb)-> @submit.on 'click', ()=>
         cb()
         @destroy()
+
+    title: ()->
+        $('#inputTitle', @so.dialog).val()
+
+    project: ()->
+        $('#inputProject', @so.dialog).val()
+
+    priority: ()->
+        $('#inputPriority', @so.dialog).val()
+
+    swimlane: ()->
+        $('#inputSwimlane', @so.dialog).val()
+
+    poc: ()->
+        $('#inputPOC', @so.dialog).val()
+
+    comment: ()->
+        $('#inputComment', @so.dialog).val()
+
+    data: ()->
+        title: @title()
+        project: @project()
+        priority: @priority()
+        swimlane: @swimlane()
+        poc: @poc()
+        comment: @comment()
 
 window.ItemForm = ItemForm
