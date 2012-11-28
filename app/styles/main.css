@@ -63,3 +63,7 @@ input.editor-text {
 #simpleoverlay-dialog {
   z-index: 1000;
 }
+
+#new {
+  margin-top: 2em;
+}

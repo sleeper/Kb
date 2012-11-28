@@ -2,6 +2,8 @@ body {
   padding-top: 60px;
 }
 
+.recline-slickgrid .slick-viewport {}
+
 /* Slick.Editors.Text, Slick.Editors.Date */
 input.editor-text {
   width: 100%;

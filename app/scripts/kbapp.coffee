@@ -24,7 +24,7 @@ fields = [
         {id: 'status', label: 'status'},
         {id: 'entered_on', type: 'date', label: "Entered board"},
         {id: 'target_date', type: 'date', label: "Target date"},
-        {id: 'help_needed', type: 'boolean', label: "Help needed"},
+        {id: 'help_needed', type: 'boolean', label: "Help ?"},
         {id: 'swimlane', label: 'Swimlane'},
         {id: 'column', label: 'Column'},
         {id: 'poc', label: 'POC'}
@@ -39,6 +39,15 @@ grid_state = {
         enableAddRow: false,
         autoHeight: true
       },
+      columnsWidth: [
+        { column: 'id', width: 40},
+        { column: 'project', width: 100},
+        { column: 'title', width: 200},
+        { column: 'comment', width: 300},
+        { column: 'priority', width: 50},
+        { column: 'help_needed', width: 50},
+
+      ],
       columnsEditor: [
         { column: 'title', editor: Slick.Editors.Text },
         { column: 'status', editor: Slick.Editors.Text },
@@ -95,7 +104,7 @@ board_state =
 dataset = new recline.Model.Dataset { records: data, fields: fields}
 
 $el = $('#kanban')
-$el.append '<div id="grid"></div>'
+$el.append '<div id="grid" style="height:100%; overflow:auto;"></div>'
 $el.append '<div id="board"></div>'
 $kb = $("#board", $el)
 $grid = $("#grid", $el)
